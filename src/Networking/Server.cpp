@@ -11,15 +11,15 @@ Server::~Server()
 void Server::RequirePassword(bool requirePassword)
 { this->_needsPassword = requirePassword; if (!this->_needsPassword) _password = ""; }
 
-void Server::RequirePassword(bool requirePassword, string password)
+void Server::RequirePassword(bool requirePassword, std::string password)
 { this->_needsPassword = requirePassword; _password = password; }
 
-bool Server::StartServer(funcHelper::func<void> customPacketSendFunction)
+bool Server::openServer(funcHelper::func<void> customPacketSendFunction)
 {
     if (this->bind(_port))
         return false;
 
-    _isOpen_Connected = true;
+    _connectionOpen = true;
     this->StartThreads(customPacketSendFunction);
     this->onServerOpened.invoke(_threadSafeEvents);
     return true;
@@ -27,7 +27,7 @@ bool Server::StartServer(funcHelper::func<void> customPacketSendFunction)
 
 void Server::CloseServer()
 {
-    Packet closeConnection = this->ConnectionCloseTemplate();
+    sf::Packet closeConnection = this->ConnectionCloseTemplate();
     this->SendToAll(closeConnection);
 
     if (_ssource != nullptr) _ssource->request_stop();
@@ -48,18 +48,18 @@ void Server::CloseServer()
     }
     this->close();
 
-    if (_isOpen_Connected)
+    if (_connectionOpen)
         this->onServerClosed.invoke(_threadSafeEvents);
 
     this->_needsPassword = false;
     _password = "";
-    _isOpen_Connected = false;
+    _connectionOpen = false;
     // _lastID = 0;
     this->deletedClientIDs.clear();
     this->newClientIDs.clear();
     this->DataPackets.clear();
     _clientData.clear();
-    _open_Connected_Time = 0.0;
+    _connectionTime = 0.0;
 }
 
 void Server::setPort(unsigned short port)
@@ -67,16 +67,16 @@ void Server::setPort(unsigned short port)
     _port = port;
 }
 
-void Server::SendToAll(Packet& packet)
+void Server::SendToAll(sf::Packet& packet)
 {
     for (auto& c: _clientData)
     {
-        if (this->send(packet, IpAddress((IP)c.first), c.second.port))
-            cerr << "ERROR - Server.h (Could not send packet to all client data)" << endl;
+        if (this->send(packet, sf::IpAddress((IP)c.first), c.second.port))
+            std::cerr << "ERROR - Server.h (Could not send packet to all client data)" << std::endl;
     }
 }
 
-void Server::SendTo(Packet& packet, ID id)
+void Server::SendTo(sf::Packet& packet, ID id)
 {
     if (id != 0) 
     {
@@ -85,27 +85,27 @@ void Server::SendTo(Packet& packet, ID id)
         // if the ID is not a client anymore dont send packet
         if (temp == &_clientData.end()->second) return;
         
-        if (this->send(packet, IpAddress((IP)id), temp->port))
-            cerr << "ERROR - Could not send packet to client" << endl;
+        if (this->send(packet, sf::IpAddress((IP)id), temp->port))
+            std::cerr << "ERROR - Could not send packet to client" << std::endl;
     }
 }
 
-bool Server::isConnectionRequest(Packet& packet, IpAddress senderIPAddress, unsigned short senderPort)
+bool Server::isConnectionRequest(sf::Packet& packet, sf::IpAddress senderIPAddress, unsigned short senderPort)
 {
     int temp;
 
     // making a copy of the packet in case that it is not a connection request
     // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    Packet c_packet = packet;
+    sf::Packet c_packet = packet;
     
     if ((c_packet >> temp) && temp == PacketType::ConnectionRequest)
     {
         packet >> temp; // removing the packet type infomation from the packet
         if (this->_needsPassword)
         {
-            Packet needPassword = this->PasswordRequestPacket();
+            sf::Packet needPassword = this->PasswordRequestPacket();
             if (this->send(needPassword, senderIPAddress, senderPort) != Socket::Done) 
-                cerr << "ERROR - could not send password request" << endl;
+                std::cerr << "ERROR - could not send password request" << std::endl;
         }
         else
         {
@@ -132,13 +132,13 @@ bool Server::isConnectionRequest(Packet& packet, IpAddress senderIPAddress, unsi
     return false;
 }
 
-bool Server::isConnectionClose(Packet& packet, IpAddress senderIPAddress, unsigned short senderPort)
+bool Server::isConnectionClose(sf::Packet& packet, sf::IpAddress senderIPAddress, unsigned short senderPort)
 {
     int temp;
 
     // making a copy of the packet in case that it is not a connection request
     // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    Packet c_packet = packet;
+    sf::Packet c_packet = packet;
     
     if ((c_packet >> temp) && temp == PacketType::ConnectionClose)
     {
@@ -153,19 +153,19 @@ bool Server::isConnectionClose(Packet& packet, IpAddress senderIPAddress, unsign
     return false;
 }
 
-bool Server::isPassword(Packet& packet, IpAddress senderIPAddress, unsigned short senderPort)
+bool Server::isPassword(sf::Packet& packet, sf::IpAddress senderIPAddress, unsigned short senderPort)
 {
     int temp;
 
     // making a copy of the packet in case that it is not a connection request
     // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    Packet c_packet = packet;
+    sf::Packet c_packet = packet;
     
     // if this is the right packet type
     if ((c_packet >> temp) && temp == PacketType::Password)
     {
         packet >> temp; // removing the packet type infomation from the packet
-        string sentPassword;
+        std::string sentPassword;
         packet >> sentPassword;
 
         if (_password == sentPassword)
@@ -189,23 +189,23 @@ bool Server::isPassword(Packet& packet, IpAddress senderIPAddress, unsigned shor
         }
         else
         {
-            Packet wrongPassword;
+            sf::Packet wrongPassword;
             wrongPassword = this->WrongPasswordPacket();
             if (this->send(wrongPassword, senderIPAddress, senderPort)) 
-                cerr << "ERROR - could not send request for password" << endl;
+                std::cerr << "ERROR - could not send request for password" << std::endl;
         }
     }
 
     return false;
 }
 
-bool Server::isData(Packet& packet)
+bool Server::isData(sf::Packet& packet)
 {
     int temp;
 
     // making a copy of the packet in case that it is not a connection request
     // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    Packet c_packet = packet;
+    sf::Packet c_packet = packet;
     
     if ((c_packet >> temp) && temp == PacketType::Data)
     {
@@ -233,7 +233,7 @@ bool Server::disconnectClient(ID id)
 
 void Server::disconnectAllClients()
 {
-    Packet RemoveClient = this->ConnectionCloseTemplate();
+    sf::Packet RemoveClient = this->ConnectionCloseTemplate();
 
     this->SendToAll(RemoveClient);
 
@@ -244,8 +244,8 @@ void Server::disconnectAllClients()
 
 void Server::thread_receive_packets(std::stop_token stoken)
 {
-    Packet packet;
-    IpAddress senderIP;
+    sf::Packet packet;
+    sf::IpAddress senderIP;
     unsigned short senderPort;
 
     while (!stoken.stop_requested()) {
@@ -253,7 +253,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
         if (receiveStatus == sf::Socket::Error)
         {
             if (stoken.stop_requested()) break;
-            cerr << "ERROR - receiving packet" << endl;
+            std::cerr << "ERROR - receiving packet" << std::endl;
             // restarting the socket
             this->unbind();
             this->close();
@@ -290,24 +290,24 @@ void Server::thread_receive_packets(std::stop_token stoken)
                     _clientData.insert({(ID)(senderIP.toInteger()), ClientData(senderPort, (ID)_ip)});
 
                     this->DataPackets.push_back(DataPacket(packet));
-                    Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
+                    sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
                     if (this->send(Confirmation, senderIP, senderPort))
-                        cerr << "ERROR - could not send ID Assign packet" << endl;
+                        std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
                     this->onClientConnected.invoke(_threadSafeEvents);
                 }
                 else
                 {
-                    Packet needPassword = this->PasswordRequestPacket();
+                    sf::Packet needPassword = this->PasswordRequestPacket();
                     if (this->send(needPassword, senderIP, senderPort) != Socket::Done) 
-                        cerr << "ERROR - could not send password request" << endl;
+                        std::cerr << "ERROR - could not send password request" << std::endl;
                 }
             }
         }
         else if (this->isConnectionRequest(packet, senderIP, senderPort))
         {
-            Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
+            sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
             if (this->send(Confirmation, senderIP, senderPort))
-                cerr << "ERROR - could not send ID Assign packet" << endl;
+                std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
             this->onClientConnected.invoke(_threadSafeEvents);
         }
         else if (this->isConnectionClose(packet, senderIP, senderPort))
@@ -316,9 +316,9 @@ void Server::thread_receive_packets(std::stop_token stoken)
         }
         else if (this->isPassword(packet, senderIP, senderPort))
         {
-            Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
+            sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
             if (this->send(Confirmation, senderIP, senderPort))
-                cerr << "ERROR - could not send ID Assign packet" << endl;
+                std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
             this->onClientConnected.invoke(_threadSafeEvents);
         }
 
@@ -344,7 +344,7 @@ void Server::thread_update(std::stop_token stoken, funcHelper::func<void> custom
         //* -----------------------------
 
         deltaTime = deltaClock.restart().asSeconds();
-        _open_Connected_Time += deltaTime;
+        _connectionTime += deltaTime;
         
         applyPacketsPerSecond = false;
         if (secondClock.getElapsedTime().asSeconds() >= 1)
@@ -380,20 +380,20 @@ void Server::StartThreads(funcHelper::func<void> customPacketSendFunction)
 {
     if (!this->isReceivingPackets())
     {
-        _ssource = new stop_source;
-        _receive_thread = new jthread{Server::thread_receive_packets, this, _ssource->get_token()};
+        _ssource = new std::stop_source;
+        _receive_thread = new std::jthread{Server::thread_receive_packets, this, _ssource->get_token()};
     }
-    if (_update_thread == nullptr) _update_thread = new jthread{Server::thread_update, this, _ssource->get_token(), customPacketSendFunction};
+    if (_update_thread == nullptr) _update_thread = new std::jthread{Server::thread_update, this, _ssource->get_token(), customPacketSendFunction};
 }
 
-unordered_map<ID, ClientData>& Server::getClients()
+std::unordered_map<ID, ClientData>& Server::getClients()
 { return _clientData;}
 
 ClientData Server::getClientData(std::pair<const ID, ClientData> client)
 { return client.second; }
 
-Uint32 Server::NumberOfClients()
-{ return (Uint32)_clientData.size();}
+sf::Uint32 Server::NumberOfClients()
+{ return (sf::Uint32)_clientData.size();}
 
 float Server::getClientTimeSinceLastPacket(ID clientID)
 { return _clientData.find(clientID)->second.TimeSinceLastPacket; }

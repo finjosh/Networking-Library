@@ -16,11 +16,10 @@
 #include "include/Utils/EventHelper.hpp"
 #include "include/Utils/UpdateLimiter.hpp"
 
-using namespace std;
-using namespace sf;
+//! TODO UPDATE ALL "cerr" outputs to a error 
 
 // ID = Uint32
-typedef Uint32 ID;
+typedef sf::Uint32 ID;
 // IP = ID (Uint32)
 typedef ID IP;
 
@@ -37,7 +36,7 @@ enum PacketType
 
 struct DataPacket
 {
-    inline DataPacket(Packet packet)
+    inline DataPacket(sf::Packet packet)
     { this->packet = packet; editing = false; }
     DataPacket() = default;
     inline ~DataPacket()
@@ -48,27 +47,26 @@ struct DataPacket
         // check if the packet is not being destroyed properly
         this->packet.clear();
     }
-    Packet packet;
+    sf::Packet packet;
     bool editing = true;
 };
 
 // if when sending packets from host to client about enemies creates errors the issue would be that the enemy is being deleted
 // while the packet sending thread is trying to read from that enemy
-class SocketPlus : public UdpSocket
+class SocketPlus : protected sf::UdpSocket
 {
     protected:
 
-        int _clientTimeoutTime = 120; // in seconds (2 min)
+        int _clientTimeoutTime = 20; 
 
         //* Base Class variables
 
             IP _ip = 0;
-            ID _id = 0;
             bool _needsPassword = false;
-            string _password = "";
+            std::string _password = "";
             unsigned short _port = 0;
-            bool _isOpen_Connected = false;
-            double _open_Connected_Time = 0.0;
+            bool _connectionOpen = false; // if the server is open or the client is connected
+            double _connectionTime = 0.0; // time that the connection has been up
             bool _threadSafeEvents = true;
 
         // ----------------
@@ -76,11 +74,11 @@ class SocketPlus : public UdpSocket
         //* thread variables
 
             // stop source is universal
-            stop_source* _ssource = nullptr;
+            std::stop_source* _ssource = nullptr;
             // receiving thread
-            jthread* _receive_thread = nullptr;
+            std::jthread* _receive_thread = nullptr;
             // sending/updating thread
-            jthread* _update_thread = nullptr;
+            std::jthread* _update_thread = nullptr;
             bool _sendingPackets = false;
             // in updates/second
             unsigned int _socketUpdateRate = 64;
@@ -117,7 +115,7 @@ class SocketPlus : public UdpSocket
 
         //* Public data vars for ease of access
         
-            list<DataPacket> DataPackets;
+            std::list<DataPacket> DataPackets;
 
         // ------------------------------------
 
@@ -133,7 +131,9 @@ class SocketPlus : public UdpSocket
             /// @returns ID
             ID getID();
             /// @returns IP as IPAddress
-            IpAddress getIP();
+            sf::IpAddress getIP();
+            /// @returns Local IP as IPAddress
+            sf::IpAddress getLocalIP();
             /// @returns IP as integer
             IP getIP_I();
             /// @returns the time in seconds
@@ -158,7 +158,7 @@ class SocketPlus : public UdpSocket
             void sendingPackets(bool sendPackets);
             /// @brief sets this password
             /// @note if this derived class is the server, sets the server password, else sets the password that will be sent to server
-            void setPassword(string password);
+            void setPassword(std::string password);
             /// @brief sets the time for a client to timeout if no packets are sent (seconds)
             void setClientTimeout(const int& timeout);
 
@@ -167,23 +167,21 @@ class SocketPlus : public UdpSocket
         //* Boolean question Functions
 
             /// @returns true if the given packet is a connection request **Does NOT change ANYTHING about the packet
-            virtual bool isConnectionRequest(Packet packet);
+            virtual bool isConnectionRequest(sf::Packet packet);
             /// @returns true if the given packet is a connection close **Does NOT change ANYTHING about the packet
-            virtual bool isConnectionClose(Packet packet);
+            virtual bool isConnectionClose(sf::Packet packet);
             /// @returns true if the given packet is a data packet **Does NOT change ANYTHING about the packet
-            virtual bool isData(Packet packet);
+            virtual bool isData(sf::Packet packet);
             /// @returns true if the given packet is a connection confirmation **Done NOT change ANYTHING about the packet
-            virtual bool isConnectionConfirm(Packet packet);
+            virtual bool isConnectionConfirm(sf::Packet packet);
             /// @returns true if the given packet is a password request **Done NOT change ANYTHING about the packet
-            virtual bool isPasswordRequest(Packet packet);
+            virtual bool isPasswordRequest(sf::Packet packet);
             /// @returns true if the given packet is a password **Done NOT change ANYTHING about the packet
-            virtual bool isPassword(Packet packet);
+            virtual bool isPassword(sf::Packet packet);
             /// @returns true if the given packet is informing of a wrong packet **Done NOT change ANYTHING about the packet
-            virtual bool isWrongPassword(Packet packet);
-            /// @returns true if the server is open
-            bool isOpen();
-            /// @returns true if the client is connected
-            bool isConnected();
+            virtual bool isWrongPassword(sf::Packet packet);
+            /// @returns true if the client is connected or server is open
+            bool isConnectionOpen();
             /// @brief if the receiving thread is running
             /// @returns true
             bool isReceivingPackets();
@@ -191,9 +189,9 @@ class SocketPlus : public UdpSocket
             bool isSendingPackets();
             /// @brief if this needs a password
             bool NeedsPassword();
-            static bool isValidIpAddress(IpAddress ipAddress);
-            static bool isValidIpAddress(Uint32 ipAddress);
-            static bool isValidIpAddress(string ipAddress);
+            static bool isValidIpAddress(sf::IpAddress ipAddress);
+            static bool isValidIpAddress(sf::Uint32 ipAddress);
+            static bool isValidIpAddress(std::string ipAddress);
 
         // ---------------------------
 
@@ -208,13 +206,13 @@ class SocketPlus : public UdpSocket
 
         //* Template Functions
 
-            static Packet ConnectionCloseTemplate();
-            static Packet ConnectionRequestTemplate();
-            static Packet DataPacketTemplate();
-            static Packet ConnectionConfirmPacket(Uint32 id);
-            static Packet PasswordRequestPacket();
-            static Packet PasswordPacket(string password);
-            static Packet WrongPasswordPacket();
+            static sf::Packet ConnectionCloseTemplate();
+            static sf::Packet ConnectionRequestTemplate();
+            static sf::Packet DataPacketTemplate();
+            static sf::Packet ConnectionConfirmPacket(sf::Uint32 id);
+            static sf::Packet PasswordRequestPacket();
+            static sf::Packet PasswordPacket(std::string password);
+            static sf::Packet WrongPasswordPacket();
 
         // -------------------
 };

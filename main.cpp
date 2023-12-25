@@ -6,6 +6,9 @@
 #include "TGUI/Backend/SFML-Graphics.hpp"
 
 #include "include/Utils/Utils.hpp"
+#include "include/Networking/SocketDisplay.hpp"
+#include "include/Networking/Client.hpp"
+#include "include/Networking/Server.hpp"
 
 using namespace std;
 using namespace sf;
@@ -23,7 +26,15 @@ int main()
 
     tgui::Gui gui{window};
     gui.setRelativeView({0, 0, 1920/(float)window.getSize().x, 1080/(float)window.getSize().y});
+    tgui::Theme::setDefault("themes/Black.txt");
     // -----------------------
+
+    Server server(50001);
+    server.openServer({});
+
+    SocketDisplay sDisplay;
+    sDisplay.init(gui);
+    sDisplay.setSocket(server);
 
     //! Required to initialize VarDisplay and CommandPrompt
     // creates the UI for the VarDisplay
@@ -62,11 +73,15 @@ int main()
         TFuncDisplay::update();
         //! ------------------------------
 
+        sDisplay.update();
+
         // draw for tgui
         gui.draw();
         // display for sfml window
         window.display();
     }
+
+    sDisplay.close();
 
     //! Required so that VarDisplay and CommandPrompt release all data
     VarDisplay::close();

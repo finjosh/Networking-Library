@@ -4,7 +4,7 @@
 
 SocketPlus::SocketPlus()
 {
-    _ip = IpAddress::getPublicAddress().toInteger();
+    _ip = sf::IpAddress::getPublicAddress().toInteger();
     _port = this->getLocalPort();
 }
 
@@ -30,19 +30,22 @@ SocketPlus::~SocketPlus()
 //* Getter
 
 ID SocketPlus::getID()
-{ return _id; }
+{ return (ID)_ip; }
 
-IpAddress SocketPlus::getIP()
-{ return IpAddress(_id); }
+sf::IpAddress SocketPlus::getIP()
+{ return sf::IpAddress(_ip); }
+
+sf::IpAddress SocketPlus::getLocalIP()
+{ return sf::IpAddress::getLocalAddress(); }
 
 IP SocketPlus::getIP_I()
-{ return _id; }
+{ return _ip; }
 
 double SocketPlus::getConnectionTime()
-{ return _open_Connected_Time; }
+{ return _connectionTime; }
 
 double SocketPlus::getOpenTime()
-{ return _open_Connected_Time; }
+{ return _connectionTime; }
 
 unsigned int SocketPlus::getUpdateInterval()
 { return _socketUpdateRate; }
@@ -63,7 +66,7 @@ void SocketPlus::setUpdateInterval(unsigned int interval)
 void SocketPlus::sendingPackets(bool sendPackets)
 { this->_sendingPackets = sendPackets; }
 
-void SocketPlus::setPassword(string password)
+void SocketPlus::setPassword(std::string password)
 { this->_password = password; }
 
 void SocketPlus::setClientTimeout(const int& timeout)
@@ -76,7 +79,7 @@ void SocketPlus::setClientTimeout(const int& timeout)
 
 //* Boolean question Functions
 
-bool SocketPlus::isConnectionRequest(Packet packet)
+bool SocketPlus::isConnectionRequest(sf::Packet packet)
 {
     int temp;
     
@@ -87,7 +90,7 @@ bool SocketPlus::isConnectionRequest(Packet packet)
     return false;
 }
 
-bool SocketPlus::isConnectionClose(Packet packet)
+bool SocketPlus::isConnectionClose(sf::Packet packet)
 {
     int temp;
     
@@ -99,7 +102,7 @@ bool SocketPlus::isConnectionClose(Packet packet)
     return false;
 }
 
-bool SocketPlus::isData(Packet packet)
+bool SocketPlus::isData(sf::Packet packet)
 {
     int temp;
     
@@ -110,7 +113,7 @@ bool SocketPlus::isData(Packet packet)
     return false;
 }
 
-bool SocketPlus::isConnectionConfirm(Packet packet)
+bool SocketPlus::isConnectionConfirm(sf::Packet packet)
 {
     int temp;
     
@@ -121,7 +124,7 @@ bool SocketPlus::isConnectionConfirm(Packet packet)
     return false;
 }
 
-bool SocketPlus::isPasswordRequest(Packet packet)
+bool SocketPlus::isPasswordRequest(sf::Packet packet)
 {
     int temp;
     
@@ -132,7 +135,7 @@ bool SocketPlus::isPasswordRequest(Packet packet)
     return false;
 }
 
-bool SocketPlus::isPassword(Packet packet)
+bool SocketPlus::isPassword(sf::Packet packet)
 {
     int temp;
     
@@ -143,7 +146,7 @@ bool SocketPlus::isPassword(Packet packet)
     return false;
 }
 
-bool SocketPlus::isWrongPassword(Packet packet)
+bool SocketPlus::isWrongPassword(sf::Packet packet)
 {
     int temp;
     
@@ -153,11 +156,8 @@ bool SocketPlus::isWrongPassword(Packet packet)
     return false;
 }
 
-bool SocketPlus::isOpen()
-{ return _isOpen_Connected; }
-
-bool SocketPlus::isConnected()
-{ return _isOpen_Connected; }
+bool SocketPlus::isConnectionOpen()
+{ return _connectionOpen; }
 
 bool SocketPlus::isReceivingPackets()
 {
@@ -170,21 +170,21 @@ bool SocketPlus::isSendingPackets()
 bool SocketPlus::NeedsPassword()
 { return this->_needsPassword; }
 
-bool SocketPlus::isValidIpAddress(IpAddress ipAddress)
+bool SocketPlus::isValidIpAddress(sf::IpAddress ipAddress)
 {
-    if (ipAddress != IpAddress::None) return true;
+    if (ipAddress != sf::IpAddress::None) return true;
     else return false;
 }
 
-bool SocketPlus::isValidIpAddress(Uint32 ipAddress)
+bool SocketPlus::isValidIpAddress(sf::Uint32 ipAddress)
 {
-    if (IpAddress(ipAddress) != IpAddress::None) return true;
+    if (sf::IpAddress(ipAddress) != sf::IpAddress::None) return true;
     else return false;
 }
 
-bool SocketPlus::isValidIpAddress(string ipAddress)
+bool SocketPlus::isValidIpAddress(std::string ipAddress)
 {
-    if (IpAddress(ipAddress) != IpAddress::None) return true;
+    if (sf::IpAddress(ipAddress) != sf::IpAddress::None) return true;
     else return false;
 }
 
@@ -202,7 +202,7 @@ void SocketPlus::ClearDataPackets()
 
 void SocketPlus::ClearEmptyPackets()
 {
-    for (list<DataPacket>::iterator temp = this->DataPackets.begin(); temp != this->DataPackets.end(); ++temp)
+    for (std::list<DataPacket>::iterator temp = this->DataPackets.begin(); temp != this->DataPackets.end(); ++temp)
     {
         if (temp->packet.endOfPacket())
             this->DataPackets.erase(temp); 
@@ -213,53 +213,53 @@ void SocketPlus::ClearEmptyPackets()
 
 //* Template Functions
 
-Packet SocketPlus::ConnectionCloseTemplate()
+sf::Packet SocketPlus::ConnectionCloseTemplate()
 {
-    Packet out;
+    sf::Packet out;
     out << PacketType::ConnectionClose;
     return out;
 }
 
-Packet SocketPlus::ConnectionRequestTemplate()
+sf::Packet SocketPlus::ConnectionRequestTemplate()
 {
-    Packet out;
+    sf::Packet out;
     out << PacketType::ConnectionRequest;
     return out;
 }
 
-Packet SocketPlus::DataPacketTemplate()
+sf::Packet SocketPlus::DataPacketTemplate()
 {
-    Packet out;
+    sf::Packet out;
     out << PacketType::Data;
     return out;
 }
 
-Packet SocketPlus::ConnectionConfirmPacket(Uint32 id)
+sf::Packet SocketPlus::ConnectionConfirmPacket(sf::Uint32 id)
 {
-    Packet out;
+    sf::Packet out;
     out << PacketType::ConnectionConfirm;
     out << id;
     return out;
 }
 
-Packet SocketPlus::PasswordRequestPacket()
+sf::Packet SocketPlus::PasswordRequestPacket()
 {
-    Packet out;
+    sf::Packet out;
     out << PacketType::RequestPassword;
     return out;
 }
 
-Packet SocketPlus::PasswordPacket(string password)
+sf::Packet SocketPlus::PasswordPacket(std::string password)
 {
-    Packet out;
+    sf::Packet out;
     out << PacketType::Password;
     out << password;
     return out;
 }
 
-Packet SocketPlus::WrongPasswordPacket()
+sf::Packet SocketPlus::WrongPasswordPacket()
 {
-    Packet out;
+    sf::Packet out;
     out << PacketType::WrongPassword;
     return out;
 }

@@ -1,6 +1,6 @@
 #include "include/Networking/Client.hpp"
 
-Client::Client(IpAddress serverIP, unsigned short serverPort) 
+Client::Client(sf::IpAddress serverIP, unsigned short serverPort) 
 { 
     _serverIP = serverIP; 
     _serverPort = serverPort;  
@@ -19,34 +19,34 @@ Client::~Client()
 bool Client::WasIncorrectPassword()
 { bool temp = _wrongPassword; _wrongPassword = false; return temp; }
 
-void Client::setAndSendPassword(string password)
+void Client::setAndSendPassword(std::string password)
 { _password = password; this->sendPasswordToServer(); }
 
 void Client::sendPasswordToServer()
 {
-    Packet temp = this->PasswordPacket(_password);
-        if (this->send(temp, _serverIP, _serverPort)) cerr << "could not send password to host" << endl;
+    sf::Packet temp = this->PasswordPacket(_password);
+        if (this->send(temp, _serverIP, _serverPort)) std::cerr << "could not send password to host" << std::endl;
 }
 
 bool Client::ConnectToServer(funcHelper::func<void> customPacketSendFunction)
 {
-    Packet connectionRequest = this->ConnectionRequestTemplate();
+    sf::Packet connectionRequest = this->ConnectionRequestTemplate();
 
-    if (_serverIP != IpAddress::None)
+    if (_serverIP != sf::IpAddress::None)
     {
         if (!this->isReceivingPackets())
         {
             delete(_ssource);
             _ssource = nullptr;
-            _ssource = new stop_source;
+            _ssource = new std::stop_source;
             this->bind(Socket::AnyPort);
-            _receive_thread = new jthread{thread_receive_packets, this, _ssource->get_token()};
+            _receive_thread = new std::jthread{thread_receive_packets, this, _ssource->get_token()};
         }
-        if (_update_thread == nullptr) _update_thread = new jthread{thread_update, this, _ssource->get_token(), customPacketSendFunction};
+        if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _ssource->get_token(), customPacketSendFunction};
     }
 
-    if (_serverIP == IpAddress::LocalHost) _id = IpAddress::LocalHost.toInteger();
-    else _id = _ip;
+    if (_serverIP == sf::IpAddress::LocalHost) _ip = sf::IpAddress::LocalHost.toInteger();
+    else _ip = _ip;
 
     if (this->send(connectionRequest, _serverIP, _serverPort) != Socket::Done)
     {
@@ -57,30 +57,30 @@ bool Client::ConnectToServer(funcHelper::func<void> customPacketSendFunction)
     return true;
 }
 
-void Client::setServerData(IpAddress serverIP, unsigned short serverPort)
+void Client::setServerData(sf::IpAddress serverIP, unsigned short serverPort)
 {
     _serverIP = serverIP; 
     _serverPort = serverPort;  
 }
 
-void Client::setServerData(IpAddress serverIP)
+void Client::setServerData(sf::IpAddress serverIP)
 {
     _serverIP = serverIP; 
 }
 
-void Client::SendToServer(Packet& packet)
+void Client::SendToServer(sf::Packet& packet)
 {
     if (this->send(packet, _serverIP, _serverPort))
-        cerr << "ERROR - could not send packet to the server" << endl;
+        std::cerr << "ERROR - could not send packet to the server" << std::endl;
 }
 
-bool Client::isData(Packet& packet)
+bool Client::isData(sf::Packet& packet)
 {
     int temp;
 
     // making a copy of the packet in case that it is not a connection request
     // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    Packet c_packet = packet;
+    sf::Packet c_packet = packet;
     
     if ((c_packet >> temp) && temp == PacketType::Data)
     {
@@ -92,13 +92,13 @@ bool Client::isData(Packet& packet)
     return false;
 }
 
-bool Client::isConnectionClose(Packet packet)
+bool Client::isConnectionClose(sf::Packet packet)
 {
     int temp;
 
     // making a copy of the packet in case that it is not a connection request
     // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    Packet c_packet = packet;
+    sf::Packet c_packet = packet;
     
     if ((c_packet >> temp) && temp == PacketType::ConnectionClose)
     {
@@ -106,8 +106,7 @@ bool Client::isConnectionClose(Packet packet)
 
         packet.clear();
 
-        _id = 0;
-        _isOpen_Connected = false;
+        _connectionOpen = false;
 
         return true;
     }
@@ -116,18 +115,18 @@ bool Client::isConnectionClose(Packet packet)
     return false;
 }
 
-bool Client::isConnectionConfirm(Packet& packet)
+bool Client::isConnectionConfirm(sf::Packet& packet)
 {
     int temp;
 
     // making a copy of the packet in case that it is not a connection request
     // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    Packet c_packet = packet;
+    sf::Packet c_packet = packet;
     
     if ((c_packet >> temp) && temp == PacketType::ConnectionConfirm)
     {
         packet >> temp;
-        packet >> _id;
+        packet >> _ip;
         return true;
     }
 
@@ -135,13 +134,13 @@ bool Client::isConnectionConfirm(Packet& packet)
     return false;
 }
 
-bool Client::isWrongPassword(Packet& packet)
+bool Client::isWrongPassword(sf::Packet& packet)
 {
     int temp;
 
     // making a copy of the packet in case that it is not a connection request
     // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    Packet c_packet = packet;
+    sf::Packet c_packet = packet;
     
     if ((c_packet >> temp) && temp == PacketType::WrongPassword)
     {
@@ -155,13 +154,13 @@ bool Client::isWrongPassword(Packet& packet)
     return false;
 }
 
-bool Client::isPasswordRequest(Packet& packet)
+bool Client::isPasswordRequest(sf::Packet& packet)
 {
     int temp;
 
     // making a copy of the packet in case that it is not a connection request
     // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    Packet c_packet = packet;
+    sf::Packet c_packet = packet;
     
     if ((c_packet >> temp) && temp == PacketType::RequestPassword)
     {
@@ -176,8 +175,8 @@ bool Client::isPasswordRequest(Packet& packet)
 
 void Client::thread_receive_packets(std::stop_token stoken)
 {
-    Packet packet;
-    IpAddress senderIP;
+    sf::Packet packet;
+    sf::IpAddress senderIP;
     unsigned short senderPort;
 
     while (!stoken.stop_requested()) {
@@ -185,7 +184,7 @@ void Client::thread_receive_packets(std::stop_token stoken)
         if (receiveStatus == sf::Socket::Error)
         {
             if (stoken.stop_requested()) break;
-            cerr << "ERROR - receiving packet" << endl;
+            std::cerr << "ERROR - receiving packet" << std::endl;
             // restarting the socket
             this->unbind();
             this->close();
@@ -209,14 +208,13 @@ void Client::thread_receive_packets(std::stop_token stoken)
         }
         else if (this->isConnectionClose(packet))
         {              
-            _isOpen_Connected = false;
-            _id = 0;
+            _connectionOpen = false;
             _port = 0;
             this->onConnectionClosed.invoke(_threadSafeEvents);
         }
         else if (this->isConnectionConfirm(packet))
         {
-            _isOpen_Connected = true;
+            _connectionOpen = true;
             _port = this->getLocalPort();
             this->onConnectionConfirmed.invoke(_threadSafeEvents);
         }
@@ -242,9 +240,9 @@ void Client::thread_update(std::stop_token stoken, funcHelper::func<void> custom
     while (!stoken.stop_requested())
     {
         deltaTime = deltaClock.restart().asSeconds();
-        if (this->isConnected()) 
+        if (this->isConnectionOpen()) 
         {
-            _open_Connected_Time += deltaTime;
+            _connectionTime += deltaTime;
             _timeSinceLastPacket += deltaTime;
         }
         if (_timeSinceLastPacket >= _clientTimeoutTime) { this->Disconnect(); this->onConnectionClosed.invoke(_threadSafeEvents); }
@@ -273,22 +271,22 @@ void Client::StopThreads()
 
 void Client::Disconnect()
 {
-    if (this->isConnected())
+    if (this->isConnectionOpen())
     {
-        Packet close = this->ConnectionCloseTemplate();
+        sf::Packet close = this->ConnectionCloseTemplate();
         this->SendToServer(close);
     }
     
-    if (_isOpen_Connected) 
+    if (_connectionOpen) 
         this->onConnectionClosed.invoke(_threadSafeEvents);
  
-    _isOpen_Connected = false;
+    _connectionOpen = false;
     this->_needsPassword = false;
     _wrongPassword = false;
     _password = "";
-    _open_Connected_Time = 0.f;
+    _connectionTime = 0.f;
     _timeSinceLastPacket = 0.f;
-    _serverIP = IpAddress::None;
+    _serverIP = sf::IpAddress::None;
 
     StopThreads();
 }
@@ -296,7 +294,7 @@ void Client::Disconnect()
 float Client::getTimeSinceLastPacket()
 { return _timeSinceLastPacket; }
 
-IpAddress Client::getServerIP()
+sf::IpAddress Client::getServerIP()
 { return _serverIP; }
 
 unsigned int Client::getServerPort()

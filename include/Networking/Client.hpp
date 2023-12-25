@@ -11,7 +11,7 @@ class Client : public SocketPlus
 
         //* Server variables
 
-            IpAddress _serverIP;
+            sf::IpAddress _serverIP;
             unsigned short _serverPort;
             bool _wrongPassword = false;
             // Time since last packet from server
@@ -43,7 +43,7 @@ class Client : public SocketPlus
 
         // -------
 
-        Client(IpAddress serverIP, unsigned short serverPort);
+        Client(sf::IpAddress serverIP, unsigned short serverPort);
         Client(unsigned short serverPort);
         ~Client();
         // CAN only be used once per wrong password sent as the bool is reset after call
@@ -51,36 +51,36 @@ class Client : public SocketPlus
         // OR
         // the server has not responded yet
         bool WasIncorrectPassword();
-        void setAndSendPassword(string password);
+        void setAndSendPassword(std::string password);
         void sendPasswordToServer();
         // attempts to connect to the given server while handling the thread through fail and successful
         // true for successful send of connection attempt (DOES NOT MEAN THERE IS A CONNECTION CONFIRMATION)
         bool ConnectToServer(funcHelper::func<void> customPacketSendFunction);
-        void setServerData(IpAddress serverIP, unsigned short serverPort);
-        void setServerData(IpAddress serverIP);
+        void setServerData(sf::IpAddress serverIP, unsigned short serverPort);
+        void setServerData(sf::IpAddress serverIP);
         // sends the packet to the server
-        void SendToServer(Packet& packet);
+        void SendToServer(sf::Packet& packet);
         // returns true if the given packet is a data packet 
         // - removes the packet type
-        virtual bool isData(Packet& packet);
+        virtual bool isData(sf::Packet& packet);
         // returns true if the given packet is a connection close 
         // - removes the ID
         // - sets isConnected to false
-        virtual bool isConnectionClose(Packet packet);
+        virtual bool isConnectionClose(sf::Packet packet);
         // returns true if the given packet is a connection confirmation
         // - resets ID to the given one if the ID is different
-        virtual bool isConnectionConfirm(Packet& packet);
+        virtual bool isConnectionConfirm(sf::Packet& packet);
         // returns true if the given packet is a indication that the wrong password was given
         // - sets the "wrongPassword" to true
-        virtual bool isWrongPassword(Packet& packet);
+        virtual bool isWrongPassword(sf::Packet& packet);
         // returns true if the given packet is a password request
         // - sets "serverNeedsPassword" to true
-        virtual bool isPasswordRequest(Packet& packet);
+        virtual bool isPasswordRequest(sf::Packet& packet);
         // resets all the data stored in the client
         void Disconnect();
         // returns the time in seconds
         float getTimeSinceLastPacket();
-        IpAddress getServerIP();
+        sf::IpAddress getServerIP();
         unsigned int getServerPort();
 };
 

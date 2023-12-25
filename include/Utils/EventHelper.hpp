@@ -17,7 +17,6 @@ class Event;
 class ThreadSafeEvent
 {
 public:
-    /// @note if event was already added it will not be added again
     static void addEvent(Event* event);
     /// @brief Call this first thing every frame
     static void update();
@@ -27,7 +26,7 @@ public:
 private:
     inline ThreadSafeEvent() = default;
 
-    static std::set<Event*> _events;
+    static std::multiset<Event*> _events;
 };
 
 class Event
