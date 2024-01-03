@@ -22,6 +22,7 @@
 typedef sf::Uint32 ID;
 // IP = ID (Uint32)
 typedef ID IP;
+typedef unsigned short Port;
 
 enum PacketType
 {
@@ -189,8 +190,17 @@ class SocketPlus : protected sf::UdpSocket
             bool isSendingPackets();
             /// @brief if this needs a password
             bool NeedsPassword();
+            /// @brief Checks if the given ipAddress is valid
+            /// @note if it is invalid program will freeze for a few seconds
+            /// @note something to do with SFML's implementation of "IpAddress"
             static bool isValidIpAddress(sf::IpAddress ipAddress);
+            /// @brief Checks if the given ipAddress is valid
+            /// @note if it is invalid program will freeze for a few seconds
+            /// @note something to do with SFML's implementation of "IpAddress"
             static bool isValidIpAddress(sf::Uint32 ipAddress);
+            /// @brief Checks if the given ipAddress is valid
+            /// @note if it is invalid program will freeze for a few seconds
+            /// @note something to do with SFML's implementation of "IpAddress"
             static bool isValidIpAddress(std::string ipAddress);
 
         // ---------------------------

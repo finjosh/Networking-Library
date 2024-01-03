@@ -68,6 +68,11 @@ void Client::setServerData(sf::IpAddress serverIP)
     _serverIP = serverIP; 
 }
 
+void Client::setServerData(Port port)
+{
+    _serverPort = port;
+}
+
 void Client::SendToServer(sf::Packet& packet)
 {
     if (this->send(packet, _serverIP, _serverPort))

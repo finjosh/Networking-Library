@@ -224,6 +224,8 @@ bool Server::disconnectClient(ID id)
 {
     if (_clientData.find(id) != _clientData.end())
     {
+        sf::Packet RemoveClient = this->ConnectionCloseTemplate();
+        SendTo(RemoveClient, id);
         _clientData.erase(id);
         this->deletedClientIDs.push_back(id);
         return true;

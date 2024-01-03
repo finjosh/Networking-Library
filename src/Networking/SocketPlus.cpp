@@ -182,10 +182,20 @@ bool SocketPlus::isValidIpAddress(sf::Uint32 ipAddress)
     else return false;
 }
 
+// #include "include/Utils/Stopwatch.hpp"
+
 bool SocketPlus::isValidIpAddress(std::string ipAddress)
 {
-    if (sf::IpAddress(ipAddress) != sf::IpAddress::None) return true;
-    else return false;
+    // timer::Stopwatch timer;
+    if (sf::IpAddress(ipAddress) != sf::IpAddress::None) 
+    {
+        return true;
+    }
+    else 
+    {
+        // std::cout << std::to_string(timer.lap()/1000.f) << std::endl;
+        return false;
+    }
 }
 
 bool SocketPlus::isThreadSafeEvents()

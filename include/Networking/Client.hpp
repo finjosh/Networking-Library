@@ -43,7 +43,7 @@ class Client : public SocketPlus
 
         // -------
 
-        Client(sf::IpAddress serverIP, unsigned short serverPort);
+        Client(sf::IpAddress serverIP, Port serverPort);
         Client(unsigned short serverPort);
         ~Client();
         // CAN only be used once per wrong password sent as the bool is reset after call
@@ -56,8 +56,9 @@ class Client : public SocketPlus
         // attempts to connect to the given server while handling the thread through fail and successful
         // true for successful send of connection attempt (DOES NOT MEAN THERE IS A CONNECTION CONFIRMATION)
         bool ConnectToServer(funcHelper::func<void> customPacketSendFunction);
-        void setServerData(sf::IpAddress serverIP, unsigned short serverPort);
+        void setServerData(sf::IpAddress serverIP, Port serverPort);
         void setServerData(sf::IpAddress serverIP);
+        void setServerData(Port port);
         // sends the packet to the server
         void SendToServer(sf::Packet& packet);
         // returns true if the given packet is a data packet 

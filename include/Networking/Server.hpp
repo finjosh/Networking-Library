@@ -48,7 +48,7 @@ class Server : public SocketPlus
         
         // ----------------------------------------------
 
-        Server(unsigned short port, bool passwordRequired = false);
+        Server(Port port, bool passwordRequired = false);
         ~Server();
         void RequirePassword(bool requirePassword);
         void RequirePassword(bool requirePassword, std::string password);

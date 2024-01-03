@@ -6,7 +6,7 @@
 #include "TGUI/Backend/SFML-Graphics.hpp"
 
 #include "include/Utils/Utils.hpp"
-#include "include/Networking/SocketDisplay.hpp"
+#include "include/Networking/SocketUI.hpp"
 #include "include/Networking/Client.hpp"
 #include "include/Networking/Server.hpp"
 
@@ -32,9 +32,13 @@ int main()
     Server server(50001);
     server.openServer({});
 
-    SocketDisplay sDisplay;
-    sDisplay.init(gui);
-    sDisplay.setSocket(server);
+    SocketUI sDisplay(50001);
+    // sDisplay.init(gui);
+    // sDisplay.setSocket(server);
+    sDisplay.initConnectionDisplay(gui);
+    sDisplay.setInfoVisible();
+    sDisplay.initInfoDisplay(gui);
+    sDisplay.setConnectionVisible();
 
     //! Required to initialize VarDisplay and CommandPrompt
     // creates the UI for the VarDisplay
@@ -81,7 +85,7 @@ int main()
         window.display();
     }
 
-    sDisplay.close();
+    sDisplay.closeConnectionDisplay();
 
     //! Required so that VarDisplay and CommandPrompt release all data
     VarDisplay::close();
