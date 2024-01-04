@@ -4,8 +4,8 @@ SocketUI::SocketUI(Port serverPort) : _client(sf::IpAddress::LocalHost, serverPo
 
 SocketUI::~SocketUI()
 {
-    _infoParent->destroy();
-    _connectionParent->destroy();
+    if (_infoParent != nullptr) _infoParent->destroy();
+    if (_connectionParent != nullptr) _connectionParent->destroy();
 }
 
 void SocketUI::initConnectionDisplay(tgui::Gui& gui)
@@ -14,6 +14,7 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
 
     _connectionParent = tgui::ChildWindow::create("Connection Manager", tgui::ChildWindow::Close);
     gui.add(_connectionParent);
+    _connectionParent->setPosition({"45%","45%"});
     _connectionParent->onClosing(_close, this, false);
     _connectionParent->setResizable(true);
 
@@ -35,6 +36,7 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
         });
     });
     _sendPassword = tgui::Button::create("Send Password");
+    _IPState = tgui::Label::create("Checking IP...");
 
     _panel = tgui::ScrollablePanel::create();
     
@@ -54,16 +56,49 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
         }
     });
     _IPEdit->onReturnOrUnfocus([this](){
-        if (this->_socket != nullptr && !this->isServer())
+        if (this->_socket != nullptr && !this->isServer() && _IPEdit->getText() != "")
         {
-            if (SocketPlus::isValidIpAddress(_IPEdit->getText().toStdString()))
-                this->getClient()->setServerData(sf::IpAddress(_IPEdit->getText().toStdString()));
-            else    
-            {
-                _IPEdit->setDefaultText("Invalid IP Entered");
-                _IPEdit->setText("");
-            }
-        }
+            //! not optimal but works good enough
+            this->_validIPState = validIP::checking;
+
+            std::thread* tempThread = new std::thread([this](){
+                std::string pass = _IPEdit->getText().toStdString();
+                if (SocketPlus::isValidIpAddress(pass))
+                {
+                    this->getClient()->setServerData(sf::IpAddress(pass)); 
+                    this->_validIPState = validIP::valid;
+                    return;
+                }
+                this->_validIPState = validIP::invalid;
+            });
+
+            TFunc::Add([this, tempThread](TData* data){
+                if (this->_validIPState == validIP::checking)
+                {
+                    data->setRunning();
+                    std::string temp = "Checking IP";
+                    for (int i = 0; i < int(data->totalTime*2)%3 + 1; i++)
+                        temp += '.';
+
+                    this->_IPState->setText(temp);
+                    return;
+                }
+                else if (this->_validIPState == validIP::invalid)
+                {
+                    this->_IPEdit->setDefaultText("Invalid IP Entered");
+                    this->_IPEdit->setText("");
+                }
+                else
+                {
+                    this->_IPEdit->setDefaultText("Server IP");
+                    this->_IPEdit->setText(this->getClient()->getServerIP().toString());
+                }
+                tempThread->detach();
+                delete(tempThread); //! bad as all functions could be cleared and thread will never be removed
+                this->UpdateConnectionDisplay();
+            });
+            this->UpdateConnectionDisplay();
+        } 
     });
 
     UpdateConnectionDisplay();
@@ -314,6 +349,8 @@ void SocketUI::UpdateConnectionDisplay()
         this->setClient();
 
         addWidgetToConnection(_IPEdit, 1);
+        if (_validIPState == validIP::checking) 
+            addWidgetToConnection(_IPState, 1, 5);
 
         if (_client.NeedsPassword())
         {

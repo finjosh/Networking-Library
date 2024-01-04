@@ -25,11 +25,9 @@ public:
     /// @brief used to update the command prompts keyboard events
     static void UpdateEvent(const sf::Event& event);
 
-    /// @brief opens the command prompts window
-    static void openPrompt();
-    /// @brief closes the command prompts window without removing it from tgui
-    /// @param abortTguiClose set to nullptr if not used with tgui
-    static void closePrompt(bool* abortTguiClose);
+    /// @brief sets the command prompt as visible or not
+    /// @param visible the state to set the command prompt to
+    static void setVisible(bool visible = true);
 
     /// @brief only prints to the command prompt IF the command prompt is set to true
     /// @note setting command prompt to allow prints is only done through the command prompt its self during runtime
@@ -54,6 +52,10 @@ protected:
     static void setMaxHistory(const size_t& size);
     static size_t getMaxHistory();
     static void clearHistory();
+
+    /// @brief closes the command prompts window without removing it from tgui
+    /// @param abortTguiClose set to nullptr if not used with tgui
+    static void _close(bool* abortTguiClose);
 
 private:
     inline CommandPrompt() = default;

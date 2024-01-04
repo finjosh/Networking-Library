@@ -1,0 +1,951 @@
+Renderer.1 {
+    BackgroundColor = rgb(80, 80, 80);
+    BackgroundColorHover = rgb(100, 100, 100);
+    BorderColor = Black;
+    TextColor = rgb(190, 190, 190);
+    TextColorHover = rgb(250, 250, 250);
+    Texture = "themes/Black.png" Part(140, 53, 45, 50) Middle(10, 0) Smooth;
+    TextureDisabled = None;
+    TextureDown = "themes/Black.png" Part(125, 105, 45, 50) Middle(10, 0) Smooth;
+    TextureDownFocused = None;
+    TextureDownHover = None;
+    TextureFocused = "themes/Black.png" Part(93, 53, 45, 50) Middle(10, 0) Smooth;
+    TextureHover = "themes/Black.png" Part(140, 1, 45, 50) Middle(10, 0) Smooth;
+}
+
+Renderer.2 {
+    BackgroundColor = rgb(80, 80, 80);
+    BackgroundColorHover = rgb(100, 100, 100);
+    BorderColor = Black;
+    CheckColor = rgb(190, 190, 190);
+    TextColor = rgb(190, 190, 190);
+    TextColorHover = rgb(250, 250, 250);
+    TextureChecked = "themes/Black.png" Part(219, 171, 32, 32) Smooth;
+    TextureCheckedDisabled = None;
+    TextureCheckedFocused = "themes/Black.png" Part(221, 69, 32, 32) Smooth;
+    TextureCheckedHover = "themes/Black.png" Part(221, 1, 32, 32) Smooth;
+    TextureUnchecked = "themes/Black.png" Part(125, 209, 32, 32) Smooth;
+    TextureUncheckedDisabled = None;
+    TextureUncheckedFocused = "themes/Black.png" Part(216, 209, 32, 32) Smooth;
+    TextureUncheckedHover = "themes/Black.png" Part(221, 35, 32, 32) Smooth;
+}
+
+Renderer.3 {
+    BackgroundColor = rgb(80, 80, 80);
+    BackgroundColorHover = rgb(100, 100, 100);
+    BorderColor = Black;
+    CheckColor = rgb(190, 190, 190);
+    TextColor = rgb(190, 190, 190);
+    TextColorHover = rgb(250, 250, 250);
+    TextureChecked = "themes/Black.png" Part(187, 35, 32, 32) Smooth;
+    TextureCheckedDisabled = None;
+    TextureCheckedFocused = "themes/Black.png" Part(187, 1, 32, 32) Smooth;
+    TextureCheckedHover = "themes/Black.png" Part(253, 137, 32, 32) Smooth;
+    TextureUnchecked = "themes/Black.png" Part(219, 137, 32, 32) Smooth;
+    TextureUncheckedDisabled = None;
+    TextureUncheckedFocused = "themes/Black.png" Part(253, 103, 32, 32) Smooth;
+    TextureUncheckedHover = "themes/Black.png" Part(187, 69, 32, 32) Smooth;
+}
+
+Renderer.4 {
+    BorderColor = Black;
+    TextColor = rgb(190, 190, 190);
+    TextureBackground = None;
+
+    Scrollbar {
+        ArrowBackgroundColor = rgb(80, 80, 80);
+        ArrowColor = rgb(190, 190, 190);
+        TextureArrowDown = "themes/Black.png" Part(1, 230, 20, 20) Middle(0, 1, 20, 19) Smooth;
+        TextureArrowDownHover = "themes/Black.png" Part(306, 225, 20, 20) Middle(0, 1, 20, 19) Smooth;
+        TextureArrowUp = "themes/Black.png" Part(284, 225, 20, 20) Middle(0, 0, 20, 19) Smooth;
+        TextureArrowUpHover = "themes/Black.png" Part(285, 171, 20, 20) Middle(0, 0, 20, 19) Smooth;
+        TextureThumb = "themes/Black.png" Part(23, 230, 20, 20) Smooth;
+        TextureThumbHover = "themes/Black.png" Part(306, 193, 20, 20) Smooth;
+        TextureTrack = "themes/Black.png" Part(255, 1, 20, 20) Smooth;
+        TextureTrackHover = "themes/Black.png" Part(284, 203, 20, 20) Smooth;
+        ThumbColor = rgb(190, 190, 190);
+        TrackColor = rgb(80, 80, 80);
+    }
+}
+
+Renderer.5 {
+    BackgroundColor = rgb(80, 80, 80);
+    BackgroundColorHover = rgb(100, 100, 100);
+    BorderColor = Black;
+    CaretColor = rgb(110, 110, 255);
+    DefaultTextColor = rgb(120, 120, 120);
+    Padding = (6, 4, 6, 4);
+    SelectedTextBackgroundColor = rgb(10, 110, 255);
+    SelectedTextColor = White;
+    TextColor = rgb(190, 190, 190);
+    Texture = "themes/Black.png" Part(1, 154, 60, 40) Middle(15, 0) Smooth;
+    TextureDisabled = None;
+    TextureFocused = "themes/Black.png" Part(1, 112, 60, 40) Middle(15, 0) Smooth;
+    TextureHover = "themes/Black.png" Part(63, 196, 60, 40) Middle(15, 0) Smooth;
+}
+
+Renderer.6 {
+    ArrowColor = rgb(190, 190, 190);
+    BackgroundColor = rgb(80, 80, 80);
+    BackgroundColorHover = rgb(100, 100, 100);
+    BorderBetweenArrows = 0;
+    BorderColor = Black;
+    TextureArrowDown = "themes/Black.png" Part(1, 230, 20, 20) Middle(0, 1, 20, 19) Smooth;
+    TextureArrowDownHover = "themes/Black.png" Part(306, 225, 20, 20) Middle(0, 1, 20, 19) Smooth;
+    TextureArrowUp = "themes/Black.png" Part(284, 225, 20, 20) Middle(0, 0, 20, 19) Smooth;
+    TextureArrowUpHover = "themes/Black.png" Part(285, 171, 20, 20) Middle(0, 0, 20, 19) Smooth;
+}
+
+Tabs.Tabs1 {
+    AutoSize = 0;
+    Position = (10, 30);
+    Selected = 0;
+    Size = (275, 25);
+    Tabs = ["Tab 1", "Tab 2", "Tab 3"];
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        BorderColor = Black;
+        DistanceToSide = 8;
+        SelectedBackgroundColor = rgb(10, 110, 255);
+        SelectedTextColor = White;
+        TextColor = rgb(190, 190, 190);
+        TextureDisabledTab = None;
+        TextureSelectedTab = "themes/Black.png" Part(63, 112, 60, 32) Middle(16, 0) Smooth;
+        TextureSelectedTabHover = None;
+        TextureTab = "themes/Black.png" Part(1, 196, 60, 32) Middle(16, 0) Smooth;
+        TextureTabHover = None;
+    }
+}
+
+BitmapButton.BitmapButton1 {
+    ImageScaling = 0.8;
+    Position = (10, 70);
+    Size = (125, 25);
+    Text = BitmapButton;
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        BackgroundColorHover = rgb(100, 100, 100);
+        BorderColor = Black;
+        TextColor = rgb(190, 190, 190);
+        TextColorHover = rgb(250, 250, 250);
+        Texture = "themes/Black.png" Part(140, 53, 45, 50) Middle(10, 0) Smooth;
+        TextureDisabled = None;
+        TextureDown = "themes/Black.png" Part(125, 105, 45, 50) Middle(10, 0) Smooth;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = "themes/Black.png" Part(93, 53, 45, 50) Middle(10, 0) Smooth;
+        TextureHover = "themes/Black.png" Part(140, 1, 45, 50) Middle(10, 0) Smooth;
+    }
+}
+
+Button.Button2 {
+    Position = (140, 70);
+    Renderer = &1;
+    Size = (70, 25);
+    Text = Button;
+    TextSize = 13;
+}
+
+ComboBox.ComboBox1 {
+    ChangeItemOnScroll = false;
+    Items = [ComboBox];
+    ItemsToDisplay = 0;
+    MaximumItems = 0;
+    Position = (10, 110);
+    SelectedItemIndex = 0;
+    Size = (125, 22);
+    TextSize = 13;
+
+    Renderer {
+        ArrowBackgroundColor = rgb(80, 80, 80);
+        ArrowColor = rgb(190, 190, 190);
+        BackgroundColor = rgb(80, 80, 80);
+        BorderColor = Black;
+        Padding = (3, 3, 3, 3);
+        TextColor = rgb(190, 190, 190);
+        TextureArrow = "themes/Black.png" Part(250, 205, 32, 32) Smooth;
+        TextureArrowDisabled = None;
+        TextureArrowHover = "themes/Black.png" Part(219, 103, 32, 32) Smooth;
+        TextureBackground = "themes/Black.png" Part(63, 146, 48, 48) Middle(16) Smooth;
+        TextureBackgroundDisabled = None;
+
+        ListBox {
+            BackgroundColor = rgb(80, 80, 80);
+            BackgroundColorHover = rgb(100, 100, 100);
+            BorderColor = Black;
+            Padding = (3, 3, 3, 3);
+            SelectedBackgroundColor = rgb(10, 110, 255);
+            SelectedBackgroundColorHover = rgb(30, 150, 255);
+            SelectedTextColor = White;
+            TextColor = rgb(190, 190, 190);
+            TextColorHover = rgb(250, 250, 250);
+            TextureBackground = "themes/Black.png" Part(63, 146, 48, 48) Middle(16) Smooth;
+
+            Scrollbar {
+                ArrowBackgroundColor = rgb(80, 80, 80);
+                ArrowColor = rgb(190, 190, 190);
+                TextureArrowDown = "themes/Black.png" Part(1, 230, 20, 20) Middle(0, 1, 20, 19) Smooth;
+                TextureArrowDownHover = "themes/Black.png" Part(306, 225, 20, 20) Middle(0, 1, 20, 19) Smooth;
+                TextureArrowUp = "themes/Black.png" Part(284, 225, 20, 20) Middle(0, 0, 20, 19) Smooth;
+                TextureArrowUpHover = "themes/Black.png" Part(285, 171, 20, 20) Middle(0, 0, 20, 19) Smooth;
+                TextureThumb = "themes/Black.png" Part(23, 230, 20, 20) Smooth;
+                TextureThumbHover = "themes/Black.png" Part(306, 193, 20, 20) Smooth;
+                TextureTrack = "themes/Black.png" Part(255, 1, 20, 20) Smooth;
+                TextureTrackHover = "themes/Black.png" Part(284, 203, 20, 20) Smooth;
+                ThumbColor = rgb(190, 190, 190);
+                TrackColor = rgb(80, 80, 80);
+            }
+        }
+    }
+}
+
+ChildWindow.ChildWindow1 {
+    Position = (300, 30);
+    Size = (490, 300);
+    Title = ChildWindow;
+    TitleAlignment = Center;
+    TitleButtons = Close;
+    TitleTextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        BorderColor = Black;
+        Borders = (1, 1, 1, 1);
+        DistanceToSide = 5;
+        PaddingBetweenButtons = 2;
+        ShowTextOnTitleButtons = false;
+        TextureBackground = None;
+        TextureTitleBar = "themes/Black.png" Part(1, 85, 75, 25) Middle(25, 0) Smooth;
+        TitleColor = rgb(190, 190, 190);
+
+        MaximizeButton {
+            Texture = "themes/Black.png" Part(255, 23, 15, 15) Smooth;
+            TextureDown = "themes/Black.png" Part(62, 238, 15, 15) Smooth;
+            TextureHover = "themes/Black.png" Part(267, 239, 15, 15) Smooth;
+        }
+
+        MinimizeButton {
+            Texture = "themes/Black.png" Part(255, 57, 15, 15) Smooth;
+            TextureDown = "themes/Black.png" Part(96, 238, 15, 15) Smooth;
+            TextureHover = "themes/Black.png" Part(250, 239, 15, 15) Smooth;
+        }
+
+        CloseButton {
+            Texture = "themes/Black.png" Part(79, 238, 15, 15) Smooth;
+            TextureDown = "themes/Black.png" Part(45, 230, 15, 15) Smooth;
+            TextureHover = "themes/Black.png" Part(255, 40, 15, 15) Smooth;
+        }
+    }
+
+    Picture.Picture1 {
+        Position = (10, 10);
+        Size = (100, 100);
+
+        Renderer {
+            Texture = "resources/DefaultPicture.png" Smooth;
+            TransparentTexture = false;
+        }
+    }
+
+    CheckBox.CheckBox1 {
+        Checked = true;
+        Position = (140, 19);
+        Renderer = &2;
+        Size = (18, 18);
+        Text = "CheckBox 1";
+        TextSize = 13;
+    }
+
+    RadioButton.RadioButton1 {
+        Position = (262, 19);
+        Renderer = &3;
+        Size = (18, 18);
+        Text = "RadioButton 1";
+        TextSize = 13;
+    }
+
+    CheckBox.CheckBox2 {
+        Checked = true;
+        Position = (140, 49);
+        Renderer = &2;
+        Size = (18, 18);
+        Text = "CheckBox 2";
+        TextSize = 13;
+    }
+
+    CheckBox.CheckBox3 {
+        Position = (140, 79);
+        Renderer = &2;
+        Size = (18, 18);
+        Text = "CheckBox 3";
+        TextSize = 13;
+    }
+
+    RadioButton.RadioButton2 {
+        Checked = true;
+        Position = (262, 49);
+        Renderer = &3;
+        Size = (18, 18);
+        Text = "RadioButton 2";
+        TextSize = 13;
+    }
+
+    RadioButton.RadioButton3 {
+        Position = (262, 79);
+        Renderer = &3;
+        Size = (18, 18);
+        Text = "RadioButton 3";
+        TextSize = 13;
+    }
+
+    ListView.ListView1 {
+        ExpandLastColumn = 1;
+        HeaderHeight = 0;
+        HeaderSeparatorHeight = 0;
+        HeaderVisible = true;
+        ItemHeight = 20;
+        Position = (10, 120);
+        ResizableColumns = false;
+        SeparatorWidth = 1;
+        ShowVerticalGridLines = 1;
+        Size = (470, 147);
+        TextSize = 13;
+
+        Renderer {
+            BackgroundColor = rgb(80, 80, 80);
+            BackgroundColorHover = rgb(100, 100, 100);
+            BorderColor = Black;
+            Borders = (1, 1, 1, 1);
+            HeaderBackgroundColor = rgb( 95, 95, 95);
+            HeaderTextColor = rgb(210, 210, 210);
+            SelectedBackgroundColor = rgb(10, 110, 255);
+            SelectedBackgroundColorHover = rgb(30, 150, 255);
+            SelectedTextColor = White;
+            TextColor = rgb(190, 190, 190);
+            TextColorHover = rgb(250, 250, 250);
+            TextureBackground = None;
+            TextureHeaderBackground = None;
+
+            Scrollbar {
+                ArrowBackgroundColor = rgb(80, 80, 80);
+                ArrowColor = rgb(190, 190, 190);
+                TextureArrowDown = "themes/Black.png" Part(1, 230, 20, 20) Middle(0, 1, 20, 19) Smooth;
+                TextureArrowDownHover = "themes/Black.png" Part(306, 225, 20, 20) Middle(0, 1, 20, 19) Smooth;
+                TextureArrowUp = "themes/Black.png" Part(284, 225, 20, 20) Middle(0, 0, 20, 19) Smooth;
+                TextureArrowUpHover = "themes/Black.png" Part(285, 171, 20, 20) Middle(0, 0, 20, 19) Smooth;
+                TextureThumb = "themes/Black.png" Part(23, 230, 20, 20) Smooth;
+                TextureThumbHover = "themes/Black.png" Part(306, 193, 20, 20) Smooth;
+                TextureTrack = "themes/Black.png" Part(255, 1, 20, 20) Smooth;
+                TextureTrackHover = "themes/Black.png" Part(284, 203, 20, 20) Smooth;
+                ThumbColor = rgb(190, 190, 190);
+                TrackColor = rgb(80, 80, 80);
+            }
+        }
+
+        Column {
+            Text = Name;
+            Width = 210;
+        }
+
+        Column {
+            Alignment = Right;
+            Text = Size;
+            Width = 85;
+        }
+
+        Column {
+            Alignment = Right;
+            Text = Modified;
+            Width = 145;
+        }
+    }
+}
+
+ProgressBar.ProgressBar1 {
+    Maximum = 100;
+    Minimum = 0;
+    Position = (10, 150);
+    Size = (240, 22);
+    Text = ProgressBar;
+    TextSize = 13;
+    Value = 52;
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        BorderColor = Black;
+        FillColor = rgb(10, 110, 255);
+        TextColor = rgb(190, 190, 190);
+        TextColorFilled = rgb(250, 250, 250);
+        TextureBackground = "themes/Black.png" Part(1, 1, 90, 40) Middle(20, 0) Smooth;
+        TextureFill = "themes/Black.png" Part(1, 43, 90, 40) Middle(16, 0) Smooth;
+    }
+}
+
+RangeSlider.RangeSlider1 {
+    Maximum = 10;
+    Minimum = 0;
+    Position = (110, 220);
+    SelectionEnd = 7;
+    SelectionStart = 3;
+    Size = (140, 16);
+    Step = 1;
+
+    Renderer {
+        BorderColor = Black;
+        SelectedTrackColor = rgb(10, 110, 255);
+        SelectedTrackColorHover = rgb(30, 150, 255);
+        TextureSelectedTrack = None;
+        TextureSelectedTrackHover = None;
+        TextureThumb = "themes/Black.png" Part(253, 171, 30, 30) Smooth;
+        TextureThumbHover = None;
+        TextureTrack = "themes/Black.png" Part(172, 209, 20, 45) Middle(0, 15) Smooth;
+        TextureTrackHover = "themes/Black.png" Part(194, 209, 20, 45) Middle(0, 15) Smooth;
+        ThumbColor = rgb(190, 190, 190);
+        TrackColor = rgb(80, 80, 80);
+    }
+}
+
+Slider.Slider1 {
+    ChangeValueOnScroll = true;
+    InvertedDirection = false;
+    Maximum = 10;
+    Minimum = 0;
+    Position = (110, 190);
+    Size = (140, 16);
+    Step = 1;
+    Value = 5;
+
+    Renderer {
+        BorderColor = Black;
+        TextureThumb = "themes/Black.png" Part(253, 171, 30, 30) Smooth;
+        TextureThumbHover = None;
+        TextureTrack = "themes/Black.png" Part(172, 209, 20, 45) Middle(0, 15) Smooth;
+        TextureTrackHover = "themes/Black.png" Part(194, 209, 20, 45) Middle(0, 15) Smooth;
+        ThumbColor = rgb(190, 190, 190);
+        TrackColor = rgb(80, 80, 80);
+    }
+}
+
+Label.Label1 {
+    AutoSize = true;
+    Position = (10, 190);
+    Renderer = &4;
+    Size = (45, 17);
+    Text = "Slider:";
+    TextSize = 13;
+}
+
+Label.Label2 {
+    AutoSize = true;
+    Position = (10, 220);
+    Renderer = &4;
+    Size = (86, 17);
+    Text = "RangeSlider:";
+    TextSize = 13;
+}
+
+SpinControl.SpinControl1 {
+    DecimalPlaces = 2;
+    Position = (110, 314);
+    Size = (110, 30);
+    UseWideArrows = false;
+
+    Renderer {
+    }
+
+    Group {
+        Size = (110, 30);
+
+        Renderer {
+        }
+
+        EditBox.SpinText {
+            InputValidator = Float;
+            Renderer = &5;
+            Size = (95, 30);
+            Text = "500.00";
+            TextSize = 13;
+        }
+
+        SpinButton.SpinButton {
+            Maximum = 1000;
+            Minimum = 0;
+            Position = (SpinText.left + SpinText.width, SpinText.top);
+            Renderer = &6;
+            Size = (15, 30);
+            Step = 1;
+            Value = 500;
+        }
+    }
+}
+
+Label.Label3 {
+    AutoSize = true;
+    Position = (10, 270);
+    Renderer = &4;
+    Size = (81, 17);
+    Text = "SpinButton:";
+    TextSize = 13;
+}
+
+TextArea.TextArea1 {
+    HorizontalScrollbarPolicy = Never;
+    MaximumCharacters = 0;
+    Position = (300, 340);
+    Size = (490, 95);
+    Text = "Pork chop shoulder beef ribs, rump buffalo bacon drumstick ball tip cupim biltong ham hock porchetta jowl pancetta. Burgdoggen drumstick pork belly swine pork loin chislic. Porchetta kevin cupim beef ribs t-bone capicola chuck landjaeger short loin pastrami tail chicken boudin sirloin shank. Ham hock pork loin chuck cow t-bone andouille. Ham hock ribeye pastrami tail tongue rump filet mignon boudin corned beef meatball picanha. Ham short ribs turkey pig. Pork chop bresaola alcatra chuck.\nFrankfurter strip steak kielbasa turkey, burgdoggen salami alcatra flank jowl. Bacon chislic turkey picanha. Meatball tri-tip landjaeger, pork loin chislic shankle cow alcatra rump. Pork chop sirloin flank, boudin bresaola ham andouille ribeye jerky pork chuck salami. Buffalo bacon strip steak prosciutto. Pig shank pork, t-bone ribeye bresaola strip steak alcatra short ribs fatback. Tail tri-tip capicola jerky.\nBacon ipsum dolor amet bacon rump pork chop prosciutto turducken. Chislic tenderloin ground round drumstick hamburger. Ball tip beef ribs burgdoggen andouille turkey cow fatback brisket. T-bone bresaola kielbasa turducken pork belly burgdoggen.";
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        BorderColor = Black;
+        CaretColor = rgb(110, 110, 255);
+        Padding = (3, 3, 3, 3);
+        SelectedTextBackgroundColor = rgb(10, 110, 255);
+        SelectedTextColor = White;
+        TextColor = rgb(190, 190, 190);
+        TextureBackground = "themes/Black.png" Part(63, 146, 48, 48) Middle(16) Smooth;
+
+        Scrollbar {
+            ArrowBackgroundColor = rgb(80, 80, 80);
+            ArrowColor = rgb(190, 190, 190);
+            TextureArrowDown = "themes/Black.png" Part(1, 230, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowDownHover = "themes/Black.png" Part(306, 225, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowUp = "themes/Black.png" Part(284, 225, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureArrowUpHover = "themes/Black.png" Part(285, 171, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureThumb = "themes/Black.png" Part(23, 230, 20, 20) Smooth;
+            TextureThumbHover = "themes/Black.png" Part(306, 193, 20, 20) Smooth;
+            TextureTrack = "themes/Black.png" Part(255, 1, 20, 20) Smooth;
+            TextureTrackHover = "themes/Black.png" Part(284, 203, 20, 20) Smooth;
+            ThumbColor = rgb(190, 190, 190);
+            TrackColor = rgb(80, 80, 80);
+        }
+    }
+}
+
+EditBox.EditBox1 {
+    Position = (10, 370);
+    Renderer = &5;
+    Size = (100, 22);
+    Text = EditBox;
+    TextSize = 13;
+}
+
+EditBox.EditBox2 {
+    PasswordCharacter = "*";
+    Position = (10, 400);
+    Renderer = &5;
+    Size = (100, 22);
+    Text = passwd;
+    TextSize = 13;
+}
+
+EditBox.EditBox3 {
+    Alignment = Right;
+    Position = (130, 370);
+    Renderer = &5;
+    Size = (100, 22);
+    Suffix = "$";
+    Text = "125.00";
+    TextSize = 13;
+}
+
+ListBox.ListBox1 {
+    ItemHeight = 20;
+    Items = [Dugong, Emu, Frigatebird, Gharial, Hare, Indri, Jackal, Kakapo, Liger, Mandrill, Numbat, Okapi, Platypus, Quetzal, Rhinoceros, Serval, Toucan, Uakari];
+    MaximumItems = 0;
+    Position = (290, 460);
+    SelectedItemIndex = 12;
+    Size = (160, 132);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        BackgroundColorHover = rgb(100, 100, 100);
+        BorderColor = Black;
+        Padding = (3, 3, 3, 3);
+        SelectedBackgroundColor = rgb(10, 110, 255);
+        SelectedBackgroundColorHover = rgb(30, 150, 255);
+        SelectedTextColor = White;
+        TextColor = rgb(190, 190, 190);
+        TextColorHover = rgb(250, 250, 250);
+        TextureBackground = "themes/Black.png" Part(63, 146, 48, 48) Middle(16) Smooth;
+
+        Scrollbar {
+            ArrowBackgroundColor = rgb(80, 80, 80);
+            ArrowColor = rgb(190, 190, 190);
+            TextureArrowDown = "themes/Black.png" Part(1, 230, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowDownHover = "themes/Black.png" Part(306, 225, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowUp = "themes/Black.png" Part(284, 225, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureArrowUpHover = "themes/Black.png" Part(285, 171, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureThumb = "themes/Black.png" Part(23, 230, 20, 20) Smooth;
+            TextureThumbHover = "themes/Black.png" Part(306, 193, 20, 20) Smooth;
+            TextureTrack = "themes/Black.png" Part(255, 1, 20, 20) Smooth;
+            TextureTrackHover = "themes/Black.png" Part(284, 203, 20, 20) Smooth;
+            ThumbColor = rgb(190, 190, 190);
+            TrackColor = rgb(80, 80, 80);
+        }
+    }
+}
+
+ScrollablePanel.ScrollablePanel1 {
+    ContentSize = (0, 0);
+    Position = (630, 460);
+    Size = (160, 132);
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        BorderColor = Black;
+        TextureBackground = None;
+
+        Scrollbar {
+            ArrowBackgroundColor = rgb(80, 80, 80);
+            ArrowColor = rgb(190, 190, 190);
+            TextureArrowDown = "themes/Black.png" Part(1, 230, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowDownHover = "themes/Black.png" Part(306, 225, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowUp = "themes/Black.png" Part(284, 225, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureArrowUpHover = "themes/Black.png" Part(285, 171, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureThumb = "themes/Black.png" Part(23, 230, 20, 20) Smooth;
+            TextureThumbHover = "themes/Black.png" Part(306, 193, 20, 20) Smooth;
+            TextureTrack = "themes/Black.png" Part(255, 1, 20, 20) Smooth;
+            TextureTrackHover = "themes/Black.png" Part(284, 203, 20, 20) Smooth;
+            ThumbColor = rgb(190, 190, 190);
+            TrackColor = rgb(80, 80, 80);
+        }
+    }
+
+    Button.Button1 {
+        Position = (10, 10);
+        Renderer = &1;
+        Text = "Btn 1";
+        TextSize = 13;
+    }
+
+    Button.Button3 {
+        Position = (70, 10);
+        Renderer = &1;
+        Text = "Btn 2";
+        TextSize = 13;
+    }
+
+    Button.Button4 {
+        Position = (130, 10);
+        Renderer = &1;
+        Text = "Btn 3";
+        TextSize = 13;
+    }
+
+    Button.Button5 {
+        Position = (10, 46);
+        Renderer = &1;
+        Text = "Btn 4";
+        TextSize = 13;
+    }
+
+    Button.Button6 {
+        Position = (70, 46);
+        Renderer = &1;
+        Text = "Btn 5";
+        TextSize = 13;
+    }
+
+    Button.Button7 {
+        Position = (130, 46);
+        Renderer = &1;
+        Text = "Btn 6";
+        TextSize = 13;
+    }
+
+    Button.Button8 {
+        Position = (10, 84);
+        Renderer = &1;
+        Text = "Btn 7";
+        TextSize = 13;
+    }
+
+    Button.Button9 {
+        Position = (70, 84);
+        Renderer = &1;
+        Text = "Btn 8";
+        TextSize = 13;
+    }
+
+    Button.Button10 {
+        Position = (130, 84);
+        Renderer = &1;
+        Text = "Btn 9";
+        TextSize = 13;
+    }
+
+    Button.Button11 {
+        Position = (10, 120);
+        Renderer = &1;
+        Size = (51, 22);
+        Text = "Btn 10";
+        TextSize = 13;
+    }
+
+    Button.Button12 {
+        Position = (70, 120);
+        Renderer = &1;
+        Size = (51, 22);
+        Text = "Btn 11";
+        TextSize = 13;
+    }
+
+    Button.Button13 {
+        Position = (130, 120);
+        Renderer = &1;
+        Size = (51, 22);
+        Text = "Btn 12";
+        TextSize = 13;
+    }
+
+    Button.Button14 {
+        Position = (10, 156);
+        Renderer = &1;
+        Size = (51, 22);
+        Text = "Btn 13";
+        TextSize = 13;
+    }
+
+    Button.Button15 {
+        Position = (70, 156);
+        Renderer = &1;
+        Size = (51, 22);
+        Text = "Btn 14";
+        TextSize = 13;
+    }
+
+    Button.Button16 {
+        Position = (130, 156);
+        Renderer = &1;
+        Size = (51, 22);
+        Text = "Btn 14";
+        TextSize = 13;
+    }
+}
+
+TreeView.TreeView1 {
+    ItemHeight = 20;
+    Position = (460, 460);
+    Size = (160, 132);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        BackgroundColorHover = rgb(100, 100, 100);
+        BorderColor = Black;
+        Padding = (3, 3, 3, 3);
+        SelectedBackgroundColor = rgb(10, 110, 255);
+        SelectedBackgroundColorHover = rgb(30, 150, 255);
+        SelectedTextColor = White;
+        TextColor = rgb(190, 190, 190);
+        TextColorHover = rgb(250, 250, 250);
+        TextureBackground = "themes/Black.png" Part(63, 146, 48, 48) Middle(16) Smooth;
+        TextureBranchCollapsed = None;
+        TextureBranchExpanded = None;
+        TextureLeaf = None;
+
+        Scrollbar {
+            ArrowBackgroundColor = rgb(80, 80, 80);
+            ArrowColor = rgb(190, 190, 190);
+            TextureArrowDown = "themes/Black.png" Part(1, 230, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowDownHover = "themes/Black.png" Part(306, 225, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowUp = "themes/Black.png" Part(284, 225, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureArrowUpHover = "themes/Black.png" Part(285, 171, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureThumb = "themes/Black.png" Part(23, 230, 20, 20) Smooth;
+            TextureThumbHover = "themes/Black.png" Part(306, 193, 20, 20) Smooth;
+            TextureTrack = "themes/Black.png" Part(255, 1, 20, 20) Smooth;
+            TextureTrackHover = "themes/Black.png" Part(284, 203, 20, 20) Smooth;
+            ThumbColor = rgb(190, 190, 190);
+            TrackColor = rgb(80, 80, 80);
+        }
+    }
+
+    Item {
+        Items = [Happy, Sad, Neither];
+        Text = Smiles;
+    }
+
+    Item {
+        Text = Vehicles;
+
+        Item {
+            Items = [Wheel];
+            Text = Parts;
+        }
+
+        Item {
+            Items = [Truck, Car];
+            Text = Whole;
+        }
+    }
+}
+
+SpinButton.SpinButton1 {
+    Maximum = 10;
+    Minimum = 0;
+    Position = (110, 260);
+    Renderer = &6;
+    Size = (20, 42);
+    Step = 1;
+    Value = 0;
+}
+
+Label.Label5 {
+    AutoSize = true;
+    Position = (10, 320);
+    Renderer = &4;
+    Size = (84, 17);
+    Text = "SpinControl:";
+    TextSize = 13;
+}
+
+ChatBox.ChatBox1 {
+    LinesStartFromTop = false;
+    NewLinesBelowOthers = true;
+    Position = (10, 460);
+    Size = (270, 132);
+    TextColor = #BEBEBE;
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        BorderColor = Black;
+        Padding = (3, 3, 3, 3);
+        TextureBackground = "themes/Black.png" Part(63, 146, 48, 48) Middle(16) Smooth;
+
+        Scrollbar {
+            ArrowBackgroundColor = rgb(80, 80, 80);
+            ArrowColor = rgb(190, 190, 190);
+            TextureArrowDown = "themes/Black.png" Part(1, 230, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowDownHover = "themes/Black.png" Part(306, 225, 20, 20) Middle(0, 1, 20, 19) Smooth;
+            TextureArrowUp = "themes/Black.png" Part(284, 225, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureArrowUpHover = "themes/Black.png" Part(285, 171, 20, 20) Middle(0, 0, 20, 19) Smooth;
+            TextureThumb = "themes/Black.png" Part(23, 230, 20, 20) Smooth;
+            TextureThumbHover = "themes/Black.png" Part(306, 193, 20, 20) Smooth;
+            TextureTrack = "themes/Black.png" Part(255, 1, 20, 20) Smooth;
+            TextureTrackHover = "themes/Black.png" Part(284, 203, 20, 20) Smooth;
+            ThumbColor = rgb(190, 190, 190);
+            TrackColor = rgb(80, 80, 80);
+        }
+    }
+
+    Line {
+        Color = #F08200;
+        Style = Underlined;
+        Text = "A warning message.";
+    }
+
+    Line {
+        Color = #D20000;
+        Style = Bold;
+        Text = "An error message.";
+    }
+
+    Line {
+        Color = #28AFFF;
+        Style = Italic;
+        Text = "One color and text style per line";
+    }
+
+    Line {
+        Text = "A long message automatically spread accross multiple lines.";
+    }
+}
+
+EditBox.EditBox4 {
+    Alignment = Center;
+    Position = (130, 400);
+    Renderer = &5;
+    Size = (100, 22);
+    Text = EditBox;
+    TextSize = 13;
+}
+
+Label.Label4 {
+    AutoSize = true;
+    Position = (630, 440);
+    Renderer = &4;
+    Size = (116, 17);
+    Text = "ScrollbablePanel:";
+    TextSize = 13;
+}
+
+Label.Label6 {
+    AutoSize = true;
+    Position = (460, 440);
+    Renderer = &4;
+    Size = (67, 17);
+    Text = "TreeView:";
+    TextSize = 13;
+}
+
+Label.Label7 {
+    AutoSize = true;
+    Position = (290, 440);
+    Renderer = &4;
+    Size = (53, 17);
+    Text = "ListBox:";
+    TextSize = 13;
+}
+
+Label.Label8 {
+    AutoSize = true;
+    Position = (10, 440);
+    Renderer = &4;
+    Size = (62, 17);
+    Text = "ChatBox:";
+    TextSize = 13;
+}
+
+MenuBar.MenuBar1 {
+    MinimumSubMenuWidth = 76.8;
+    Size = (100%, 20);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(80, 80, 80);
+        DistanceToSide = 5;
+        SelectedBackgroundColor = rgb(10, 110, 255);
+        SelectedTextColor = White;
+        SeparatorColor = Black;
+        TextColor = rgb(190, 190, 190);
+        TextureBackground = "themes/Black.png" Part(45, 247, 8, 6) Middle(2, 2) NoSmooth;
+        TextureItemBackground = "themes/Black.png" Part(78, 105, 8, 4) Middle(2, 0, 4, 2) NoSmooth;
+        TextureSelectedItemBackground = "themes/Black.png" Part(113, 238, 8, 6) Middle(2, 2) NoSmooth;
+    }
+
+    Menu {
+        Items = [Load, Save, Exit];
+        Text = File;
+    }
+
+    Menu {
+        Items = [Undo, Redo];
+        Text = Edit;
+    }
+
+    Menu {
+        Items = [Find, Replace];
+        Text = Search;
+    }
+
+    Menu {
+        Items = [About];
+        Text = Help;
+    }
+}
+
+Button.Button17 {
+    Position = (215, 70);
+    Renderer = &1;
+    Size = (70, 25);
+    Text = Button;
+    TextSize = 13;
+}

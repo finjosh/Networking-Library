@@ -147,6 +147,8 @@ class SocketPlus : protected sf::UdpSocket
             unsigned int getPort();
             /// @returns current client timeout time in seconds
             int getClientTimeout();
+            /// @returns the current password
+            std::string getPassword();
 
         // -------
 

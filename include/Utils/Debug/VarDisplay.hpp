@@ -38,10 +38,7 @@ public:
     /// @note call this every frame
     static void Update();
 
-    /// @brief opens the display window
-    static void openWindow();
-    /// @brief used to close the window without destroying it
-    static void closeWindow();
+    static void setVisible(bool visible = true);
     /// @brief only shows the displays title bar
     static void minimizeWindow();
     /// @brief shows the entire display (including the variables)

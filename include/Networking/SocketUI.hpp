@@ -4,6 +4,7 @@
 #pragma once
 
 #include <numeric>
+#include <thread>
 
 #include "TGUI/Backend/SFML-Graphics.hpp"
 #include "TGUI/Widgets/ChildWindow.hpp"
@@ -13,6 +14,7 @@
 #include "TGUI/Widgets/Button.hpp"
 #include "TGUI/Widgets/CheckBox.hpp"
 #include "TGUI/Widgets/ScrollablePanel.hpp"
+#include "TGUI/Widgets/Label.hpp"
 
 #include "include/Networking/Client.hpp"
 #include "include/Networking/Server.hpp"
@@ -80,6 +82,15 @@ protected:
 
 private:
 
+    enum validIP
+    {
+        valid,
+        invalid,
+        checking
+    };
+
+    validIP _validIPState = validIP::valid;
+
     tgui::ChildWindow::Ptr _infoParent;
     tgui::ListView::Ptr _list;
     tgui::TreeView::Ptr _clientData;
@@ -90,6 +101,7 @@ private:
     tgui::CheckBox::Ptr _passCheck;
     tgui::EditBox::Ptr _passEdit;
     tgui::EditBox::Ptr _IPEdit;
+    tgui::Label::Ptr _IPState;
     tgui::Button::Ptr _tryOpenConnection;
     tgui::Button::Ptr _sendPassword;
     tgui::ScrollablePanel::Ptr _panel;

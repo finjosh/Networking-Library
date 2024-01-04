@@ -1,0 +1,145 @@
+TextColor = White;
+TextColorHover = rgb(225,225,225);
+TextColorDisabled = rgb(105,105,105);
+BackgroundColor = rgb(15,15,15);
+BackgroundColorHover = rgb(40,40,40);
+BackgroundColorDisabled = rgb(10,10,10);
+SelectedTextColor = rgb(200,200,200);
+SelectedTextColorHover = rgb(175,175,175);
+SelectedBackgroundColor = rgb(75,75,75);
+SelectedBackgroundColorHover = rgb(100,100,100);
+BorderColor = rgb(75,75,75);
+Borders = (1);
+ScrollbarWidth = 16;
+ArrowBackgroundColor = rgb(25,25,25);
+ArrowBackgroundColorHover = rgb(50,50,50);
+ArrowBackgroundColorDisabled = rgb(10,10,10);
+ArrowColor = White;
+ArrowColorHover = rgb(225,225,225);
+ArrowColorDisabled = rgb(105,105,105);
+
+Button {
+    BackgroundColorDown = rgb(65,65,65);
+    BorderColorDisabled = rgb(50,50,50);
+    BorderColorDown = rgb(25,25,25);
+    BorderColorFocused = rgb(100,100,100);
+    BorderColorHover = rgb(85,85,85);
+    TextColorDown = rgb(225,225,225);
+}
+
+ChatBox
+{
+    Padding = 0;
+}
+
+ComboBox
+{
+    Padding = 0;
+}
+
+EditBox
+{
+    Padding = 0;
+    CaretWidth = 1;
+    CaretColor = White;
+    DefaultTextColor = rgb(125,125,125);
+}
+
+ListBox
+{
+    Padding = 0;
+}
+
+ListView
+{
+    Padding = 0;
+    SeparatorColor = rgb(75,75,75);
+    HeaderTextColor = White;
+    HeaderBackgroundColor = Black;
+}
+
+MenuBar
+{
+    SeparatorColor = rgb(75,75,75);
+    SeparatorThickness = 1;
+    SeparatorVerticalPadding = 1;
+}
+
+MessageBox
+{
+    TitleColor = White;
+    TitleBarColor = Black;
+    DistanceToSide = 3;
+    PaddingBetweenButtons = 1;
+}
+
+//PanelListBox
+//ProgressBar
+
+RadioButton
+{
+    CheckColor = White;
+    CheckColorHover = rgb(225,225,225);
+    CheckColorDisabled = rgb(10,10,10);
+    TextDistanceRatio = 0.2;
+}
+
+RangeSlider
+{
+    SelectedTrackColor = rgb(200,200,200);
+    TrackColorHover = rgb(225,225,225);
+    ThumbColor = rgb(25,25,25);
+    ThumbColorHover = rgb(15,15,15);
+}
+
+Scrollbar
+{
+    TrackColor = rgb(30,30,30);
+    ThumbColor = rgb(50,50,50);
+    ThumbColorHover = rgb(75,75,75);
+}
+
+SeparatorLine
+{
+    Color = rgb(75,75,75);
+}
+
+Slider
+{
+    TrackColorHover = rgb(50,50,50);
+    ThumbColor = rgb(25,25,25);
+    ThumbColorHover = rgb(15,15,15);
+}
+
+//SpinButton
+//{
+//    ArrowColor = 
+//    ArrowColorHover 
+//}
+
+TextArea
+{
+    Padding = 0;
+    CaretWidth = 1;
+    CaretColor = White;
+    DefaultTextColor = rgb(125,125,125);
+}
+
+ToggleButton
+{
+    BorderColorHover = rgb(85,85,85);
+    BorderColorDown = rgb(25,25,25);
+    BorderColorFocused = rgb(100,100,100);
+    BorderColorDisabled = rgb(50,50,50);
+    BackgroundColorDown = rgb(25,25,25);
+    BackgroundColorDownHover = rgb(15,15,15);
+}
+
+ChildWindow
+{
+    ShowTextOnTitleButtons = true;
+    DistanceToSide = 3;
+    PaddingBetweenButtons = 1;
+    TitleColor = White;
+    TitleBarColor = Black;
+}

@@ -7,6 +7,7 @@
 #include <string>
 
 #include "funcHelper.hpp"
+#include "EventHelper.hpp"
 
 #if __has_include("include/Utils/Debug/CommandHandler.hpp")
 #include "include/Utils/Debug/CommandHandler.hpp" 

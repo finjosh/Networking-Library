@@ -56,6 +56,11 @@ unsigned int SocketPlus::getPort()
 int SocketPlus::getClientTimeout()
 { return _clientTimeoutTime; }
 
+std::string SocketPlus::getPassword()
+{
+    return _password;
+}
+
 // -------
 
 //* Setters
