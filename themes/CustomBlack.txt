@@ -1,145 +1,181 @@
+// Any Global Variables are listed as normal
+// Any Variables which are not global (i.e. are not assigned to widgets automatically) have a comment with a * beside them
+
+// Text
+TextColorDisabled = rgb(155,155,155);
 TextColor = White;
-TextColorHover = rgb(225,225,225);
-TextColorDisabled = rgb(105,105,105);
-BackgroundColor = rgb(15,15,15);
-BackgroundColorHover = rgb(40,40,40);
-BackgroundColorDisabled = rgb(10,10,10);
-SelectedTextColor = rgb(200,200,200);
-SelectedTextColorHover = rgb(175,175,175);
-SelectedBackgroundColor = rgb(75,75,75);
+TextColorHover = White;
+TextColorDown = White; // *
+SelectedTextColor = White;
+SelectedTextColorHover = White;
+
+// Caret
+CaretWidth = 1; // *
+CaretColor = White; // *
+
+// Background
+BackgroundColorDisabled = rgb(20,20,20);
+BackgroundColor = rgb(40,40,40);
+BackgroundColorHover = rgb(65,65,65);
+SelectedBackgroundColor = rgb(85,85,85);
 SelectedBackgroundColorHover = rgb(100,100,100);
-BorderColor = rgb(75,75,75);
+BackgroundColorDown = rgb(115,115,115); // *
+BackgroundColorDownHover = rgb(125,125,125); // *
+
+// Boarders
 Borders = (1);
+BorderColorDisabled = rgb(55,55,55); // *
+BorderColor = rgb(75,75,75);
+BorderColorHover = rgb(100,100,100); // *
+BorderColorFocused = rgb(120,120,120); // *
+BorderColorDown = rgb(135,135,135); // *
+
+// Scrollbar
 ScrollbarWidth = 16;
+// Also used on other widgets
+TrackColor = rgb(50,50,50);
+TrackColorHover = rgb(55,55,55);
+SelectedTrackColor = rgb(65,65,65);
+// Thumb - Also used on other widgets (slider, range slider, ect.)
+ThumbColor = rgb(25,25,25); // *
+ThumbColorHover = rgb(35,35,35); // *
+
+// Arrow
+ArrowColorDisabled = rgb(105,105,105);
+ArrowColor = White;
+ArrowColorHover = White;
+ArrowBackgroundColorDisabled = rgb(10,10,10);
 ArrowBackgroundColor = rgb(25,25,25);
 ArrowBackgroundColorHover = rgb(50,50,50);
-ArrowBackgroundColorDisabled = rgb(10,10,10);
-ArrowColor = White;
-ArrowColorHover = rgb(225,225,225);
-ArrowColorDisabled = rgb(105,105,105);
+
+// Separator
+SeparatorColor = rgb(75,75,75); // *
+SeparatorThickness = 1; // *
+SeparatorVerticalPadding = 1; // *
+
+// Title Bar
+TitleBarColor = rgb(15,15,15); // *
+TitleColor = White; // *
+
+// Miscellaneous
+HeaderBackgroundColor = rgb(25,25,25); // *
+Padding = 0; // *
+PaddingBetweenButtons = 1; // *
+ButtonDistanceFromSide = 3; // *
 
 Button {
-    BackgroundColorDown = rgb(65,65,65);
-    BorderColorDisabled = rgb(50,50,50);
-    BorderColorDown = rgb(25,25,25);
-    BorderColorFocused = rgb(100,100,100);
-    BorderColorHover = rgb(85,85,85);
-    TextColorDown = rgb(225,225,225);
+    BackgroundColorDown = &BackgroundColorDown;
+    BorderColorDisabled = &BorderColorDisabled;
+    BorderColorDown = &BorderColorDown;
+    BorderColorFocused = &BorderColorFocused;
+    BorderColorHover = &BorderColorHover;
+    TextColorDown = &TextColorDown;
 }
 
 ChatBox
 {
-    Padding = 0;
+    Padding = &Padding;
 }
 
 ComboBox
 {
-    Padding = 0;
+    Padding = &Padding;
 }
 
 EditBox
 {
-    Padding = 0;
-    CaretWidth = 1;
-    CaretColor = White;
-    DefaultTextColor = rgb(125,125,125);
+    Padding = &Padding;
+    CaretWidth = &CaretWidth;
+    CaretColor = &CaretColor;
+    DefaultTextColor = &TextColorDisabled;
 }
 
 ListBox
 {
-    Padding = 0;
+    Padding = &Padding;
 }
 
 ListView
 {
-    Padding = 0;
-    SeparatorColor = rgb(75,75,75);
-    HeaderTextColor = White;
-    HeaderBackgroundColor = Black;
+    Padding = &Padding;
+    SeparatorColor = &SeparatorColor;
+    HeaderTextColor = &TextColor;
+    HeaderBackgroundColor = &HeaderBackgroundColor;
 }
 
 MenuBar
 {
-    SeparatorColor = rgb(75,75,75);
-    SeparatorThickness = 1;
-    SeparatorVerticalPadding = 1;
+    SeparatorColor = &SeparatorColor;
+    SeparatorThickness = &SeparatorThickness;
+    SeparatorVerticalPadding = &SeparatorVerticalPadding;
 }
 
 MessageBox
 {
-    TitleColor = White;
-    TitleBarColor = Black;
-    DistanceToSide = 3;
-    PaddingBetweenButtons = 1;
+    TitleColor = &TitleColor;
+    TitleBarColor = &TitleBarColor;
+    PaddingBetweenButtons = &PaddingBetweenButtons;
+    DistanceToSide = &ButtonDistanceFromSide;
 }
-
-//PanelListBox
-//ProgressBar
 
 RadioButton
 {
-    CheckColor = White;
-    CheckColorHover = rgb(225,225,225);
-    CheckColorDisabled = rgb(10,10,10);
+    CheckColor = &TextColor;
+    CheckColorHover = &TextColorHover;
+    CheckColorDisabled = &TextColorDisabled;
     TextDistanceRatio = 0.2;
 }
 
 RangeSlider
 {
-    SelectedTrackColor = rgb(200,200,200);
-    TrackColorHover = rgb(225,225,225);
-    ThumbColor = rgb(25,25,25);
-    ThumbColorHover = rgb(15,15,15);
+    SelectedTrackColor = &SelectedTrackColor;
+    TrackColorHover = &TrackColorHover;
+    ThumbColor = &ThumbColor;
+    ThumbColorHover = &ThumbColorHover;
 }
 
 Scrollbar
 {
-    TrackColor = rgb(30,30,30);
-    ThumbColor = rgb(50,50,50);
-    ThumbColorHover = rgb(75,75,75);
+    TrackColor = &TrackColor;
+    ThumbColor = &ThumbColor;
+    ThumbColorHover = &ThumbColorHover;
 }
 
 SeparatorLine
 {
-    Color = rgb(75,75,75);
+    Color = &SeparatorColor;
 }
 
 Slider
 {
-    TrackColorHover = rgb(50,50,50);
-    ThumbColor = rgb(25,25,25);
-    ThumbColorHover = rgb(15,15,15);
+    TrackColorHover = &TrackColorHover;
+    ThumbColor = &ThumbColor;
+    ThumbColorHover = &ThumbColorHover;
 }
-
-//SpinButton
-//{
-//    ArrowColor = 
-//    ArrowColorHover 
-//}
 
 TextArea
 {
-    Padding = 0;
-    CaretWidth = 1;
-    CaretColor = White;
-    DefaultTextColor = rgb(125,125,125);
+    Padding = &Padding;
+    CaretWidth = &CaretWidth;
+    CaretColor = &CaretColor;
+    DefaultTextColor = &TextColorDisabled;
 }
 
 ToggleButton
 {
-    BorderColorHover = rgb(85,85,85);
-    BorderColorDown = rgb(25,25,25);
-    BorderColorFocused = rgb(100,100,100);
-    BorderColorDisabled = rgb(50,50,50);
-    BackgroundColorDown = rgb(25,25,25);
-    BackgroundColorDownHover = rgb(15,15,15);
+    BorderColorHover = &BorderColorHover;
+    BorderColorDown = &BorderColorDown;
+    BorderColorFocused = &BorderColorFocused;
+    BorderColorDisabled = &BorderColorDisabled;
+    BackgroundColorDown = &BackgroundColorDown;
+    BackgroundColorDownHover = &BackgroundColorDownHover;
 }
 
 ChildWindow
 {
     ShowTextOnTitleButtons = true;
-    DistanceToSide = 3;
-    PaddingBetweenButtons = 1;
-    TitleColor = White;
-    TitleBarColor = Black;
+    DistanceToSide = &ButtonDistanceFromSide;
+    PaddingBetweenButtons = &PaddingBetweenButtons;
+    TitleColor = &TitleColor;
+    TitleBarColor = &TitleBarColor;
 }

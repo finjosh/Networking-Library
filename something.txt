@@ -1,0 +1,868 @@
+Renderer.1 {
+    BackgroundColor = rgb(15,15,15);
+    BorderColor = rgb(75,75,75);
+    Borders = (1);
+    Padding = 0;
+    ScrollbarWidth = 16;
+    TextureBackground = None;
+
+    Scrollbar {
+        ArrowBackgroundColor = rgb(25,25,25);
+        ArrowBackgroundColorHover = rgb(50,50,50);
+        ArrowColor = White;
+        ArrowColorHover = rgb(225,225,225);
+        TextureArrowDown = None;
+        TextureArrowDownHover = None;
+        TextureArrowUp = None;
+        TextureArrowUpHover = None;
+        TextureThumb = None;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = rgb(50,50,50);
+        ThumbColorHover = rgb(75,75,75);
+        TrackColor = rgb(30,30,30);
+    }
+}
+
+Renderer.2 {
+    BackgroundColor = rgb(15,15,15);
+    BackgroundColorHover = rgb(40,40,40);
+    BorderColor = rgb(75,75,75);
+    Borders = (1);
+    Padding = 0;
+    ScrollbarWidth = 16;
+    SelectedBackgroundColor = rgb(75,75,75);
+    SelectedBackgroundColorHover = rgb(100,100,100);
+    SelectedTextColor = rgb(200,200,200);
+    SelectedTextColorHover = rgb(175,175,175);
+    TextColor = White;
+    TextColorHover = rgb(225,225,225);
+    TextureBackground = None;
+
+    Scrollbar {
+        ArrowBackgroundColor = rgb(25,25,25);
+        ArrowBackgroundColorHover = rgb(50,50,50);
+        ArrowColor = White;
+        ArrowColorHover = rgb(225,225,225);
+        TextureArrowDown = None;
+        TextureArrowDownHover = None;
+        TextureArrowUp = None;
+        TextureArrowUpHover = None;
+        TextureThumb = None;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = rgb(50,50,50);
+        ThumbColorHover = rgb(75,75,75);
+        TrackColor = rgb(30,30,30);
+    }
+}
+
+Renderer.3 {
+    BackgroundColor = rgb(15,15,15);
+    BorderColor = rgb(75,75,75);
+    Borders = (1);
+    TextureBackground = None;
+    TextureForeground = None;
+    ThumbColor = White;
+}
+
+Renderer.4 {
+    BorderColor = rgb(75,75,75);
+    ScrollbarWidth = 16;
+    TextColor = White;
+    TextureBackground = None;
+
+    Scrollbar {
+        ArrowBackgroundColor = rgb(25,25,25);
+        ArrowBackgroundColorHover = rgb(50,50,50);
+        ArrowColor = White;
+        ArrowColorHover = rgb(225,225,225);
+        TextureArrowDown = None;
+        TextureArrowDownHover = None;
+        TextureArrowUp = None;
+        TextureArrowUpHover = None;
+        TextureThumb = None;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = rgb(50,50,50);
+        ThumbColorHover = rgb(75,75,75);
+        TrackColor = rgb(30,30,30);
+    }
+}
+
+BitmapButton.BitmapButton1 {
+    Image = None;
+    ImageScaling = 0;
+    Position = (10, 10);
+    Text = BitBtn;
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BackgroundColorDisabled = rgb(10,10,10);
+        BackgroundColorDown = rgb(65,65,65);
+        BackgroundColorHover = rgb(40,40,40);
+        BorderColor = rgb(75,75,75);
+        BorderColorDisabled = rgb(50,50,50);
+        BorderColorDown = rgb(25,25,25);
+        BorderColorFocused = rgb(100,100,100);
+        BorderColorHover = rgb(85,85,85);
+        Borders = (1);
+        TextColor = White;
+        TextColorDisabled = rgb(105,105,105);
+        TextColorDown = rgb(225,225,225);
+        TextColorHover = rgb(225,225,225);
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+Button.Button1 {
+    Position = (90, 10);
+    Text = Button;
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BackgroundColorDisabled = rgb(10,10,10);
+        BackgroundColorDown = rgb(65,65,65);
+        BackgroundColorHover = rgb(40,40,40);
+        BorderColor = rgb(75,75,75);
+        BorderColorDisabled = rgb(50,50,50);
+        BorderColorDown = rgb(25,25,25);
+        BorderColorFocused = rgb(100,100,100);
+        BorderColorHover = rgb(85,85,85);
+        Borders = (1);
+        TextColor = White;
+        TextColorDisabled = rgb(105,105,105);
+        TextColorDown = rgb(225,225,225);
+        TextColorHover = rgb(225,225,225);
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+ChatBox.ChatBox1 {
+    LineLimit = 50;
+    LinesStartFromTop = false;
+    NewLinesBelowOthers = true;
+    Position = (10, 70);
+    Renderer = &1;
+    Size = (270, 124);
+    TextColor = black;
+    TextSize = 13;
+}
+
+CheckBox.CheckBox1 {
+    Position = (180, 10);
+    Size = (17, 17);
+    Text = "Check Box";
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BackgroundColorDisabled = rgb(10,10,10);
+        BackgroundColorHover = rgb(40,40,40);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        CheckColor = White;
+        CheckColorDisabled = rgb(10,10,10);
+        CheckColorHover = rgb(225,225,225);
+        TextColor = White;
+        TextColorDisabled = rgb(105,105,105);
+        TextColorHover = rgb(225,225,225);
+        TextDistanceRatio = 0.2;
+        TextureChecked = None;
+        TextureCheckedDisabled = None;
+        TextureCheckedFocused = None;
+        TextureCheckedHover = None;
+        TextureUnchecked = None;
+        TextureUncheckedDisabled = None;
+        TextureUncheckedFocused = None;
+        TextureUncheckedHover = None;
+    }
+}
+
+ChildWindow.ChildWindow1 {
+    Position = (10, 210);
+    Size = (400, 300);
+    Title = "Child Window";
+    TitleAlignment = Center;
+    TitleButtons = Close;
+    TitleTextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        DistanceToSide = 3;
+        PaddingBetweenButtons = 1;
+        ShowTextOnTitleButtons = true;
+        TextureBackground = None;
+        TextureTitleBar = None;
+        TitleBarColor = Black;
+        TitleColor = White;
+
+        CloseButton {
+            BackgroundColor = rgb(15,15,15);
+            BackgroundColorDisabled = rgb(10,10,10);
+            BackgroundColorDown = rgb(65,65,65);
+            BackgroundColorHover = rgb(40,40,40);
+            BorderColor = rgb(75,75,75);
+            BorderColorDisabled = rgb(50,50,50);
+            BorderColorDown = rgb(25,25,25);
+            BorderColorFocused = rgb(100,100,100);
+            BorderColorHover = rgb(85,85,85);
+            Borders = (1);
+            TextColor = White;
+            TextColorDisabled = rgb(105,105,105);
+            TextColorDown = rgb(225,225,225);
+            TextColorHover = rgb(225,225,225);
+            Texture = None;
+            TextureDisabled = None;
+            TextureDown = None;
+            TextureDownFocused = None;
+            TextureDownHover = None;
+            TextureFocused = None;
+            TextureHover = None;
+        }
+    }
+
+    ListBox.ListBox1 {
+        ItemHeight = 19;
+        Items = ["A item", "This is a list box", "Soime other item", another, item, "is ", this, "to ", many, items];
+        MaximumItems = 0;
+        Position = (10, 10);
+        Renderer = &2;
+        Size = (150, 135);
+        TextSize = 13;
+    }
+
+    ChatBox.ChatBox2 {
+        LineLimit = 50;
+        LinesStartFromTop = false;
+        NewLinesBelowOthers = true;
+        Position = (10, 150);
+        Renderer = &1;
+        Size = (270, 124);
+        TextColor = black;
+        TextSize = 13;
+    }
+
+    Knob.Knob2 {
+        ClockwiseTurning = true;
+        EndRotation = 270;
+        Maximum = 360;
+        Minimum = 0;
+        Position = (210, 0);
+        Renderer = &3;
+        Size = (140, 140);
+        StartRotation = 270;
+        Value = 0;
+    }
+}
+
+ComboBox.ComboBox1 {
+    ChangeItemOnScroll = false;
+    Items = ["Some Item", "Another Item", "Some random Item", "Combo Box"];
+    ItemsToDisplay = 0;
+    MaximumItems = 0;
+    Position = (310, 10);
+    SelectedItemIndex = 3;
+    Size = (150, 21);
+    TextSize = 13;
+
+    Renderer {
+        ArrowBackgroundColor = rgb(25,25,25);
+        ArrowBackgroundColorDisabled = rgb(10,10,10);
+        ArrowBackgroundColorHover = rgb(50,50,50);
+        ArrowColor = White;
+        ArrowColorDisabled = rgb(105,105,105);
+        ArrowColorHover = rgb(225,225,225);
+        BackgroundColor = rgb(15,15,15);
+        BackgroundColorDisabled = rgb(10,10,10);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        Padding = 0;
+        TextColor = White;
+        TextColorDisabled = rgb(105,105,105);
+        TextureArrow = None;
+        TextureArrowDisabled = None;
+        TextureArrowHover = None;
+        TextureBackground = None;
+        TextureBackgroundDisabled = None;
+
+        ListBox {
+            BackgroundColor = rgb(15,15,15);
+            BackgroundColorHover = rgb(40,40,40);
+            BorderColor = rgb(75,75,75);
+            Borders = (1);
+            Padding = 0;
+            ScrollbarWidth = 16;
+            SelectedBackgroundColor = rgb(75,75,75);
+            SelectedBackgroundColorHover = rgb(100,100,100);
+            SelectedTextColor = rgb(200,200,200);
+            SelectedTextColorHover = rgb(175,175,175);
+            TextColor = White;
+            TextColorHover = rgb(225,225,225);
+            TextureBackground = None;
+
+            Scrollbar {
+                ArrowBackgroundColor = rgb(25,25,25);
+                ArrowBackgroundColorHover = rgb(50,50,50);
+                ArrowColor = White;
+                ArrowColorHover = rgb(225,225,225);
+                TextureArrowDown = None;
+                TextureArrowDownHover = None;
+                TextureArrowUp = None;
+                TextureArrowUpHover = None;
+                TextureThumb = None;
+                TextureThumbHover = None;
+                TextureTrack = None;
+                TextureTrackHover = None;
+                ThumbColor = rgb(50,50,50);
+                ThumbColorHover = rgb(75,75,75);
+                TrackColor = rgb(30,30,30);
+            }
+        }
+    }
+}
+
+Knob.Knob1 {
+    ClockwiseTurning = true;
+    EndRotation = 270;
+    Maximum = 360;
+    Minimum = 0;
+    Position = (300, 50);
+    Renderer = &3;
+    Size = (140, 140);
+    StartRotation = 270;
+    Value = 0;
+}
+
+Label.Label1 {
+    AutoSize = true;
+    Position = (510, 10);
+    Renderer = &4;
+    Size = (39, 17);
+    Text = Label;
+    TextSize = 13;
+}
+
+ListBox.ListBox2 {
+    AutoScroll = false;
+    ItemHeight = 19;
+    Items = ["A item", "This is a list box", "Soime other item", another, item, "is ", this, "to ", many, items];
+    MaximumItems = 0;
+    Position = (470, 50);
+    Renderer = &2;
+    Size = (150, 135);
+    TextSize = 13;
+}
+
+ListView.ListView1 {
+    ExpandLastColumn = 1;
+    HeaderHeight = 0;
+    HeaderSeparatorHeight = 0;
+    HeaderVisible = true;
+    ItemHeight = 19;
+    Position = (470, 210);
+    ResizableColumns = false;
+    SeparatorWidth = 1;
+    ShowVerticalGridLines = 1;
+    Size = (388, 140);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BackgroundColorHover = rgb(40,40,40);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        HeaderBackgroundColor = Black;
+        HeaderTextColor = White;
+        Padding = 0;
+        ScrollbarWidth = 16;
+        SelectedBackgroundColor = rgb(75,75,75);
+        SelectedBackgroundColorHover = rgb(100,100,100);
+        SelectedTextColor = rgb(200,200,200);
+        SelectedTextColorHover = rgb(175,175,175);
+        SeparatorColor = rgb(75,75,75);
+        TextColor = White;
+        TextColorHover = rgb(225,225,225);
+        TextureBackground = None;
+        TextureHeaderBackground = None;
+
+        Scrollbar {
+            ArrowBackgroundColor = rgb(25,25,25);
+            ArrowBackgroundColorHover = rgb(50,50,50);
+            ArrowColor = White;
+            ArrowColorHover = rgb(225,225,225);
+            TextureArrowDown = None;
+            TextureArrowDownHover = None;
+            TextureArrowUp = None;
+            TextureArrowUpHover = None;
+            TextureThumb = None;
+            TextureThumbHover = None;
+            TextureTrack = None;
+            TextureTrackHover = None;
+            ThumbColor = rgb(50,50,50);
+            ThumbColorHover = rgb(75,75,75);
+            TrackColor = rgb(30,30,30);
+        }
+    }
+
+    Column {
+        AutoResize = true;
+        Expanded = true;
+        Text = "A Column";
+        Width = 50;
+    }
+
+    Column {
+        AutoResize = true;
+        Expanded = true;
+        Text = "Another Column";
+        Width = 50;
+    }
+
+    Column {
+        AutoResize = true;
+        Expanded = true;
+        Text = "Some other column";
+        Width = 50;
+    }
+}
+
+Panel.Panel1 {
+    Position = (470, 390);
+    Size = (150, 150);
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        TextureBackground = None;
+    }
+
+    Label."This is a panel with a label" {
+        Renderer = &4;
+        Size = (146, 67);
+        Text = "This is a panel with a label";
+        TextSize = 13;
+    }
+}
+
+ProgressBar.ProgressBar1 {
+    Maximum = 100;
+    Minimum = 0;
+    Position = (130, 530);
+    Size = (225, 21);
+    TextSize = 13;
+    Value = 75;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        FillColor = rgb(75,75,75);
+        TextColor = White;
+        TextureBackground = None;
+        TextureFill = None;
+    }
+}
+
+RadioButton.RadioButton1 {
+    Checked = true;
+    Position = (240, 580);
+    Size = (37, 37);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BackgroundColorDisabled = rgb(10,10,10);
+        BackgroundColorHover = rgb(40,40,40);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        CheckColor = White;
+        CheckColorDisabled = rgb(10,10,10);
+        CheckColorHover = rgb(225,225,225);
+        TextColor = White;
+        TextColorDisabled = rgb(105,105,105);
+        TextColorHover = rgb(225,225,225);
+        TextDistanceRatio = 0.2;
+        TextureChecked = None;
+        TextureCheckedDisabled = None;
+        TextureCheckedFocused = None;
+        TextureCheckedHover = None;
+        TextureUnchecked = None;
+        TextureUncheckedDisabled = None;
+        TextureUncheckedFocused = None;
+        TextureUncheckedHover = None;
+    }
+}
+
+RangeSlider.RangeSlider1 {
+    Maximum = 10;
+    Minimum = 0;
+    Position = (130, 650);
+    SelectionEnd = 5;
+    SelectionStart = 2;
+    Size = (200, 16);
+    Step = 1;
+
+    Renderer {
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        SelectedTrackColor = rgb(200,200,200);
+        SelectedTrackColorHover = rgb(100,100,100);
+        TextureSelectedTrack = None;
+        TextureSelectedTrackHover = None;
+        TextureThumb = None;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = rgb(25,25,25);
+        ThumbColorHover = rgb(15,15,15);
+        TrackColor = rgb(15,15,15);
+        TrackColorHover = rgb(225,225,225);
+    }
+}
+
+ScrollablePanel.ScrollablePanel1 {
+    ContentSize = (0, 0);
+    Position = (670, 390);
+    Size = (150, 150);
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        ScrollbarWidth = 16;
+        TextureBackground = None;
+
+        Scrollbar {
+            ArrowBackgroundColor = rgb(25,25,25);
+            ArrowBackgroundColorHover = rgb(50,50,50);
+            ArrowColor = White;
+            ArrowColorHover = rgb(225,225,225);
+            TextureArrowDown = None;
+            TextureArrowDownHover = None;
+            TextureArrowUp = None;
+            TextureArrowUpHover = None;
+            TextureThumb = None;
+            TextureThumbHover = None;
+            TextureTrack = None;
+            TextureTrackHover = None;
+            ThumbColor = rgb(50,50,50);
+            ThumbColorHover = rgb(75,75,75);
+            TrackColor = rgb(30,30,30);
+        }
+    }
+
+    Scrollbar.Scrollbar1 {
+        AutoHide = true;
+        Maximum = 10;
+        ScrollAmount = 1;
+        Size = (156, 430);
+        Value = 0;
+        ViewportSize = 1;
+
+        Renderer {
+            ArrowBackgroundColor = rgb(25,25,25);
+            ArrowBackgroundColorHover = rgb(50,50,50);
+            ArrowColor = White;
+            ArrowColorHover = rgb(225,225,225);
+            TextureArrowDown = None;
+            TextureArrowDownHover = None;
+            TextureArrowUp = None;
+            TextureArrowUpHover = None;
+            TextureThumb = None;
+            TextureThumbHover = None;
+            TextureTrack = None;
+            TextureTrackHover = None;
+            ThumbColor = rgb(50,50,50);
+            ThumbColorHover = rgb(75,75,75);
+            TrackColor = rgb(30,30,30);
+        }
+    }
+}
+
+Slider.Slider1 {
+    ChangeValueOnScroll = true;
+    InvertedDirection = false;
+    Maximum = 10;
+    Minimum = 0;
+    Position = (130, 700);
+    Size = (200, 16);
+    Step = 1;
+    Value = 3;
+
+    Renderer {
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        TextureThumb = None;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = rgb(25,25,25);
+        ThumbColorHover = rgb(15,15,15);
+        TrackColor = rgb(15,15,15);
+        TrackColorHover = rgb(50,50,50);
+    }
+}
+
+SpinControl.SpinControl1 {
+    DecimalPlaces = 0;
+    Position = (680, 50);
+    Size = (150, 42);
+    UseWideArrows = false;
+
+    Renderer {
+    }
+
+    Group {
+        Size = (150, 42);
+
+        Renderer {
+        }
+
+        EditBox.SpinText {
+            InputValidator = Float;
+            Size = (130, 42);
+            Text = 0;
+            TextSize = 13;
+
+            Renderer {
+                BackgroundColor = rgb(15,15,15);
+                BackgroundColorDisabled = rgb(10,10,10);
+                BackgroundColorHover = rgb(40,40,40);
+                BorderColor = rgb(75,75,75);
+                Borders = (1);
+                CaretColor = White;
+                CaretWidth = 1;
+                DefaultTextColor = rgb(125,125,125);
+                Padding = 0;
+                SelectedTextBackgroundColor = rgb(75,75,75);
+                SelectedTextColor = rgb(200,200,200);
+                TextColor = White;
+                TextColorDisabled = rgb(105,105,105);
+                Texture = None;
+                TextureDisabled = None;
+                TextureFocused = None;
+                TextureHover = None;
+            }
+        }
+
+        SpinButton.SpinButton {
+            Maximum = 10;
+            Minimum = 0;
+            Position = (SpinText.left + SpinText.width, SpinText.top);
+            Size = (20, 42);
+            Step = 1;
+            Value = 0;
+
+            Renderer {
+                ArrowColor = White;
+                ArrowColorHover = rgb(225,225,225);
+                BackgroundColor = rgb(15,15,15);
+                BackgroundColorHover = rgb(40,40,40);
+                BorderColor = rgb(75,75,75);
+                Borders = (1);
+                TextureArrowDown = None;
+                TextureArrowDownHover = None;
+                TextureArrowUp = None;
+                TextureArrowUpHover = None;
+            }
+        }
+    }
+}
+
+Tabs.Tabs1 {
+    AutoSize = 1;
+    Position = (680, 120);
+    TabHeight = 21;
+    Tabs = [Tab, Tab2, Tab3, Tab4];
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        SelectedBackgroundColor = rgb(75,75,75);
+        SelectedTextColor = rgb(200,200,200);
+        TextColor = White;
+        TextureDisabledTab = None;
+        TextureSelectedTab = None;
+        TextureSelectedTabHover = None;
+        TextureTab = None;
+        TextureTabHover = None;
+    }
+}
+
+TextArea.TextArea1 {
+    DefaultText = "Text Area";
+    HorizontalScrollbarPolicy = Never;
+    MaximumCharacters = 0;
+    Position = (470, 600);
+    Size = (270, 154);
+    Text = "";
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        CaretColor = White;
+        CaretWidth = 1;
+        DefaultTextColor = rgb(125,125,125);
+        Padding = 0;
+        ScrollbarWidth = 16;
+        SelectedTextBackgroundColor = rgb(75,75,75);
+        SelectedTextColor = rgb(200,200,200);
+        TextColor = White;
+        TextureBackground = None;
+
+        Scrollbar {
+            ArrowBackgroundColor = rgb(25,25,25);
+            ArrowBackgroundColorHover = rgb(50,50,50);
+            ArrowColor = White;
+            ArrowColorHover = rgb(225,225,225);
+            TextureArrowDown = None;
+            TextureArrowDownHover = None;
+            TextureArrowUp = None;
+            TextureArrowUpHover = None;
+            TextureThumb = None;
+            TextureThumbHover = None;
+            TextureTrack = None;
+            TextureTrackHover = None;
+            ThumbColor = rgb(50,50,50);
+            ThumbColorHover = rgb(75,75,75);
+            TrackColor = rgb(30,30,30);
+        }
+    }
+}
+
+ToggleButton.ToggleButton1 {
+    Down = false;
+    Position = (130, 790);
+    Size = (63.6667, 44.0769);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BackgroundColorDisabled = rgb(10,10,10);
+        BackgroundColorDown = rgb(25,25,25);
+        BackgroundColorDownHover = rgb(15,15,15);
+        BackgroundColorHover = rgb(40,40,40);
+        BorderColor = rgb(75,75,75);
+        BorderColorDisabled = rgb(50,50,50);
+        BorderColorDown = rgb(25,25,25);
+        BorderColorFocused = rgb(100,100,100);
+        BorderColorHover = rgb(85,85,85);
+        Borders = (1);
+        TextColor = White;
+        TextColorDisabled = rgb(105,105,105);
+        TextColorDown = rgb(200,200,200);
+        TextColorHover = rgb(225,225,225);
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+TreeView.TreeView1 {
+    ItemHeight = 19;
+    Position = (470, 800);
+    Size = (150, 135);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgb(15,15,15);
+        BackgroundColorHover = rgb(40,40,40);
+        BorderColor = rgb(75,75,75);
+        Borders = (1);
+        Padding = 0;
+        ScrollbarWidth = 16;
+        SelectedBackgroundColor = rgb(75,75,75);
+        SelectedBackgroundColorHover = rgb(100,100,100);
+        SelectedTextColor = rgb(200,200,200);
+        SelectedTextColorHover = rgb(175,175,175);
+        TextColor = White;
+        TextColorHover = rgb(225,225,225);
+        TextureBackground = None;
+        TextureBranchCollapsed = None;
+        TextureBranchExpanded = None;
+        TextureLeaf = None;
+
+        Scrollbar {
+            ArrowBackgroundColor = rgb(25,25,25);
+            ArrowBackgroundColorHover = rgb(50,50,50);
+            ArrowColor = White;
+            ArrowColorHover = rgb(225,225,225);
+            TextureArrowDown = None;
+            TextureArrowDownHover = None;
+            TextureArrowUp = None;
+            TextureArrowUpHover = None;
+            TextureThumb = None;
+            TextureThumbHover = None;
+            TextureTrack = None;
+            TextureTrackHover = None;
+            ThumbColor = rgb(50,50,50);
+            ThumbColorHover = rgb(75,75,75);
+            TrackColor = rgb(30,30,30);
+        }
+    }
+}
+
+Label.Label2 {
+    AutoSize = true;
+    Position = (10, 50);
+    Renderer = &4;
+    Size = (62, 17);
+    Text = "Chat Box";
+    TextSize = 13;
+}
+
+Label.Label3 {
+    AutoSize = true;
+    Position = (670, 370);
+    Renderer = &4;
+    Size = (107, 17);
+    Text = "Scrollable panel";
+    TextSize = 13;
+}
+
+Label.Label4 {
+    AutoSize = true;
+    Position = (140, 590);
+    Renderer = &4;
+    Size = (84, 17);
+    Text = "Radio Check";
+    TextSize = 13;
+}
+
+Label.Label5 {
+    AutoSize = true;
+    Position = (130, 770);
+    Renderer = &4;
+    Size = (93, 17);
+    Text = "Toggle Button";
+    TextSize = 13;
+}

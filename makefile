@@ -25,7 +25,7 @@ LINKERFLAGS=$(LIBS) \
 			-l:CommandPrompt.a -l:CommandHandler.a \
 			-l:TFuncDisplay.a -l:VarDisplay.a -l:LiveVar.a \
 			-l:iniParser.a -l:Log.a \
-			-l:EventHelper.a -l:StringHelper.a -l:TerminatingFunction.a \
+			-l:EventHelper.a -l:TerminatingFunction.a -l:StringHelper.a \
 			# -mwindows
 
 # the directory for lib files
