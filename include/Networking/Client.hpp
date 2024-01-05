@@ -52,10 +52,10 @@ class Client : public SocketPlus
         // the server has not responded yet
         bool WasIncorrectPassword();
         void setAndSendPassword(std::string password);
-        void sendPasswordToServer();
+        void sendPasswordToServer(); // TODO put this into connect to server
         // attempts to connect to the given server while handling the thread through fail and successful
         // true for successful send of connection attempt (DOES NOT MEAN THERE IS A CONNECTION CONFIRMATION)
-        bool ConnectToServer(funcHelper::func<void> customPacketSendFunction);
+        bool ConnectToServer(funcHelper::func<void> customPacketSendFunction); // TODO rename to open connection
         void setServerData(sf::IpAddress serverIP, Port serverPort);
         void setServerData(sf::IpAddress serverIP);
         void setServerData(Port port);

@@ -1,6 +1,7 @@
 #include "include/Networking/SocketUI.hpp"
 
-SocketUI::SocketUI(Port serverPort) : _client(sf::IpAddress::LocalHost, serverPort), _server(serverPort) {}
+SocketUI::SocketUI(Port serverPort, funcHelper::func<void> serverCustomPacketSendFunction, funcHelper::func<void> clientCustomPacketSendFunction) : 
+    _client(sf::IpAddress::LocalHost, serverPort), _server(serverPort), _sSendFunc(serverCustomPacketSendFunction), _cSendFunc(clientCustomPacketSendFunction) {}
 
 SocketUI::~SocketUI()
 {
@@ -30,7 +31,7 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
     _tryOpenConnection->onClick([this](){
         TFunc::Add([this](TData* data){
             if (this->getClient()->NeedsPassword())
-                this->UpdateConnectionDisplay();
+                this->updateConnectionDisplay();
             else if (!this->isServer() && !this->getClient()->isConnectionOpen())
                 data->setRunning();
         });
@@ -44,11 +45,11 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
     _panel->setSize({"100%", "100%"});
 
     //* Updating which widgets to show
-    _serverCheck->onCheck([this](){ _clientCheck->setChecked(false); UpdateConnectionDisplay(); });
-    _serverCheck->onUncheck([this](){ this->resetUIConnectionStates(); UpdateConnectionDisplay(); });
-    _clientCheck->onCheck([this](){ _serverCheck->setChecked(false); UpdateConnectionDisplay(); });
-    _clientCheck->onUncheck([this](){ this->resetUIConnectionStates(); UpdateConnectionDisplay(); });
-    _passCheck->onChange(UpdateConnectionDisplay, this);
+    _serverCheck->onCheck([this](){ _clientCheck->setChecked(false); updateConnectionDisplay(); });
+    _serverCheck->onUncheck([this](){ this->resetUIConnectionStates(); updateConnectionDisplay(); });
+    _clientCheck->onCheck([this](){ _serverCheck->setChecked(false); updateConnectionDisplay(); });
+    _clientCheck->onUncheck([this](){ this->resetUIConnectionStates(); updateConnectionDisplay(); });
+    _passCheck->onChange(updateConnectionDisplay, this);
     _passEdit->onTextChange([this](){ 
         if (this->_socket != nullptr)
         {
@@ -95,13 +96,30 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
                 }
                 tempThread->detach();
                 delete(tempThread); //! bad as all functions could be cleared and thread will never be removed
-                this->UpdateConnectionDisplay();
+                this->updateConnectionDisplay();
             });
-            this->UpdateConnectionDisplay();
+            this->updateConnectionDisplay();
         } 
     });
 
-    UpdateConnectionDisplay();
+    _tryOpenConnection->onClick([this](){
+        if (this->isConnectionOpen())
+        {
+            this->closeConnection();
+        }
+        else
+        {
+            this->tryOpenConnection();
+        }
+        this->updateConnectionDisplay();
+    });
+
+    _sendPassword->onClick([this](){
+        this->tryOpenConnection();
+        this->updateConnectionDisplay();
+    });
+
+    updateConnectionDisplay();
 }
 
 void SocketUI::closeConnectionDisplay()
@@ -198,9 +216,9 @@ SocketPlus* SocketUI::getSocket()
     return &_client;    
 }
 
-void SocketUI::update()
+void SocketUI::updateInfoDisplay()
 {
-    if (_socket == nullptr) return;
+    if (isEmpty()) return;
     _list->changeItem(5, {"Connection Open Time", std::to_string(_socket->getConnectionTime())});
     _list->changeItem(6,{"Packets Stored", std::to_string(_socket->DataPackets.size())});
 
@@ -313,7 +331,7 @@ void SocketUI::setEmpty()
     _socket = nullptr;
 }
 
-void SocketUI::UpdateConnectionDisplay()
+void SocketUI::updateConnectionDisplay()
 {
     _panel->removeAllWidgets();
 
@@ -390,4 +408,36 @@ void SocketUI::resetUIConnectionStates()
     _passCheck->setChecked(false);
     _passEdit->setText("");
     _IPEdit->setText("");
+}
+
+void SocketUI::tryOpenConnection()
+{
+    if (!isEmpty() && isServer())
+    {
+        if (_passCheck->isChecked())
+            _server.RequirePassword(true, _passEdit->getText().toStdString());
+        else
+            _server.RequirePassword(false);
+        _server.openServer(_sSendFunc);
+    }
+    else
+    {
+        if (_client.NeedsPassword())
+        {
+            _client.ConnectToServer(_cSendFunc);
+        }
+        else
+        {
+            _client.setPassword(_passEdit->getText().toStdString());
+            _client.sendPasswordToServer(); 
+        }
+    }
+}
+
+void SocketUI::closeConnection()
+{
+    _server.CloseServer();
+    _client.Disconnect();
+    resetUIConnectionStates();
+    _socket = nullptr;
 }

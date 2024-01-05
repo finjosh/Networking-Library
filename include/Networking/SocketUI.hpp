@@ -24,7 +24,7 @@ class SocketUI
 {
 public:
 
-    SocketUI(Port serverPort);
+    SocketUI(Port serverPort, funcHelper::func<void> serverCustomPacketSendFunction, funcHelper::func<void> clientCustomPacketSendFunction);
     ~SocketUI();
 
     /// @brief creates the UI for opening a server or client connection
@@ -59,7 +59,7 @@ public:
     // void setServer(bool server);
 
     /// @brief call this every frame
-    void update();
+    void updateInfoDisplay();
 
 protected:
     void initData();
@@ -71,7 +71,7 @@ protected:
     void setEmpty();
 
     //* Functions for updating the UI in the connection parent
-    void UpdateConnectionDisplay();
+    void updateConnectionDisplay();
     /// @brief adds the given widget to the connection display with proper spacing
     /// @param indent the number of indents to move the widget by
     /// @param spacing the space from the last widget
@@ -79,6 +79,10 @@ protected:
     void addWidgetToConnection(tgui::Widget::Ptr widgetPtr, float indent = 0, float spacing = 10);
     /// @brief resets the state of the checkboxes, edit boxes, and buttons
     void resetUIConnectionStates();
+
+    /// @brief tries to open connection with the current data
+    void tryOpenConnection();
+    void closeConnection();
 
 private:
 
@@ -102,14 +106,18 @@ private:
     tgui::EditBox::Ptr _passEdit;
     tgui::EditBox::Ptr _IPEdit;
     tgui::Label::Ptr _IPState;
+    // Open / close connection
     tgui::Button::Ptr _tryOpenConnection;
     tgui::Button::Ptr _sendPassword;
     tgui::ScrollablePanel::Ptr _panel;
 
     SocketPlus* _socket = nullptr;
     Server _server;
+    funcHelper::func<void> _sSendFunc;
     Client _client;
+    funcHelper::func<void> _cSendFunc;
     bool _isServer = false;
+
 };
 
 #endif

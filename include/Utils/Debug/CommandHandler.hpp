@@ -13,7 +13,6 @@
 
 namespace Command
 {
-
 /// @brief 4 space string
 #define TAB_STR "    "
 #define Tokens std::vector<std::string>
@@ -21,14 +20,27 @@ namespace Command
 struct color
 {
     /// @brief default color is white 
-    inline color(uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255) :
+    inline color(uint8_t r = _default_text_color.r, uint8_t g = _default_text_color.g, uint8_t b = _default_text_color.b, uint8_t a = _default_text_color.a) :
         r(r), b(b), g(g), a(a)
     {}
+
+    inline static void setDefaultColor(const color& color)
+    {
+        _default_text_color = color;
+    }
+
+    inline static color getDefaultColor()
+    {
+        return _default_text_color;
+    }
 
     uint8_t r;
     uint8_t g;
     uint8_t b;
     uint8_t a;
+
+protected:
+    static color _default_text_color;
 };
 
 const color WARNING_COLOR = color(255,164,0,255);

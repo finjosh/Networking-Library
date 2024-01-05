@@ -31,7 +31,7 @@ public:
 
     /// @brief only prints to the command prompt IF the command prompt is set to true
     /// @note setting command prompt to allow prints is only done through the command prompt its self during runtime
-    static void print(const std::string& str, const Command::color& color = Command::color(255,255,255,255));
+    static void print(const std::string& str, const Command::color& color = Command::color());
 
     static bool isPrintAllowed();
 

@@ -20,6 +20,7 @@
 #include "SFML/Graphics/RenderWindow.hpp"
 
 //! Edit this to change the alternating color of the vars
+const std::string DEFAULT_COLOR = "#FFFFFF";
 const std::string ALT_COLOR = "#999999";
 
 /**

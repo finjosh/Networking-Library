@@ -5,6 +5,7 @@
 
 #include "SocketPlus.hpp"
 
+// TODO Update all names for camel case
 class Server : public SocketPlus
 {
     private:  
