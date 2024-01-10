@@ -32,7 +32,7 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
         TFunc::Add([this](TData* data){
             if (this->getClient()->NeedsPassword())
                 this->updateConnectionDisplay();
-            else if (!this->isServer() && !this->getClient()->isConnectionOpen())
+            else if (!this->isServer() && !this->isEmpty() && !this->getClient()->isConnectionOpen())
                 data->setRunning();
         });
     });
@@ -119,6 +119,12 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
         this->updateConnectionDisplay();
     });
 
+    _server.onServerOpened(&SocketUI::updateConnectionDisplay, this);
+    _server.onServerClosed(&SocketUI::resetUIConnectionStates, this);
+    _client.onConnectionConfirmed(&SocketUI::updateConnectionDisplay, this);
+    _client.onConnectionClosed(&SocketUI::updateConnectionDisplay, this);
+    _client.onConnectionClosed(&SocketUI::resetUIConnectionStates, this);
+
     updateConnectionDisplay();
 }
 
@@ -159,6 +165,9 @@ void SocketUI::initInfoDisplay(tgui::Gui& gui)
 
     _clientData = tgui::TreeView::create();
     _infoParent->add(_clientData);
+
+    _server.onServerOpened(&SocketUI::initData, this);
+    _client.onConnectionConfirmed(&SocketUI::initData, this);
 
     _infoParent->onSizeChange(updateUISize, this);
     updateUISize();
@@ -216,9 +225,10 @@ SocketPlus* SocketUI::getSocket()
     return &_client;    
 }
 
+// TODO update this to use more evert instead of updates
 void SocketUI::updateInfoDisplay()
 {
-    if (isEmpty()) return;
+    if (isEmpty() || !isConnectionOpen()) return;
     _list->changeItem(5, {"Connection Open Time", std::to_string(_socket->getConnectionTime())});
     _list->changeItem(6,{"Packets Stored", std::to_string(_socket->DataPackets.size())});
 
@@ -242,11 +252,10 @@ void SocketUI::updateInfoDisplay()
                 _clientData->addItem({"Client Data", id, {"Packets/s: " + std::to_string(data.second.PacketsPerSecond)}});
                 _clientData->addItem({"Client Data", id, {"Last packet (s): " + std::to_string(data.second.TimeSinceLastPacket)}});
                 _clientData->addItem({"Client Data", id, {"Connection Time (s): " + std::to_string(data.second.ConnectionTime)}});
-            }
+            } 
             else
             {
-                _clientData->changeItem({"Client Data", id}, {"IP: " + sf::IpAddress(data.second.id).toString()});
-                _clientData->changeItem({"Client Data", id}, {"Port: " + std::to_string(data.second.port)});
+                // std::string temp = _clientData->getNodes().
                 _clientData->changeItem({"Client Data", id}, {"Packets/s: " + std::to_string(data.second.PacketsPerSecond)});
                 _clientData->changeItem({"Client Data", id}, {"Last packet (s): " + std::to_string(data.second.TimeSinceLastPacket)});
                 _clientData->changeItem({"Client Data", id}, {"Connection Time (s): " + std::to_string(data.second.ConnectionTime)});
@@ -254,11 +263,13 @@ void SocketUI::updateInfoDisplay()
         }
         for (auto data: _server.newClientIDs)
         {
-            _clientData->addItem({"New Client IDs", {std::to_string(data)}});
+            _clientData->changeItem({"New Client IDs (" + std::to_string(_server.newClientIDs.size()-1) + ")"}, "New Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")");
+            _clientData->addItem({"New Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")", {std::to_string(data)}});
         }
         for (auto data: _server.deletedClientIDs)
         {
-            _clientData->addItem({"Deleted Client IDs", {std::to_string(data)}});
+            _clientData->changeItem({"Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()-1) + ")"}, "Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()) + ")");
+            _clientData->addItem({"Deleted Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")", {std::to_string(data)}});
         }
         // _clientData->setVerticalScrollbarValue(scroll);
     }
@@ -377,7 +388,10 @@ void SocketUI::updateConnectionDisplay()
             addWidgetToConnection(_sendPassword);
         }
 
-        _tryOpenConnection->setText("Try Connect");
+        if (_client.isConnectionOpen()) // need to check here as the connection confirmation can take time
+            _tryOpenConnection->setText("Disconnect");
+        else
+            _tryOpenConnection->setText("Try Connect");
         addWidgetToConnection(_tryOpenConnection, 1);
     }
     else
@@ -422,14 +436,13 @@ void SocketUI::tryOpenConnection()
     }
     else
     {
-        if (_client.NeedsPassword())
+        if (!_client.NeedsPassword())
         {
             _client.ConnectToServer(_cSendFunc);
         }
         else
         {
-            _client.setPassword(_passEdit->getText().toStdString());
-            _client.sendPasswordToServer(); 
+            _client.setAndSendPassword(_passEdit->getText().toStdString());
         }
     }
 }
