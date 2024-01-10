@@ -170,7 +170,7 @@ bool SocketPlus::isReceivingPackets()
 }
 
 bool SocketPlus::isSendingPackets()
-{ return _sendingPackets; }
+{ return _sendingPackets && _connectionOpen; }
 
 bool SocketPlus::NeedsPassword()
 { return this->_needsPassword; }

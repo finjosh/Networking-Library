@@ -14,7 +14,10 @@
 #include "include/Utils/Debug/CommandHandler.hpp"
 #include "include/Utils/StringHelper.hpp"
 
-class CommandPrompt
+namespace Command
+{
+
+class Prompt
 {
 public:
     /// @brief initializes the command prompt UI with the given tgui::Gui
@@ -58,7 +61,7 @@ protected:
     static void _close(bool* abortTguiClose);
 
 private:
-    inline CommandPrompt() = default;
+    inline Prompt() = default;
 
     static tgui::ChildWindow::Ptr _parent;
     static tgui::EditBox::Ptr _textBox;
@@ -73,5 +76,7 @@ private:
     static tgui::Layout2d _parentSize;
     static tgui::Layout2d _parentPos;
 };
+
+}
 
 #endif

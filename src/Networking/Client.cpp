@@ -251,7 +251,7 @@ void Client::thread_update(std::stop_token stoken, funcHelper::func<void> custom
             _timeSinceLastPacket += deltaTime;
         }
         if (_timeSinceLastPacket >= _clientTimeoutTime) { this->Disconnect(); this->onConnectionClosed.invoke(_threadSafeEvents); }
-        if (_sendingPackets) customPacketSendFunction();
+        if (_sendingPackets) customPacketSendFunction.invoke();
         updateLimit.wait();
     }
 }

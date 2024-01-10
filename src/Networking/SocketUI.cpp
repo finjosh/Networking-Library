@@ -167,6 +167,7 @@ void SocketUI::initInfoDisplay(tgui::Gui& gui)
     _infoParent->add(_clientData);
 
     _server.onServerOpened(&SocketUI::initData, this);
+    _server.onServerClosed(&SocketUI::initData, this);
     _client.onConnectionConfirmed(&SocketUI::initData, this);
 
     _infoParent->onSizeChange(updateUISize, this);
@@ -237,29 +238,29 @@ void SocketUI::updateInfoDisplay()
     {
         _clientData->setVisible(true);
         _clientData->setEnabled(true);
-        // auto scroll = _clientData->getVerticalScrollbarValue();
-        // _clientData->removeAllItems();
-        // _clientData->addItem({"Client Data"});
-        // _clientData->addItem({"New Client IDs"});
-        // _clientData->addItem({"Deleted Client IDs"});
+        auto scroll = _clientData->getVerticalScrollbarValue();
+        _clientData->removeAllItems();
+        _clientData->addItem({"Client Data"});
+        _clientData->addItem({"New Client IDs"});
+        _clientData->addItem({"Deleted Client IDs"});
         for (auto data: _server.getClients())
         {
             tgui::String id(data.first);
-            if (_clientData->addItem({"Client Data", id}, false))
-            {
+            // if (_clientData->addItem({"Client Data", id}, false))
+            // {
                 _clientData->addItem({"Client Data", id, {"IP: " + sf::IpAddress(data.second.id).toString()}});
                 _clientData->addItem({"Client Data", id, {"Port: " + std::to_string(data.second.port)}});
                 _clientData->addItem({"Client Data", id, {"Packets/s: " + std::to_string(data.second.PacketsPerSecond)}});
                 _clientData->addItem({"Client Data", id, {"Last packet (s): " + std::to_string(data.second.TimeSinceLastPacket)}});
                 _clientData->addItem({"Client Data", id, {"Connection Time (s): " + std::to_string(data.second.ConnectionTime)}});
-            } 
-            else
-            {
-                // std::string temp = _clientData->getNodes().
-                _clientData->changeItem({"Client Data", id}, {"Packets/s: " + std::to_string(data.second.PacketsPerSecond)});
-                _clientData->changeItem({"Client Data", id}, {"Last packet (s): " + std::to_string(data.second.TimeSinceLastPacket)});
-                _clientData->changeItem({"Client Data", id}, {"Connection Time (s): " + std::to_string(data.second.ConnectionTime)});
-            }
+            // } 
+            // else
+            // {
+            //     // std::string temp = _clientData->getNodes().
+            //     _clientData->changeItem({"Client Data", id}, {"Packets/s: " + std::to_string(data.second.PacketsPerSecond)});
+            //     _clientData->changeItem({"Client Data", id}, {"Last packet (s): " + std::to_string(data.second.TimeSinceLastPacket)});
+            //     _clientData->changeItem({"Client Data", id}, {"Connection Time (s): " + std::to_string(data.second.ConnectionTime)});
+            // }
         }
         for (auto data: _server.newClientIDs)
         {
@@ -271,7 +272,7 @@ void SocketUI::updateInfoDisplay()
             _clientData->changeItem({"Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()-1) + ")"}, "Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()) + ")");
             _clientData->addItem({"Deleted Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")", {std::to_string(data)}});
         }
-        // _clientData->setVerticalScrollbarValue(scroll);
+        _clientData->setVerticalScrollbarValue(scroll);
     }
     else
     {

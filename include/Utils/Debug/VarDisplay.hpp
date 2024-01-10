@@ -19,10 +19,6 @@
 
 #include "SFML/Graphics/RenderWindow.hpp"
 
-//! Edit this to change the alternating color of the vars
-const std::string DEFAULT_COLOR = "#FFFFFF";
-const std::string ALT_COLOR = "#999999";
-
 /**
  * @brief auto adds any var that is made in live var and auto updates when that var is changed
 */

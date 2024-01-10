@@ -372,7 +372,7 @@ void Server::thread_update(std::stop_token stoken, funcHelper::func<void> custom
             }
         }
         
-        if (_sendingPackets) customPacketSendFunction();
+        if (_sendingPackets) customPacketSendFunction.invoke();
         
         updateLimit.wait();
     }

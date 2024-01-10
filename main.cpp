@@ -32,7 +32,7 @@ int main()
     Command::color::setDefaultColor({255,255,255,255});
     // -----------------------
 
-    SocketUI sDisplay(50001, {}, {});
+    SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->SendToAll(SocketPlus::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->SendToServer(SocketPlus::DataPacketTemplate() << "Some Data"); }});
     // sDisplay.init(gui);
     // sDisplay.setSocket(server);
     sDisplay.initConnectionDisplay(gui);
@@ -44,13 +44,13 @@ int main()
     // creates the UI for the VarDisplay
     VarDisplay::init(gui); 
     // creates the UI for the CommandPrompt
-    CommandPrompt::init(gui);
+    Command::Prompt::init(gui);
     addThemeCommands();
     // create the UI for the TFuncDisplay
     TFuncDisplay::init(gui);
     
     TFuncDisplay::setVisible();
-    CommandPrompt::setVisible();
+    Command::Prompt::setVisible();
 
     //! ---------------------------------------------------
     
@@ -68,7 +68,7 @@ int main()
 
             //! Required for LiveVar and CommandPrompt to work as intended
             LiveVar::UpdateLiveVars(event);
-            CommandPrompt::UpdateEvent(event);
+            Command::Prompt::UpdateEvent(event);
             //! ----------------------------------------------------------
 
             if (event.type == sf::Event::Closed)
@@ -99,7 +99,7 @@ int main()
 
     //! Required so that VarDisplay and CommandPrompt release all data
     VarDisplay::close();
-    CommandPrompt::close();
+    Command::Prompt::close();
     TFuncDisplay::close();
     //! --------------------------------------------------------------
 

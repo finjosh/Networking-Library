@@ -80,7 +80,7 @@ class SocketPlus : protected sf::UdpSocket
             std::jthread* _receive_thread = nullptr;
             // sending/updating thread
             std::jthread* _update_thread = nullptr;
-            bool _sendingPackets = false;
+            bool _sendingPackets = true;
             // in updates/second
             unsigned int _socketUpdateRate = 64;
 
