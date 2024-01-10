@@ -14,7 +14,7 @@ using namespace std;
 using namespace sf;
 
 void addThemeCommands();
-
+// TODO UPDATE NETWORKING CLASSES
 int main()
 {
     //! If you want Terminating functions to be attached to the CommandHandler you need to call the initializer
