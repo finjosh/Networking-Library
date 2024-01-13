@@ -30,7 +30,7 @@ void Server::CloseServer()
     sf::Packet closeConnection = this->ConnectionCloseTemplate();
     this->SendToAll(closeConnection);
 
-    if (_ssource != nullptr) _ssource->request_stop();
+    if (_sSource != nullptr) _sSource->request_stop();
     if (_update_thread != nullptr)
     {
         _update_thread->join();
@@ -43,8 +43,8 @@ void Server::CloseServer()
         delete(_receive_thread);
         _receive_thread = nullptr;
         this->close();
-        delete(_ssource);
-        _ssource = nullptr;
+        delete(_sSource);
+        _sSource = nullptr;
     }
     this->close();
 
@@ -382,10 +382,10 @@ void Server::StartThreads(funcHelper::func<void> customPacketSendFunction)
 {
     if (!this->isReceivingPackets())
     {
-        _ssource = new std::stop_source;
-        _receive_thread = new std::jthread{Server::thread_receive_packets, this, _ssource->get_token()};
+        _sSource = new std::stop_source;
+        _receive_thread = new std::jthread{Server::thread_receive_packets, this, _sSource->get_token()};
     }
-    if (_update_thread == nullptr) _update_thread = new std::jthread{Server::thread_update, this, _ssource->get_token(), customPacketSendFunction};
+    if (_update_thread == nullptr) _update_thread = new std::jthread{Server::thread_update, this, _sSource->get_token(), customPacketSendFunction};
 }
 
 std::unordered_map<ID, ClientData>& Server::getClients()

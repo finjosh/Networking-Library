@@ -38,8 +38,8 @@ class Client : public SocketPlus
 
             EventHelper::Event onWrongPassword;
             EventHelper::Event onPasswordRequest;
-            EventHelper::Event onConnectionConfirmed;
-            EventHelper::Event onConnectionClosed;
+            EventHelper::Event onConnectionConfirmed; // TODO remove these
+            EventHelper::Event onConnectionClosed; // TODO remove these
 
         // -------
 

@@ -16,7 +16,7 @@
 #include "include/Utils/EventHelper.hpp"
 #include "include/Utils/UpdateLimiter.hpp"
 
-//! TODO UPDATE ALL "cerr" outputs to a error 
+//! TODO UPDATE ALL "cerr" outputs to a error
 
 // ID = Uint32
 typedef sf::Uint32 ID;
@@ -42,8 +42,8 @@ struct DataPacket
     DataPacket() = default;
     inline ~DataPacket()
     {
-        bool endPacket = packet.endOfPacket();
-        int dataSize = packet.getDataSize();
+        // bool endPacket = packet.endOfPacket();
+        // int dataSize = packet.getDataSize();
         // TODO packet crashing 
         // check if the packet is not being destroyed properly
         this->packet.clear();
@@ -75,7 +75,7 @@ class SocketPlus : protected sf::UdpSocket
         //* thread variables
 
             // stop source is universal
-            std::stop_source* _ssource = nullptr;
+            std::stop_source* _sSource = nullptr;
             // receiving thread
             std::jthread* _receive_thread = nullptr;
             // sending/updating thread
@@ -93,8 +93,8 @@ class SocketPlus : protected sf::UdpSocket
                 // although pure virtual functions increase the time it takes for the function to be called it would be so minimal
                 // it does not matter for this project
                 
-                virtual void thread_receive_packets(std::stop_token stoken) = 0;
-                virtual void thread_update(std::stop_token stoken, funcHelper::func<void> customPacketSendFunction) = 0;
+                virtual void thread_receive_packets(std::stop_token sToken) = 0;
+                virtual void thread_update(std::stop_token sToken, funcHelper::func<void> customPacketSendFunction) = 0;
 
             // -----------------------
 
@@ -104,8 +104,17 @@ class SocketPlus : protected sf::UdpSocket
 
         //* Event stuff
             
-            EventHelper::Event onDataReceived;
-            EventHelper::Event onUpdateRateChanged;
+            EventHelper::Event onDataReceived; // TODO give the data that was received
+            EventHelper::Event onUpdateRateChanged; // TODO give the new update rate
+            EventHelper::EventDynamic<Port> onPortChanged; // TODO implement this
+            /// @brief optional param string (new password)
+            EventHelper::EventDynamic<std::string> onPasswordChanged; // TODO implement this
+            /// @note Server -> Open 
+            /// @note Client -> Connected
+            EventHelper::Event onConnectionOpen; // TODO implement this
+            /// @note Server -> Closed 
+            /// @note Client -> Disconnected
+            EventHelper::Event onConnectionClose; // TODO implement this
 
             /// @brief will determine if events are called in thread safe mode
             /// @param threadSafe Default true
@@ -194,15 +203,12 @@ class SocketPlus : protected sf::UdpSocket
             bool NeedsPassword();
             /// @brief Checks if the given ipAddress is valid
             /// @note if it is invalid program will freeze for a few seconds
-            /// @note something to do with SFML's implementation of "IpAddress"
             static bool isValidIpAddress(sf::IpAddress ipAddress);
             /// @brief Checks if the given ipAddress is valid
             /// @note if it is invalid program will freeze for a few seconds
-            /// @note something to do with SFML's implementation of "IpAddress"
             static bool isValidIpAddress(sf::Uint32 ipAddress);
             /// @brief Checks if the given ipAddress is valid
             /// @note if it is invalid program will freeze for a few seconds
-            /// @note something to do with SFML's implementation of "IpAddress"
             static bool isValidIpAddress(std::string ipAddress);
 
         // ---------------------------
@@ -210,8 +216,8 @@ class SocketPlus : protected sf::UdpSocket
         //* Other Useful functions
 
             void ClearDataPackets();
-            // @warning try to avoid using this function by deleting a packet once you use it
-            // (very inefficient if used often with lots of data packets)
+            /// @warning try to avoid using this function by deleting a packet once you use it
+            /// @note very inefficient if used often with lots of data packets
             void ClearEmptyPackets();
 
         // ------------------------

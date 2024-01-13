@@ -36,13 +36,13 @@ bool Client::ConnectToServer(funcHelper::func<void> customPacketSendFunction)
     {
         if (!this->isReceivingPackets())
         {
-            delete(_ssource);
-            _ssource = nullptr;
-            _ssource = new std::stop_source;
+            delete(_sSource);
+            _sSource = nullptr;
+            _sSource = new std::stop_source;
             this->bind(Socket::AnyPort);
-            _receive_thread = new std::jthread{thread_receive_packets, this, _ssource->get_token()};
+            _receive_thread = new std::jthread{thread_receive_packets, this, _sSource->get_token()};
         }
-        if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _ssource->get_token(), customPacketSendFunction};
+        if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token(), customPacketSendFunction};
     }
 
     if (_serverIP == sf::IpAddress::LocalHost) _ip = sf::IpAddress::LocalHost.toInteger();
@@ -260,7 +260,7 @@ void Client::StopThreads()
 {
     if (_update_thread != nullptr)
     {
-        _ssource->request_stop();
+        _sSource->request_stop();
         _update_thread->detach();
         delete(_update_thread);
         _update_thread = nullptr;

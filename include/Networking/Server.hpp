@@ -42,8 +42,8 @@ class Server : public SocketPlus
 
                 EventHelper::Event onClientConnected;
                 EventHelper::Event onClientDisconnected;
-                EventHelper::Event onServerClosed;
-                EventHelper::Event onServerOpened;
+                EventHelper::Event onServerClosed; // TODO remove these
+                EventHelper::Event onServerOpened; // TODO remove these
 
             // -------
         

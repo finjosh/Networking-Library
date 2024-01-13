@@ -10,7 +10,7 @@ SocketPlus::SocketPlus()
 
 SocketPlus::~SocketPlus()
 {   
-    if (_ssource != nullptr) _ssource->request_stop();
+    if (_sSource != nullptr) _sSource->request_stop();
     if (_receive_thread != nullptr) 
     {
         _receive_thread->detach();
@@ -21,7 +21,7 @@ SocketPlus::~SocketPlus()
     }
     delete(_receive_thread);
     delete(_update_thread);
-    delete(_ssource);
+    delete(_sSource);
     this->close();
 }
 
