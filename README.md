@@ -10,10 +10,10 @@ Tested with:
 SFML:
   - Version: 2.6.1
 
-<!-- ### ([TGUI](https://tgui.eu/)) -->
+### ([TGUI](https://tgui.eu/))
 
-<!-- TGUI is used for the 
+TGUI is used for the Socket UI and Connection Display which are not required for the networking library to work
 
 TGUI:
-  - Version: 1.1 -->
+  - Version: 1.x dev build from 1/13/2024
 

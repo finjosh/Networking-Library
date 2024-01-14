@@ -57,7 +57,7 @@ int main()
     sf::Clock deltaClock;
     while (window.isOpen())
     {
-        EventHelper::ThreadSafeEvent::update();
+        EventHelper::Event::ThreadSafe::update();
         window.clear();
         // updating the delta time var
         sf::Time deltaTime = deltaClock.restart();

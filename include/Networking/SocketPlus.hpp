@@ -109,10 +109,10 @@ class SocketPlus : protected sf::UdpSocket
             EventHelper::EventDynamic<Port> onPortChanged; // TODO implement this
             /// @brief optional param string (new password)
             EventHelper::EventDynamic<std::string> onPasswordChanged; // TODO implement this
-            /// @note Server -> Open 
-            /// @note Client -> Connected
+            /// @note Server -> Open
+            /// @note Client -> Connection Confirmed
             EventHelper::Event onConnectionOpen; // TODO implement this
-            /// @note Server -> Closed 
+            /// @note Server -> Closed
             /// @note Client -> Disconnected
             EventHelper::Event onConnectionClose; // TODO implement this
 
