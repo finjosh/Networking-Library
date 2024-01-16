@@ -72,7 +72,7 @@ void Server::SendToAll(sf::Packet& packet)
     for (auto& c: _clientData)
     {
         if (this->send(packet, sf::IpAddress((IP)c.first), c.second.port))
-            std::cerr << "ERROR - Server.h (Could not send packet to all client data)" << std::endl;
+            throw std::runtime_error("ERROR - Server.h (Could not send packet to all client data)");
     }
 }
 
@@ -86,7 +86,7 @@ void Server::SendTo(sf::Packet& packet, ID id)
         if (temp == &_clientData.end()->second) return;
         
         if (this->send(packet, sf::IpAddress((IP)id), temp->port))
-            std::cerr << "ERROR - Could not send packet to client" << std::endl;
+            throw std::runtime_error("ERROR - Could not send packet to client");
     }
 }
 
@@ -105,7 +105,7 @@ bool Server::isConnectionRequest(sf::Packet& packet, sf::IpAddress senderIPAddre
         {
             sf::Packet needPassword = this->PasswordRequestPacket();
             if (this->send(needPassword, senderIPAddress, senderPort) != Socket::Done) 
-                std::cerr << "ERROR - could not send password request" << std::endl;
+                throw std::runtime_error("ERROR - could not send password request");
         }
         else
         {
@@ -192,7 +192,7 @@ bool Server::isPassword(sf::Packet& packet, sf::IpAddress senderIPAddress, unsig
             sf::Packet wrongPassword;
             wrongPassword = this->WrongPasswordPacket();
             if (this->send(wrongPassword, senderIPAddress, senderPort)) 
-                std::cerr << "ERROR - could not send request for password" << std::endl;
+                throw std::runtime_error("ERROR - could not send request for password");
         }
     }
 
@@ -255,7 +255,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
         if (receiveStatus == sf::Socket::Error)
         {
             if (stoken.stop_requested()) break;
-            std::cerr << "ERROR - receiving packet" << std::endl;
+            throw std::runtime_error("ERROR - receiving packet");
             // restarting the socket
             this->unbind();
             this->close();
@@ -294,14 +294,14 @@ void Server::thread_receive_packets(std::stop_token stoken)
                     // this->DataPackets.push_back(DataPacket(packet));
                     sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
                     if (this->send(Confirmation, senderIP, senderPort))
-                        std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
+                        throw std::runtime_error("ERROR - could not send ID Assign packet");
                     this->onClientConnected.invoke(_threadSafeEvents);
                 }
                 else
                 {
                     sf::Packet needPassword = this->PasswordRequestPacket();
                     if (this->send(needPassword, senderIP, senderPort) != Socket::Done) 
-                        std::cerr << "ERROR - could not send password request" << std::endl;
+                        throw std::runtime_error("ERROR - could not send password request");
                 }
             }
         }
@@ -309,7 +309,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
         {
             sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
             if (this->send(Confirmation, senderIP, senderPort))
-                std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
+                throw std::runtime_error("ERROR - could not send ID Assign packet");
             this->onClientConnected.invoke(_threadSafeEvents);
         }
         else if (this->isConnectionClose(packet, senderIP, senderPort))
@@ -320,7 +320,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
         {
             sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
             if (this->send(Confirmation, senderIP, senderPort))
-                std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
+                throw std::runtime_error("ERROR - could not send ID Assign packet");
             this->onClientConnected.invoke(_threadSafeEvents);
         }
 

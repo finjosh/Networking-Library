@@ -25,7 +25,7 @@ void Client::setAndSendPassword(std::string password)
 void Client::sendPasswordToServer()
 {
     sf::Packet temp = this->PasswordPacket(_password);
-        if (this->send(temp, _serverIP, _serverPort)) std::cerr << "could not send password to host" << std::endl;
+        if (this->send(temp, _serverIP, _serverPort)) throw std::runtime_error("could not send password to host");
 }
 
 bool Client::ConnectToServer(funcHelper::func<void> customPacketSendFunction)
@@ -76,7 +76,7 @@ void Client::setServerData(Port port)
 void Client::SendToServer(sf::Packet& packet)
 {
     if (this->send(packet, _serverIP, _serverPort))
-        std::cerr << "ERROR - could not send packet to the server" << std::endl;
+        throw std::runtime_error("ERROR - could not send packet to the server");
 }
 
 bool Client::isData(sf::Packet& packet)
@@ -189,7 +189,7 @@ void Client::thread_receive_packets(std::stop_token stoken)
         if (receiveStatus == sf::Socket::Error)
         {
             if (stoken.stop_requested()) break;
-            std::cerr << "ERROR - receiving packet" << std::endl;
+            throw std::runtime_error("ERROR - receiving packet");
             // restarting the socket
             this->unbind();
             this->close();

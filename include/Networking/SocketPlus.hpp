@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <stdexcept>
 #include <iostream>
 #include <thread>
 #include <list>
@@ -15,8 +16,6 @@
 #include "include/Utils/funcHelper.hpp"
 #include "include/Utils/EventHelper.hpp"
 #include "include/Utils/UpdateLimiter.hpp"
-
-//! TODO UPDATE ALL "cerr" outputs to a error
 
 // ID = Uint32
 typedef sf::Uint32 ID;
