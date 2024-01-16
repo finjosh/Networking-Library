@@ -119,11 +119,11 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
         this->updateConnectionDisplay();
     });
 
-    _server.onServerOpened(&SocketUI::updateConnectionDisplay, this);
-    _server.onServerClosed(&SocketUI::resetUIConnectionStates, this);
-    _client.onConnectionConfirmed(&SocketUI::updateConnectionDisplay, this);
-    _client.onConnectionClosed(&SocketUI::updateConnectionDisplay, this);
-    _client.onConnectionClosed(&SocketUI::resetUIConnectionStates, this);
+    _server.onConnectionOpen(&SocketUI::updateConnectionDisplay, this);
+    _server.onConnectionClose(&SocketUI::resetUIConnectionStates, this);
+    _client.onConnectionOpen(&SocketUI::updateConnectionDisplay, this);
+    _client.onConnectionClose(&SocketUI::updateConnectionDisplay, this);
+    _client.onConnectionClose(&SocketUI::resetUIConnectionStates, this);
 
     updateConnectionDisplay();
 }
@@ -166,9 +166,9 @@ void SocketUI::initInfoDisplay(tgui::Gui& gui)
     _clientData = tgui::TreeView::create();
     _infoParent->add(_clientData);
 
-    _server.onServerOpened(&SocketUI::initData, this);
-    _server.onServerClosed(&SocketUI::initData, this);
-    _client.onConnectionConfirmed(&SocketUI::initData, this);
+    _server.onConnectionOpen(&SocketUI::initData, this);
+    _server.onConnectionClose(&SocketUI::initData, this);
+    _client.onConnectionOpen(&SocketUI::initData, this);
 
     _infoParent->onSizeChange(updateUISize, this);
     updateUISize();
@@ -231,7 +231,7 @@ void SocketUI::updateInfoDisplay()
 {
     if (isEmpty() || !isConnectionOpen()) return;
     _list->changeItem(5, {"Connection Open Time", std::to_string(_socket->getConnectionTime())});
-    _list->changeItem(6,{"Packets Stored", std::to_string(_socket->DataPackets.size())});
+    // _list->changeItem(6,{"Packets Stored", std::to_string(_socket->DataPackets.size())});
 
     // TODO check if this works
     if (_isServer)
@@ -291,7 +291,7 @@ void SocketUI::initData()
     _list->addItem({"Port", std::to_string(_socket->getPort())});
     _list->addItem({"Connection Open", (_socket->isConnectionOpen() ? "True" : "False")});
     _list->addItem({"Connection Open Time", std::to_string(_socket->getConnectionTime())});
-    _list->addItem({"Packets Stored", std::to_string(_socket->DataPackets.size())});
+    // _list->addItem({"Packets Stored", std::to_string(_socket->DataPackets.size())});
     updateUISize();
 }
 

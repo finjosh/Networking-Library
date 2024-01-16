@@ -9,10 +9,10 @@ Server::~Server()
 {}
 
 void Server::RequirePassword(bool requirePassword)
-{ this->_needsPassword = requirePassword; if (!this->_needsPassword) _password = ""; }
+{ this->_needsPassword = requirePassword; if (!this->_needsPassword) setPassword(""); }
 
 void Server::RequirePassword(bool requirePassword, std::string password)
-{ this->_needsPassword = requirePassword; _password = password; }
+{ this->_needsPassword = requirePassword; setPassword(password); }
 
 bool Server::openServer(funcHelper::func<void> customPacketSendFunction)
 {
@@ -21,7 +21,7 @@ bool Server::openServer(funcHelper::func<void> customPacketSendFunction)
 
     _connectionOpen = true;
     this->StartThreads(customPacketSendFunction);
-    this->onServerOpened.invoke(_threadSafeEvents);
+    this->onConnectionOpen.invoke(_threadSafeEvents);
     return true;
 }
 
@@ -49,15 +49,15 @@ void Server::CloseServer()
     this->close();
 
     if (_connectionOpen)
-        this->onServerClosed.invoke(_threadSafeEvents);
+        this->onConnectionClose.invoke(_threadSafeEvents);
 
-    this->_needsPassword = false;
-    _password = "";
+    _needsPassword = false;
+    this->setPassword("");
     _connectionOpen = false;
     // _lastID = 0;
     this->deletedClientIDs.clear();
     this->newClientIDs.clear();
-    this->DataPackets.clear();
+    // this->DataPackets.clear();
     _clientData.clear();
     _connectionTime = 0.0;
 }
@@ -277,10 +277,10 @@ void Server::thread_receive_packets(std::stop_token stoken)
             auto client = _clientData.find((ID)senderIP.toInteger()); 
             if (client != _clientData.end()) 
             {
-                this->DataPackets.push_back(DataPacket(packet));
+                // this->DataPackets.push_back(DataPacket(packet)); // TODO remove this after ensuring that the event works
                 client->second.TimeSinceLastPacket = 0.0;
                 client->second.PacketsSent++;
-                this->onDataReceived.invoke(_threadSafeEvents);
+                this->onDataReceived.invoke(packet, _threadSafeEvents);
             }
             // if the sender is not a current client add them
             else
@@ -291,7 +291,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
                     // newClientIDs.push_back(_lastID);
                     _clientData.insert({(ID)(senderIP.toInteger()), ClientData(senderPort, (ID)_ip)});
 
-                    this->DataPackets.push_back(DataPacket(packet));
+                    // this->DataPackets.push_back(DataPacket(packet));
                     sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
                     if (this->send(Confirmation, senderIP, senderPort))
                         std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
@@ -338,12 +338,11 @@ void Server::thread_update(std::stop_token stoken, funcHelper::func<void> custom
     bool applyPacketsPerSecond = false;
     while (!stoken.stop_requested())
     {
-        //* TODO make this more efficient
+        // TODO do this with an event
         if (updateLimit.getUpdateLimit() != _socketUpdateRate)
         {
             updateLimit.updateLimit(_socketUpdateRate);
         }
-        //* -----------------------------
 
         deltaTime = deltaClock.restart().asSeconds();
         _connectionTime += deltaTime;

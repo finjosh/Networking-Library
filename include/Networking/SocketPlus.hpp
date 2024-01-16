@@ -44,7 +44,7 @@ struct DataPacket
     {
         // bool endPacket = packet.endOfPacket();
         // int dataSize = packet.getDataSize();
-        // TODO packet crashing 
+        // TODO packet crashing??
         // check if the packet is not being destroyed properly
         this->packet.clear();
     }
@@ -52,6 +52,7 @@ struct DataPacket
     bool editing = true;
 };
 
+// TODO make a function to handle packets here (do it with a switch case)
 // if when sending packets from host to client about enemies creates errors the issue would be that the enemy is being deleted
 // while the packet sending thread is trying to read from that enemy
 class SocketPlus : protected sf::UdpSocket
@@ -65,7 +66,8 @@ class SocketPlus : protected sf::UdpSocket
             IP _ip = 0;
             bool _needsPassword = false;
             std::string _password = "";
-            unsigned short _port = 0;
+            unsigned short _port = 777;
+            unsigned short _serverPort = 777;
             bool _connectionOpen = false; // if the server is open or the client is connected
             double _connectionTime = 0.0; // time that the connection has been up
             bool _threadSafeEvents = true;
@@ -104,17 +106,30 @@ class SocketPlus : protected sf::UdpSocket
 
         //* Event stuff
             
-            EventHelper::Event onDataReceived; // TODO give the data that was received
-            EventHelper::Event onUpdateRateChanged; // TODO give the new update rate
+            /// @brief invoked when data is received
+            /// @note optional parameter sf::Packet
+            EventHelper::EventDynamic<sf::Packet> onDataReceived;
+            /// @brief invoked when the update rate is changed
+            /// @note optional parameter unsigned int
+            EventHelper::EventDynamic<unsigned int> onUpdateRateChanged;
+            /// @brief invoked when the client timeout time has been changed
+            /// @note optional parameter unsigned int
+            EventHelper::EventDynamic<unsigned int> onClientTimeoutChanged;
+            /// @brief invoked when this port is changed 
+            /// @note optional parameter Port (unsigned short)
             EventHelper::EventDynamic<Port> onPortChanged; // TODO implement this
-            /// @brief optional param string (new password)
+            /// @brief invoked when the server port is changed 
+            /// @note optional parameter Port (unsigned short)
+            EventHelper::EventDynamic<Port> onServerPortChanged; // TODO implement this
+            /// @brief invoked when the password is changed
+            /// @note optional parameter New Password (string)
             EventHelper::EventDynamic<std::string> onPasswordChanged; // TODO implement this
             /// @note Server -> Open
             /// @note Client -> Connection Confirmed
-            EventHelper::Event onConnectionOpen; // TODO implement this
+            EventHelper::Event onConnectionOpen;
             /// @note Server -> Closed
             /// @note Client -> Disconnected
-            EventHelper::Event onConnectionClose; // TODO implement this
+            EventHelper::Event onConnectionClose;
 
             /// @brief will determine if events are called in thread safe mode
             /// @param threadSafe Default true
@@ -125,7 +140,7 @@ class SocketPlus : protected sf::UdpSocket
 
         //* Public data vars for ease of access
         
-            std::list<DataPacket> DataPackets;
+            // std::list<DataPacket> DataPackets;
 
         // ------------------------------------
 
@@ -213,12 +228,12 @@ class SocketPlus : protected sf::UdpSocket
 
         // ---------------------------
 
-        //* Other Useful functions
+        // * Other Useful functions
 
-            void ClearDataPackets();
-            /// @warning try to avoid using this function by deleting a packet once you use it
-            /// @note very inefficient if used often with lots of data packets
-            void ClearEmptyPackets();
+        //     void ClearDataPackets();
+        //     /// @warning try to avoid using this function by deleting a packet once you use it
+        //     /// @note very inefficient if used often with lots of data packets
+        //     void ClearEmptyPackets();
 
         // ------------------------
 

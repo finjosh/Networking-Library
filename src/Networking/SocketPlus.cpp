@@ -66,18 +66,24 @@ std::string SocketPlus::getPassword()
 //* Setters
 
 void SocketPlus::setUpdateInterval(unsigned int interval)
-{ this->_socketUpdateRate = interval; }
+{ 
+    this->_socketUpdateRate = interval;
+    onUpdateRateChanged.invoke(interval, _threadSafeEvents);
+}
 
 void SocketPlus::sendingPackets(bool sendPackets)
 { this->_sendingPackets = sendPackets; }
 
 void SocketPlus::setPassword(std::string password)
-{ this->_password = password; }
+{ 
+    this->_password = password; 
+    onPasswordChanged.invoke(password, _threadSafeEvents);
+}
 
 void SocketPlus::setClientTimeout(const int& timeout)
 { 
     _clientTimeoutTime = timeout; 
-    onUpdateRateChanged.invoke(_threadSafeEvents);
+    onClientTimeoutChanged.invoke(timeout, _threadSafeEvents);
 }
 
 // --------
@@ -212,17 +218,17 @@ bool SocketPlus::isThreadSafeEvents()
 
 //* Other Useful functions
 
-void SocketPlus::ClearDataPackets()
-{ this->DataPackets.clear(); }
+// void SocketPlus::ClearDataPackets()
+// { this->DataPackets.clear(); }
 
-void SocketPlus::ClearEmptyPackets()
-{
-    for (std::list<DataPacket>::iterator temp = this->DataPackets.begin(); temp != this->DataPackets.end(); ++temp)
-    {
-        if (temp->packet.endOfPacket())
-            this->DataPackets.erase(temp); 
-    }
-}
+// void SocketPlus::ClearEmptyPackets()
+// {
+//     for (std::list<DataPacket>::iterator temp = this->DataPackets.begin(); temp != this->DataPackets.end(); ++temp)
+//     {
+//         if (temp->packet.endOfPacket())
+//             this->DataPackets.erase(temp); 
+//     }
+// }
 
 // ------------------------
 

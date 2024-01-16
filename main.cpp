@@ -39,6 +39,16 @@ int main()
     sDisplay.setInfoVisible();
     sDisplay.initInfoDisplay(gui);
     sDisplay.setConnectionVisible();
+    sDisplay.getServer()->onDataReceived([](sf::Packet packet){ 
+        std::string temp;
+        packet >> temp;
+        Command::Prompt::print(temp); 
+    });
+    sDisplay.getClient()->onDataReceived([](sf::Packet packet){ 
+        std::string temp;
+        packet >> temp;
+        Command::Prompt::print(temp); 
+    });
 
     //! Required to initialize VarDisplay and CommandPrompt
     // creates the UI for the VarDisplay
@@ -73,6 +83,23 @@ int main()
 
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            //! TEST for sending packets
+            // if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P)
+            // {
+            //     if (!sDisplay.isEmpty() && sDisplay.isServer())
+            //     {
+            //         auto temp = SocketPlus::DataPacketTemplate();
+            //         temp << "Some Other Data";
+            //         sDisplay.getServer()->SendToAll(temp);
+            //     }
+            //     else if (!sDisplay.isEmpty())
+            //     {
+            //         auto temp = SocketPlus::DataPacketTemplate();
+            //         temp << "Some Other Data";
+            //         sDisplay.getClient()->SendToServer(temp);
+            //     }
+            // } 
         }
         //! Updates all the vars being displayed
         VarDisplay::Update();

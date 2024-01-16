@@ -20,7 +20,7 @@ bool Client::WasIncorrectPassword()
 { bool temp = _wrongPassword; _wrongPassword = false; return temp; }
 
 void Client::setAndSendPassword(std::string password)
-{ _password = password; this->sendPasswordToServer(); }
+{ setPassword(password); this->sendPasswordToServer(); }
 
 void Client::sendPasswordToServer()
 {
@@ -207,21 +207,21 @@ void Client::thread_receive_packets(std::stop_token stoken)
 
         if (this->isData(packet))
         {            
-            this->DataPackets.push_back(DataPacket(packet));
+            // this->DataPackets.push_back(DataPacket(packet)); // TODO remove this after ensuring that the event works
             _timeSinceLastPacket = 0.0;
-            this->onDataReceived.invoke(_threadSafeEvents);
+            this->onDataReceived.invoke(packet, _threadSafeEvents);
         }
         else if (this->isConnectionClose(packet))
         {              
             _connectionOpen = false;
             _port = 0;
-            this->onConnectionClosed.invoke(_threadSafeEvents);
+            this->onConnectionClose.invoke(_threadSafeEvents);
         }
         else if (this->isConnectionConfirm(packet))
         {
             _connectionOpen = true;
             _port = this->getLocalPort();
-            this->onConnectionConfirmed.invoke(_threadSafeEvents);
+            this->onConnectionOpen.invoke(_threadSafeEvents);
         }
         else if (this->isPasswordRequest(packet))
         {
@@ -250,7 +250,7 @@ void Client::thread_update(std::stop_token stoken, funcHelper::func<void> custom
             _connectionTime += deltaTime;
             _timeSinceLastPacket += deltaTime;
         }
-        if (_timeSinceLastPacket >= _clientTimeoutTime) { this->Disconnect(); this->onConnectionClosed.invoke(_threadSafeEvents); }
+        if (_timeSinceLastPacket >= _clientTimeoutTime) { this->Disconnect(); this->onConnectionClose.invoke(_threadSafeEvents); }
         if (_sendingPackets) customPacketSendFunction.invoke();
         updateLimit.wait();
     }
@@ -283,12 +283,12 @@ void Client::Disconnect()
     }
     
     if (_connectionOpen) 
-        this->onConnectionClosed.invoke(_threadSafeEvents);
+        this->onConnectionClose.invoke(_threadSafeEvents);
  
     _connectionOpen = false;
-    this->_needsPassword = false;
+    _needsPassword = false;
     _wrongPassword = false;
-    _password = "";
+    this->setPassword("");
     _connectionTime = 0.f;
     _timeSinceLastPacket = 0.f;
     _serverIP = sf::IpAddress::None;

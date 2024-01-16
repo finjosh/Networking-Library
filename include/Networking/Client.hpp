@@ -12,7 +12,7 @@ class Client : public SocketPlus
         //* Server variables
 
             sf::IpAddress _serverIP;
-            unsigned short _serverPort;
+            // unsigned short _serverPort;
             bool _wrongPassword = false;
             // Time since last packet from server
             float _timeSinceLastPacket = 0.0;
@@ -38,8 +38,8 @@ class Client : public SocketPlus
 
             EventHelper::Event onWrongPassword;
             EventHelper::Event onPasswordRequest;
-            EventHelper::Event onConnectionConfirmed; // TODO remove these
-            EventHelper::Event onConnectionClosed; // TODO remove these
+            // EventHelper::Event onConnectionConfirmed; // TODO remove these
+            // EventHelper::Event onConnectionClosed; // TODO remove these
 
         // -------
 
