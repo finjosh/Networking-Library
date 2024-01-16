@@ -34,22 +34,22 @@ enum PacketType
     WrongPassword = 6
 };
 
-struct DataPacket
-{
-    inline DataPacket(sf::Packet packet)
-    { this->packet = packet; editing = false; }
-    DataPacket() = default;
-    inline ~DataPacket()
-    {
-        // bool endPacket = packet.endOfPacket();
-        // int dataSize = packet.getDataSize();
-        // TODO packet crashing??
-        // check if the packet is not being destroyed properly
-        this->packet.clear();
-    }
-    sf::Packet packet;
-    bool editing = true;
-};
+// struct DataPacket
+// {
+//     inline DataPacket(sf::Packet packet)
+//     { this->packet = packet; editing = false; }
+//     DataPacket() = default;
+//     inline ~DataPacket()
+//     {
+//         // bool endPacket = packet.endOfPacket();
+//         // int dataSize = packet.getDataSize();
+//         // TODO packet crashing??
+//         // check if the packet is not being destroyed properly
+//         this->packet.clear();
+//     }
+//     sf::Packet packet;
+//     bool editing = true;
+// };
 
 // TODO make a function to handle packets here (do it with a switch case)
 // if when sending packets from host to client about enemies creates errors the issue would be that the enemy is being deleted
@@ -59,19 +59,15 @@ class SocketPlus : protected sf::UdpSocket
     protected:
 
         int _clientTimeoutTime = 20; 
-
-        //* Base Class variables
-
-            IP _ip = 0;
-            bool _needsPassword = false;
-            std::string _password = "";
-            unsigned short _port = 777;
-            unsigned short _serverPort = 777;
-            bool _connectionOpen = false; // if the server is open or the client is connected
-            double _connectionTime = 0.0; // time that the connection has been up
-            bool _threadSafeEvents = true;
-
-        // ----------------
+        IP _ip = 0;
+        bool _needsPassword = false;
+        std::string _password = "";
+        unsigned short _port = 777;
+        unsigned short _serverPort = 777;
+        bool _connectionOpen = false; // if the server is open or the client is connected
+        double _connectionTime = 0.0; // time that the connection has been up
+        bool _threadSafeEvents = true;
+        funcHelper::func<void> customPacketSendFunction;
 
         //* thread variables
 
@@ -87,7 +83,7 @@ class SocketPlus : protected sf::UdpSocket
 
         // ----------------
 
-        //* Private thread functions
+        //* Protected thread functions
 
             //* PURE virtual functions
                 
@@ -122,7 +118,7 @@ class SocketPlus : protected sf::UdpSocket
             EventHelper::EventDynamic<Port> onServerPortChanged; // TODO implement this
             /// @brief invoked when the password is changed
             /// @note optional parameter New Password (string)
-            EventHelper::EventDynamic<std::string> onPasswordChanged; // TODO implement this
+            EventHelper::EventDynamic<std::string> onPasswordChanged;
             /// @note Server -> Open
             /// @note Client -> Connection Confirmed
             EventHelper::Event onConnectionOpen;

@@ -217,9 +217,6 @@ bool Server::isData(sf::Packet& packet)
     return false;
 }
 
-// ID Server::getLastConnectedClientID()
-// { return _lastID; }
-
 bool Server::disconnectClient(ID id)
 {
     if (_clientData.find(id) != _clientData.end())
