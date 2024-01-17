@@ -14,13 +14,13 @@ void Server::RequirePassword(bool requirePassword)
 void Server::RequirePassword(bool requirePassword, std::string password)
 { this->_needsPassword = requirePassword; setPassword(password); }
 
-bool Server::openServer(funcHelper::func<void> customPacketSendFunction)
+bool Server::openServer()
 {
     if (this->bind(_port))
         return false;
 
     _connectionOpen = true;
-    this->StartThreads(customPacketSendFunction);
+    StartThreads();
     this->onConnectionOpen.invoke(_threadSafeEvents);
     return true;
 }
@@ -325,7 +325,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
     }
 }
 
-void Server::thread_update(std::stop_token stoken, funcHelper::func<void> customPacketSendFunction)
+void Server::thread_update(std::stop_token stoken)
 {
     UpdateLimiter updateLimit(_socketUpdateRate);
 
@@ -368,20 +368,20 @@ void Server::thread_update(std::stop_token stoken, funcHelper::func<void> custom
             }
         }
         
-        if (_sendingPackets) customPacketSendFunction.invoke();
+        if (_sendingPackets) _packetSendFunction.invoke();
         
         updateLimit.wait();
     }
 }
 
-void Server::StartThreads(funcHelper::func<void> customPacketSendFunction)
+void Server::StartThreads()
 {
     if (!this->isReceivingPackets())
     {
         _sSource = new std::stop_source;
         _receive_thread = new std::jthread{Server::thread_receive_packets, this, _sSource->get_token()};
     }
-    if (_update_thread == nullptr) _update_thread = new std::jthread{Server::thread_update, this, _sSource->get_token(), customPacketSendFunction};
+    if (_update_thread == nullptr) _update_thread = new std::jthread{Server::thread_update, this, _sSource->get_token()};
 }
 
 std::unordered_map<ID, ClientData>& Server::getClients()

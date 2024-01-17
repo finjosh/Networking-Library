@@ -23,12 +23,12 @@ class Server : public SocketPlus
             //* Pure Virtual Definition
 
                 virtual void thread_receive_packets(std::stop_token stoken);
-                virtual void thread_update(std::stop_token stoken, funcHelper::func<void> customPacketSendFunction);
+                virtual void thread_update(std::stop_token stoken);
 
             // ------------------------
             
             // Starts the receiving packets thread so that the client can communicate to the server
-            void StartThreads(funcHelper::func<void> customPacketSendFunction);
+            void StartThreads();
 
         // -----------------
 
@@ -42,8 +42,6 @@ class Server : public SocketPlus
 
                 EventHelper::Event onClientConnected;
                 EventHelper::Event onClientDisconnected;
-                // EventHelper::Event onServerClosed; // TODO remove these
-                // EventHelper::Event onServerOpened; // TODO remove these
 
             // -------
         
@@ -55,7 +53,7 @@ class Server : public SocketPlus
         void RequirePassword(bool requirePassword, std::string password);
         // returns true if server was started with the port that was set 
         // Also handles the thread if successful start or failed start
-        bool openServer(funcHelper::func<void> customPacketSendFunction);
+        bool openServer();
         // resets all the data stored in the server
         void CloseServer();
         void setPort(unsigned short port);
@@ -80,9 +78,6 @@ class Server : public SocketPlus
         void SendToAll(sf::Packet& packet);
         // Tries to send the given packet to the client with the given ID
         void SendTo(sf::Packet& packet, ID id);
-        // // returns the ID of the last connected client if it was found
-        // // if the last connected client could not be found returns 0 (the last client was lost/removed)
-        // ID getLastConnectedClientID();
         void disconnectAllClients();
         // removes the client with the given ID
         // returns true if the client was removed returns false if it was not found

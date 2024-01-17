@@ -28,7 +28,7 @@ void Client::sendPasswordToServer()
         if (this->send(temp, _serverIP, _serverPort)) throw std::runtime_error("could not send password to host");
 }
 
-bool Client::ConnectToServer(funcHelper::func<void> customPacketSendFunction)
+bool Client::ConnectToServer()
 {
     sf::Packet connectionRequest = this->ConnectionRequestTemplate();
 
@@ -42,7 +42,7 @@ bool Client::ConnectToServer(funcHelper::func<void> customPacketSendFunction)
             this->bind(Socket::AnyPort);
             _receive_thread = new std::jthread{thread_receive_packets, this, _sSource->get_token()};
         }
-        if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token(), customPacketSendFunction};
+        if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token()};
     }
 
     if (_serverIP == sf::IpAddress::LocalHost) _ip = sf::IpAddress::LocalHost.toInteger();
@@ -236,7 +236,7 @@ void Client::thread_receive_packets(std::stop_token stoken)
     }
 }
 
-void Client::thread_update(std::stop_token stoken, funcHelper::func<void> customPacketSendFunction)
+void Client::thread_update(std::stop_token stoken)
 {
     UpdateLimiter updateLimit(_socketUpdateRate);
     sf::Clock deltaClock;
@@ -251,7 +251,7 @@ void Client::thread_update(std::stop_token stoken, funcHelper::func<void> custom
             _timeSinceLastPacket += deltaTime;
         }
         if (_timeSinceLastPacket >= _clientTimeoutTime) { this->Disconnect(); this->onConnectionClose.invoke(_threadSafeEvents); }
-        if (_sendingPackets) customPacketSendFunction.invoke();
+        if (_sendingPackets) _packetSendFunction.invoke();
         updateLimit.wait();
     }
 }
