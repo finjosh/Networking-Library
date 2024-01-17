@@ -14,13 +14,13 @@ void Server::RequirePassword(bool requirePassword)
 void Server::RequirePassword(bool requirePassword, std::string password)
 { this->_needsPassword = requirePassword; setPassword(password); }
 
-bool Server::openServer(funcHelper::func<void> customPacketSendFunction)
+bool Server::openServer()
 {
     if (this->bind(_port))
         return false;
 
     _connectionOpen = true;
-    this->StartThreads(customPacketSendFunction);
+    StartThreads();
     this->onConnectionOpen.invoke(_threadSafeEvents);
     return true;
 }
@@ -72,7 +72,7 @@ void Server::SendToAll(sf::Packet& packet)
     for (auto& c: _clientData)
     {
         if (this->send(packet, sf::IpAddress((IP)c.first), c.second.port))
-            std::cerr << "ERROR - Server.h (Could not send packet to all client data)" << std::endl;
+            throw std::runtime_error("ERROR - Server.h (Could not send packet to all client data)");
     }
 }
 
@@ -86,7 +86,7 @@ void Server::SendTo(sf::Packet& packet, ID id)
         if (temp == &_clientData.end()->second) return;
         
         if (this->send(packet, sf::IpAddress((IP)id), temp->port))
-            std::cerr << "ERROR - Could not send packet to client" << std::endl;
+            throw std::runtime_error("ERROR - Could not send packet to client");
     }
 }
 
@@ -105,7 +105,7 @@ bool Server::isConnectionRequest(sf::Packet& packet, sf::IpAddress senderIPAddre
         {
             sf::Packet needPassword = this->PasswordRequestPacket();
             if (this->send(needPassword, senderIPAddress, senderPort) != Socket::Done) 
-                std::cerr << "ERROR - could not send password request" << std::endl;
+                throw std::runtime_error("ERROR - could not send password request");
         }
         else
         {
@@ -192,7 +192,7 @@ bool Server::isPassword(sf::Packet& packet, sf::IpAddress senderIPAddress, unsig
             sf::Packet wrongPassword;
             wrongPassword = this->WrongPasswordPacket();
             if (this->send(wrongPassword, senderIPAddress, senderPort)) 
-                std::cerr << "ERROR - could not send request for password" << std::endl;
+                throw std::runtime_error("ERROR - could not send request for password");
         }
     }
 
@@ -216,9 +216,6 @@ bool Server::isData(sf::Packet& packet)
     // returning false if this packet is not a data packet
     return false;
 }
-
-// ID Server::getLastConnectedClientID()
-// { return _lastID; }
 
 bool Server::disconnectClient(ID id)
 {
@@ -255,7 +252,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
         if (receiveStatus == sf::Socket::Error)
         {
             if (stoken.stop_requested()) break;
-            std::cerr << "ERROR - receiving packet" << std::endl;
+            throw std::runtime_error("ERROR - receiving packet");
             // restarting the socket
             this->unbind();
             this->close();
@@ -294,14 +291,14 @@ void Server::thread_receive_packets(std::stop_token stoken)
                     // this->DataPackets.push_back(DataPacket(packet));
                     sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
                     if (this->send(Confirmation, senderIP, senderPort))
-                        std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
+                        throw std::runtime_error("ERROR - could not send ID Assign packet");
                     this->onClientConnected.invoke(_threadSafeEvents);
                 }
                 else
                 {
                     sf::Packet needPassword = this->PasswordRequestPacket();
                     if (this->send(needPassword, senderIP, senderPort) != Socket::Done) 
-                        std::cerr << "ERROR - could not send password request" << std::endl;
+                        throw std::runtime_error("ERROR - could not send password request");
                 }
             }
         }
@@ -309,7 +306,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
         {
             sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
             if (this->send(Confirmation, senderIP, senderPort))
-                std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
+                throw std::runtime_error("ERROR - could not send ID Assign packet");
             this->onClientConnected.invoke(_threadSafeEvents);
         }
         else if (this->isConnectionClose(packet, senderIP, senderPort))
@@ -320,7 +317,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
         {
             sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
             if (this->send(Confirmation, senderIP, senderPort))
-                std::cerr << "ERROR - could not send ID Assign packet" << std::endl;
+                throw std::runtime_error("ERROR - could not send ID Assign packet");
             this->onClientConnected.invoke(_threadSafeEvents);
         }
 
@@ -328,7 +325,7 @@ void Server::thread_receive_packets(std::stop_token stoken)
     }
 }
 
-void Server::thread_update(std::stop_token stoken, funcHelper::func<void> customPacketSendFunction)
+void Server::thread_update(std::stop_token stoken)
 {
     UpdateLimiter updateLimit(_socketUpdateRate);
 
@@ -371,20 +368,20 @@ void Server::thread_update(std::stop_token stoken, funcHelper::func<void> custom
             }
         }
         
-        if (_sendingPackets) customPacketSendFunction.invoke();
+        if (_sendingPackets) _packetSendFunction.invoke();
         
         updateLimit.wait();
     }
 }
 
-void Server::StartThreads(funcHelper::func<void> customPacketSendFunction)
+void Server::StartThreads()
 {
     if (!this->isReceivingPackets())
     {
         _sSource = new std::stop_source;
         _receive_thread = new std::jthread{Server::thread_receive_packets, this, _sSource->get_token()};
     }
-    if (_update_thread == nullptr) _update_thread = new std::jthread{Server::thread_update, this, _sSource->get_token(), customPacketSendFunction};
+    if (_update_thread == nullptr) _update_thread = new std::jthread{Server::thread_update, this, _sSource->get_token()};
 }
 
 std::unordered_map<ID, ClientData>& Server::getClients()

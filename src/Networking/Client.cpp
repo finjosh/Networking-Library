@@ -25,10 +25,10 @@ void Client::setAndSendPassword(std::string password)
 void Client::sendPasswordToServer()
 {
     sf::Packet temp = this->PasswordPacket(_password);
-        if (this->send(temp, _serverIP, _serverPort)) std::cerr << "could not send password to host" << std::endl;
+        if (this->send(temp, _serverIP, _serverPort)) throw std::runtime_error("could not send password to host");
 }
 
-bool Client::ConnectToServer(funcHelper::func<void> customPacketSendFunction)
+bool Client::ConnectToServer()
 {
     sf::Packet connectionRequest = this->ConnectionRequestTemplate();
 
@@ -42,7 +42,7 @@ bool Client::ConnectToServer(funcHelper::func<void> customPacketSendFunction)
             this->bind(Socket::AnyPort);
             _receive_thread = new std::jthread{thread_receive_packets, this, _sSource->get_token()};
         }
-        if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token(), customPacketSendFunction};
+        if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token()};
     }
 
     if (_serverIP == sf::IpAddress::LocalHost) _ip = sf::IpAddress::LocalHost.toInteger();
@@ -76,7 +76,7 @@ void Client::setServerData(Port port)
 void Client::SendToServer(sf::Packet& packet)
 {
     if (this->send(packet, _serverIP, _serverPort))
-        std::cerr << "ERROR - could not send packet to the server" << std::endl;
+        throw std::runtime_error("ERROR - could not send packet to the server");
 }
 
 bool Client::isData(sf::Packet& packet)
@@ -189,7 +189,7 @@ void Client::thread_receive_packets(std::stop_token stoken)
         if (receiveStatus == sf::Socket::Error)
         {
             if (stoken.stop_requested()) break;
-            std::cerr << "ERROR - receiving packet" << std::endl;
+            throw std::runtime_error("ERROR - receiving packet");
             // restarting the socket
             this->unbind();
             this->close();
@@ -236,7 +236,7 @@ void Client::thread_receive_packets(std::stop_token stoken)
     }
 }
 
-void Client::thread_update(std::stop_token stoken, funcHelper::func<void> customPacketSendFunction)
+void Client::thread_update(std::stop_token stoken)
 {
     UpdateLimiter updateLimit(_socketUpdateRate);
     sf::Clock deltaClock;
@@ -251,7 +251,7 @@ void Client::thread_update(std::stop_token stoken, funcHelper::func<void> custom
             _timeSinceLastPacket += deltaTime;
         }
         if (_timeSinceLastPacket >= _clientTimeoutTime) { this->Disconnect(); this->onConnectionClose.invoke(_threadSafeEvents); }
-        if (_sendingPackets) customPacketSendFunction.invoke();
+        if (_sendingPackets) _packetSendFunction.invoke();
         updateLimit.wait();
     }
 }

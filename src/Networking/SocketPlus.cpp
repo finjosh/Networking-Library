@@ -61,6 +61,11 @@ std::string SocketPlus::getPassword()
     return _password;
 }
 
+const funcHelper::func<void>& SocketPlus::getPacketSendFunction()
+{
+    return _packetSendFunction;
+}
+
 // -------
 
 //* Setters
@@ -84,6 +89,14 @@ void SocketPlus::setClientTimeout(const int& timeout)
 { 
     _clientTimeoutTime = timeout; 
     onClientTimeoutChanged.invoke(timeout, _threadSafeEvents);
+}
+
+bool SocketPlus::setPacketSendFunction(funcHelper::func<void> packetSendFunction)
+{
+    if (this->isConnectionOpen()) return false;
+    _packetSendFunction = packetSendFunction;
+    onPacketSendChanged.invoke(_threadSafeEvents);
+    return true;
 }
 
 // --------

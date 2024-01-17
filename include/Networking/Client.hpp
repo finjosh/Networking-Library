@@ -24,7 +24,7 @@ class Client : public SocketPlus
             //* Pure Virtual Definition
         
                 virtual void thread_receive_packets(std::stop_token stoken);
-                virtual void thread_update(std::stop_token stoken, funcHelper::func<void> customPacketSendFunctions);
+                virtual void thread_update(std::stop_token stoken);
             
             // ------------------------
 
@@ -38,8 +38,6 @@ class Client : public SocketPlus
 
             EventHelper::Event onWrongPassword;
             EventHelper::Event onPasswordRequest;
-            // EventHelper::Event onConnectionConfirmed; // TODO remove these
-            // EventHelper::Event onConnectionClosed; // TODO remove these
 
         // -------
 
@@ -55,7 +53,7 @@ class Client : public SocketPlus
         void sendPasswordToServer(); // TODO put this into connect to server
         // attempts to connect to the given server while handling the thread through fail and successful
         // true for successful send of connection attempt (DOES NOT MEAN THERE IS A CONNECTION CONFIRMATION)
-        bool ConnectToServer(funcHelper::func<void> customPacketSendFunction); // TODO rename to open connection
+        bool ConnectToServer(); // TODO rename to open connection
         void setServerData(sf::IpAddress serverIP, Port serverPort);
         void setServerData(sf::IpAddress serverIP);
         void setServerData(Port port);

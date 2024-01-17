@@ -433,13 +433,15 @@ void SocketUI::tryOpenConnection()
             _server.RequirePassword(true, _passEdit->getText().toStdString());
         else
             _server.RequirePassword(false);
-        _server.openServer(_sSendFunc);
+        _server.setPacketSendFunction(_sSendFunc);
+        _server.openServer();
     }
     else
     {
         if (!_client.NeedsPassword())
         {
-            _client.ConnectToServer(_cSendFunc);
+            _client.setPacketSendFunction(_cSendFunc);
+            _client.ConnectToServer();
         }
         else
         {
