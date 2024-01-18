@@ -9,13 +9,6 @@
 #include "funcHelper.hpp"
 #include "EventHelper.hpp"
 
-#if __has_include("include/Utils/Debug/CommandHandler.hpp")
-#include "include/Utils/Debug/CommandHandler.hpp" 
-#endif
-#if __has_include("include/Utils/Debug/CommandPrompt.hpp")
-#include "include/Utils/Debug/CommandPrompt.hpp"
-#endif
-
 struct TerminatingFunction 
 {
 public:
@@ -54,19 +47,6 @@ public:
     /// @return a list where each item is a pair of, name and total time
     static std::list<std::pair<std::string, std::string>> getStringData();
 
-    #ifdef COMMANDPROMPT_H
-        /// @brief prints the string data to the command prompt every frame
-        /// @param print if turn prints every frame
-        static void printToPrompt(const bool& print = false);
-        /// @brief prints the string data to the command prompt once
-        static void printToPromptOnce();
-    #endif
-
-    #ifdef COMMANDHANDLER_H
-        // must be called separately as static classes are not initalized in any specific order
-        static void initCommands();
-    #endif 
-
 protected:
     struct _tFunc
     {
@@ -99,9 +79,6 @@ protected:
     static std::list<_tFunc> terminatingFunctions;
 private:
     inline TerminatingFunction() = default;
-    #ifdef COMMANDPROMPT_H
-    static bool _printToPrompt;
-    #endif
 };
 
 typedef TerminatingFunction TFunc;

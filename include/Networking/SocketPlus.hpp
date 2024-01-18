@@ -39,16 +39,16 @@ class SocketPlus : protected sf::UdpSocket
 {
     protected:
 
-        int _clientTimeoutTime = 20; 
         IP _ip = 0;
         bool _needsPassword = false;
         std::string _password = "";
-        unsigned short _port = 777;
-        unsigned short _serverPort = 777;
+        unsigned short _port = 777; // TODO reimplement _port
+        unsigned short _serverPort = 777; // TODO reimplement _serverPort
         bool _connectionOpen = false; // if the server is open or the client is connected
         double _connectionTime = 0.0; // time that the connection has been up
+        int _clientTimeoutTime = 20; 
         bool _threadSafeEvents = true;
-        funcHelper::func<void> _packetSendFunction;
+        funcHelper::func<void> _packetSendFunction = {[](){}};
 
         //* thread variables
 
@@ -58,23 +58,29 @@ class SocketPlus : protected sf::UdpSocket
             std::jthread* _receive_thread = nullptr;
             // sending/updating thread
             std::jthread* _update_thread = nullptr;
+            // if we should be sending packets in the thread
             bool _sendingPackets = true;
             // in updates/second
             unsigned int _socketUpdateRate = 64;
+            /// @brief called every update
+            /// @note not thread safe
+            funcHelper::funcDynamic<float> _update = {[](){}};
+            /// @brief called every second in when the update thread is running
+            /// @note not thread safe
+            funcHelper::func<void> _secondUpdate = {[](){}};
 
         // ----------------
 
         //* Protected thread functions
+                            
+            virtual void thread_receive_packets(std::stop_token sToken) = 0;
+            virtual void thread_update(std::stop_token sToken);
 
-            //* PURE virtual functions
-                
-                // although pure virtual functions increase the time it takes for the function to be called it would be so minimal
-                // it does not matter for this project
-                
-                virtual void thread_receive_packets(std::stop_token sToken) = 0;
-                virtual void thread_update(std::stop_token sToken) = 0;
+            //* Pure virtual
 
-            // -----------------------
+                virtual void initThreadFunctions() = 0;
+
+            // -------------
 
         // -------------------------
 
@@ -109,10 +115,10 @@ class SocketPlus : protected sf::UdpSocket
             /// @note Client -> Disconnected
             EventHelper::Event onConnectionClose;
 
-            /// @brief will determine if events are called in thread safe mode
-            /// @param threadSafe Default true
-            void setThreadSafeEvents(bool threadSafe = true);
-            bool isThreadSafeEvents();
+            // /// @brief will determine if events are called in thread safe mode
+            // /// @param threadSafe Default true
+            // void setThreadSafeEvents(bool threadSafe = true);
+            // bool isThreadSafeEvents();
 
         // ------
 
@@ -122,6 +128,13 @@ class SocketPlus : protected sf::UdpSocket
             ~SocketPlus();
 
         // ------------------------------
+
+        //* Public thread functions
+
+            void startThreads();
+            void stopThreads();
+
+        // ---------------------
 
         //* Getter
 
@@ -165,7 +178,7 @@ class SocketPlus : protected sf::UdpSocket
             /// @brief sets the sending packet function
             /// @note if the socket connection is open then you cannot set the function
             /// @returns true if the function was set
-            bool setPacketSendFunction(funcHelper::func<void> packetSendFunction);
+            bool setPacketSendFunction(funcHelper::func<void> packetSendFunction = {[](){}});
 
         // --------
 
@@ -205,15 +218,6 @@ class SocketPlus : protected sf::UdpSocket
             static bool isValidIpAddress(std::string ipAddress);
 
         // ---------------------------
-
-        // * Other Useful functions
-
-        //     void ClearDataPackets();
-        //     /// @warning try to avoid using this function by deleting a packet once you use it
-        //     /// @note very inefficient if used often with lots of data packets
-        //     void ClearEmptyPackets();
-
-        // ------------------------
 
         //* Template Functions
 

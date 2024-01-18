@@ -6,6 +6,7 @@ SocketPlus::SocketPlus()
 {
     _ip = sf::IpAddress::getPublicAddress().toInteger();
     _port = this->getLocalPort();
+    // onPortChanged.invoke(_threadSafeEvents);
 }
 
 SocketPlus::~SocketPlus()
@@ -26,6 +27,85 @@ SocketPlus::~SocketPlus()
 }
 
 // ------------------------------
+
+//* Protected Thread Functions
+
+void SocketPlus::thread_update(std::stop_token sToken)
+{
+    UpdateLimiter updateLimit(_socketUpdateRate);
+
+    sf::Clock deltaClock;
+    float deltaTime;
+    float secondTime;
+    
+    while (!sToken.stop_requested())
+    {
+        // TODO do this with an event
+        if (updateLimit.getUpdateLimit() != _socketUpdateRate)
+        {
+            updateLimit.updateLimit(_socketUpdateRate);
+        }
+
+        deltaTime = deltaClock.restart().asSeconds();
+        secondTime += deltaTime;
+        _connectionTime += deltaTime;
+        
+        // checking if second update should be called
+        if (secondTime >= 1.f)
+        {
+            _secondUpdate.invoke();
+            secondTime = 0.f;
+        }
+
+        // calling the fixed update function
+        _update.invoke(deltaTime);
+        
+        // if we are sending packets call the sending function
+        if (_sendingPackets) 
+            _packetSendFunction.invoke();
+        
+        updateLimit.wait();
+    }
+}
+
+// ---------------------------
+
+//* Public Thread functions
+
+void SocketPlus::startThreads()
+{
+    this->initThreadFunctions();
+
+    if (_receive_thread == nullptr)
+    {
+        if (_sSource != nullptr) delete(_sSource);
+        _sSource = new std::stop_source;
+        _receive_thread = new std::jthread{thread_receive_packets, this, _sSource->get_token()};
+    }
+    if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token()};
+}
+
+void SocketPlus::stopThreads()
+{
+    if (_sSource == nullptr) return;
+    _sSource->request_stop();
+    if (_update_thread != nullptr)
+    {
+        _update_thread->detach();
+        delete(_update_thread);
+        _update_thread = nullptr;
+    }
+    if (_receive_thread != nullptr)
+    {
+        _receive_thread->detach();
+        delete(_receive_thread);
+        _receive_thread = nullptr;
+    }
+    delete(_sSource);
+    _sSource = nullptr;
+}
+
+// ------------------------
 
 //* Getter
 
@@ -222,28 +302,12 @@ bool SocketPlus::isValidIpAddress(std::string ipAddress)
     }
 }
 
-bool SocketPlus::isThreadSafeEvents()
-{
-    return _threadSafeEvents;
-}
-
-// ---------------------------
-
-//* Other Useful functions
-
-// void SocketPlus::ClearDataPackets()
-// { this->DataPackets.clear(); }
-
-// void SocketPlus::ClearEmptyPackets()
+// bool SocketPlus::isThreadSafeEvents()
 // {
-//     for (std::list<DataPacket>::iterator temp = this->DataPackets.begin(); temp != this->DataPackets.end(); ++temp)
-//     {
-//         if (temp->packet.endOfPacket())
-//             this->DataPackets.erase(temp); 
-//     }
+//     return _threadSafeEvents;
 // }
 
-// ------------------------
+// ---------------------------
 
 //* Template Functions
 

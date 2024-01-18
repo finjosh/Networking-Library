@@ -29,12 +29,14 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
     _IPEdit->setDefaultText("Server IP");
     _tryOpenConnection = tgui::Button::create("Try Open Connection");
     _tryOpenConnection->onClick([this](){
-        TFunc::Add([this](TData* data){
+        TFunction temp = {[this](TData* data){
             if (this->getClient()->NeedsPassword())
                 this->updateConnectionDisplay();
             else if (!this->isServer() && !this->isEmpty() && !this->getClient()->isConnectionOpen())
                 data->setRunning();
-        });
+        }};
+        TFunc::remove(temp.getTypeid());
+        TFunc::Add(temp);
     });
     _sendPassword = tgui::Button::create("Send Password");
     _IPState = tgui::Label::create("Checking IP...");
@@ -169,6 +171,7 @@ void SocketUI::initInfoDisplay(tgui::Gui& gui)
     _server.onConnectionOpen(&SocketUI::initData, this);
     _server.onConnectionClose(&SocketUI::initData, this);
     _client.onConnectionOpen(&SocketUI::initData, this);
+    _client.onConnectionClose(&SocketUI::initData, this);
 
     _infoParent->onSizeChange(updateUISize, this);
     updateUISize();
@@ -241,8 +244,8 @@ void SocketUI::updateInfoDisplay()
         auto scroll = _clientData->getVerticalScrollbarValue();
         _clientData->removeAllItems();
         _clientData->addItem({"Client Data"});
-        _clientData->addItem({"New Client IDs"});
-        _clientData->addItem({"Deleted Client IDs"});
+        _clientData->addItem({"New Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")"});
+        _clientData->addItem({"Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()) + ")"});
         for (auto data: _server.getClients())
         {
             tgui::String id(data.first);
@@ -264,12 +267,12 @@ void SocketUI::updateInfoDisplay()
         }
         for (auto data: _server.newClientIDs)
         {
-            _clientData->changeItem({"New Client IDs (" + std::to_string(_server.newClientIDs.size()-1) + ")"}, "New Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")");
+            // _clientData->changeItem({"New Client IDs (" + std::to_string(_server.newClientIDs.size()-1) + ")"}, "New Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")");
             _clientData->addItem({"New Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")", {std::to_string(data)}});
         }
         for (auto data: _server.deletedClientIDs)
         {
-            _clientData->changeItem({"Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()-1) + ")"}, "Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()) + ")");
+            // _clientData->changeItem({"Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()-1) + ")"}, "Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()) + ")");
             _clientData->addItem({"Deleted Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")", {std::to_string(data)}});
         }
         _clientData->setVerticalScrollbarValue(scroll);

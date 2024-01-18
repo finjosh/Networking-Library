@@ -1,5 +1,6 @@
 #include "include/Networking/Server.hpp"
 
+// TODO organize this
 Server::Server(unsigned short port, bool passwordRequired)
 {
     _port = port;
@@ -20,32 +21,19 @@ bool Server::openServer()
         return false;
 
     _connectionOpen = true;
-    StartThreads();
+    startThreads();
     this->onConnectionOpen.invoke(_threadSafeEvents);
     return true;
 }
 
 void Server::CloseServer()
 {
+    if (!this->isConnectionOpen()) return;
+
     sf::Packet closeConnection = this->ConnectionCloseTemplate();
     this->SendToAll(closeConnection);
 
-    if (_sSource != nullptr) _sSource->request_stop();
-    if (_update_thread != nullptr)
-    {
-        _update_thread->join();
-        delete(_update_thread);
-        _update_thread = nullptr;
-    }
-    if (this->isReceivingPackets()) 
-    {
-        _receive_thread->detach();
-        delete(_receive_thread);
-        _receive_thread = nullptr;
-        this->close();
-        delete(_sSource);
-        _sSource = nullptr;
-    }
+    this->stopThreads();
     this->close();
 
     if (_connectionOpen)
@@ -325,64 +313,54 @@ void Server::thread_receive_packets(std::stop_token stoken)
     }
 }
 
-void Server::thread_update(std::stop_token stoken)
-{
-    UpdateLimiter updateLimit(_socketUpdateRate);
+// void Server::thread_update(std::stop_token stoken)
+// {
+//     UpdateLimiter updateLimit(_socketUpdateRate);
 
-    sf::Clock deltaClock;
-    float deltaTime;
-    sf::Clock secondClock;
-    bool applyPacketsPerSecond = false;
-    while (!stoken.stop_requested())
-    {
-        // TODO do this with an event
-        if (updateLimit.getUpdateLimit() != _socketUpdateRate)
-        {
-            updateLimit.updateLimit(_socketUpdateRate);
-        }
+//     sf::Clock deltaClock;
+//     float deltaTime;
+//     sf::Clock secondClock;
+//     bool applyPacketsPerSecond = false;
+//     while (!stoken.stop_requested())
+//     {
+//         // TODO do this with an event
+//         if (updateLimit.getUpdateLimit() != _socketUpdateRate)
+//         {
+//             updateLimit.updateLimit(_socketUpdateRate);
+//         }
 
-        deltaTime = deltaClock.restart().asSeconds();
-        _connectionTime += deltaTime;
+//         deltaTime = deltaClock.restart().asSeconds();
+//         _connectionTime += deltaTime;
         
-        applyPacketsPerSecond = false;
-        if (secondClock.getElapsedTime().asSeconds() >= 1)
-        {
-            applyPacketsPerSecond = true;
-            secondClock.restart();
-        }
+//         applyPacketsPerSecond = false;
+//         if (secondClock.getElapsedTime().asSeconds() >= 1)
+//         {
+//             applyPacketsPerSecond = true;
+//             secondClock.restart();
+//         }
         
-        for (auto& clientData: _clientData)
-        {
-            clientData.second.TimeSinceLastPacket += deltaTime;
-            if (clientData.second.TimeSinceLastPacket >= _clientTimeoutTime)
-            {
-                this->disconnectClient(clientData.first);
-                this->onClientDisconnected.invoke(_threadSafeEvents);
-            }
-            clientData.second.ConnectionTime += deltaTime;
+//         for (auto& clientData: _clientData)
+//         {
+//             clientData.second.TimeSinceLastPacket += deltaTime;
+//             if (clientData.second.TimeSinceLastPacket >= _clientTimeoutTime)
+//             {
+//                 this->disconnectClient(clientData.first);
+//                 this->onClientDisconnected.invoke(_threadSafeEvents);
+//             }
+//             clientData.second.ConnectionTime += deltaTime;
 
-            if (applyPacketsPerSecond)
-            {
-                clientData.second.PacketsPerSecond = clientData.second.PacketsSent;
-                clientData.second.PacketsSent = 0;
-            }
-        }
+//             if (applyPacketsPerSecond)
+//             {
+//                 clientData.second.PacketsPerSecond = clientData.second.PacketsSent;
+//                 clientData.second.PacketsSent = 0;
+//             }
+//         }
         
-        if (_sendingPackets) _packetSendFunction.invoke();
+//         if (_sendingPackets) _packetSendFunction.invoke();
         
-        updateLimit.wait();
-    }
-}
-
-void Server::StartThreads()
-{
-    if (!this->isReceivingPackets())
-    {
-        _sSource = new std::stop_source;
-        _receive_thread = new std::jthread{Server::thread_receive_packets, this, _sSource->get_token()};
-    }
-    if (_update_thread == nullptr) _update_thread = new std::jthread{Server::thread_update, this, _sSource->get_token()};
-}
+//         updateLimit.wait();
+//     }
+// }
 
 std::unordered_map<ID, ClientData>& Server::getClients()
 { return _clientData;}
@@ -401,3 +379,32 @@ double Server::getClientConnectionTime(ID clientID)
 
 unsigned int Server::getClientPacketsPerSec(ID clientID)
 { return _clientData.find(clientID)->second.PacketsPerSecond; }
+
+void Server::initThreadFunctions() 
+{
+    _secondUpdate.setFunction(&secondUpdate, this);
+    _update.setFunction(&update, this);
+}
+
+void Server::update(const float& deltaTime) 
+{
+    for (auto& clientData: _clientData)
+    {
+        clientData.second.TimeSinceLastPacket += deltaTime;
+        if (clientData.second.TimeSinceLastPacket >= _clientTimeoutTime)
+        {
+            this->disconnectClient(clientData.first);
+            this->onClientDisconnected.invoke(_threadSafeEvents);
+        }
+        clientData.second.ConnectionTime += deltaTime;
+    }
+}
+
+void Server::secondUpdate() 
+{
+    for (auto& clientData: _clientData)
+    {
+        clientData.second.PacketsPerSecond = clientData.second.PacketsSent;
+        clientData.second.PacketsSent = 0;
+    }
+}

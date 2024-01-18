@@ -1,5 +1,7 @@
 #include "include/Networking/Client.hpp"
 
+// TODO organize this
+
 Client::Client(sf::IpAddress serverIP, unsigned short serverPort) 
 { 
     _serverIP = serverIP; 
@@ -12,6 +14,25 @@ Client::Client(unsigned short serverPort)
 }
 
 // ----------------
+
+void Client::initThreadFunctions()
+{
+    _update.setFunction(&update, this);
+}
+
+void Client::update(const float& deltaTime)
+{
+    if (this->isConnectionOpen()) 
+    {
+        _connectionTime += deltaTime;
+        _timeSinceLastPacket += deltaTime;
+    }
+    if (_timeSinceLastPacket >= _clientTimeoutTime) 
+    { 
+        this->Disconnect(); 
+        return;
+    }
+}
 
 Client::~Client()
 {}
@@ -36,13 +57,18 @@ bool Client::ConnectToServer()
     {
         if (!this->isReceivingPackets())
         {
-            delete(_sSource);
-            _sSource = nullptr;
-            _sSource = new std::stop_source;
+            // delete(_sSource);
+            // _sSource = nullptr;
+            // _sSource = new std::stop_source;
             this->bind(Socket::AnyPort);
-            _receive_thread = new std::jthread{thread_receive_packets, this, _sSource->get_token()};
+            startThreads(); //! needs to be started after the socket has been bind
+            // _receive_thread = new std::jthread{thread_receive_packets, this, _sSource->get_token()};
         }
-        if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token()};
+        // if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token()};
+    }
+    else
+    {
+        return false;
     }
 
     if (_serverIP == sf::IpAddress::LocalHost) _ip = sf::IpAddress::LocalHost.toInteger();
@@ -50,7 +76,8 @@ bool Client::ConnectToServer()
 
     if (this->send(connectionRequest, _serverIP, _serverPort) != Socket::Done)
     {
-        StopThreads();
+        stopThreads();
+        close();
         return false; 
     }
 
@@ -59,13 +86,16 @@ bool Client::ConnectToServer()
 
 void Client::setServerData(sf::IpAddress serverIP, unsigned short serverPort)
 {
-    _serverIP = serverIP; 
-    _serverPort = serverPort;  
+    setServerData(serverIP);
+    setServerData(serverPort);  
 }
 
 void Client::setServerData(sf::IpAddress serverIP)
 {
-    _serverIP = serverIP; 
+    if (_serverIP == "")
+        _serverIP = sf::IpAddress::LocalHost;
+    else
+        _serverIP = serverIP; 
 }
 
 void Client::setServerData(Port port)
@@ -132,6 +162,7 @@ bool Client::isConnectionConfirm(sf::Packet& packet)
     {
         packet >> temp;
         packet >> _ip;
+        _connectionTime = 0;
         return true;
     }
 
@@ -214,13 +245,13 @@ void Client::thread_receive_packets(std::stop_token stoken)
         else if (this->isConnectionClose(packet))
         {              
             _connectionOpen = false;
-            _port = 0;
+            // _port = 0;
             this->onConnectionClose.invoke(_threadSafeEvents);
         }
         else if (this->isConnectionConfirm(packet))
         {
             _connectionOpen = true;
-            _port = this->getLocalPort();
+            // _port = this->getLocalPort();
             this->onConnectionOpen.invoke(_threadSafeEvents);
         }
         else if (this->isPasswordRequest(packet))
@@ -236,43 +267,29 @@ void Client::thread_receive_packets(std::stop_token stoken)
     }
 }
 
-void Client::thread_update(std::stop_token stoken)
-{
-    UpdateLimiter updateLimit(_socketUpdateRate);
-    sf::Clock deltaClock;
-    float deltaTime;
+// void Client::thread_update(std::stop_token stoken)
+// {
+//     UpdateLimiter updateLimit(_socketUpdateRate);
+//     sf::Clock deltaClock;
+//     float deltaTime;
 
-    while (!stoken.stop_requested())
-    {
-        deltaTime = deltaClock.restart().asSeconds();
-        if (this->isConnectionOpen()) 
-        {
-            _connectionTime += deltaTime;
-            _timeSinceLastPacket += deltaTime;
-        }
-        if (_timeSinceLastPacket >= _clientTimeoutTime) { this->Disconnect(); this->onConnectionClose.invoke(_threadSafeEvents); }
-        if (_sendingPackets) _packetSendFunction.invoke();
-        updateLimit.wait();
-    }
-}
-
-void Client::StopThreads()
-{
-    if (_update_thread != nullptr)
-    {
-        _sSource->request_stop();
-        _update_thread->detach();
-        delete(_update_thread);
-        _update_thread = nullptr;
-    }
-    if (this->isReceivingPackets())
-    {
-        _receive_thread->detach();
-        this->close();
-        delete(_receive_thread);
-        _receive_thread = nullptr;
-    }
-}
+//     while (!stoken.stop_requested())
+//     {
+//         deltaTime = deltaClock.restart().asSeconds();
+//         if (this->isConnectionOpen()) 
+//         {
+//             _connectionTime += deltaTime;
+//             _timeSinceLastPacket += deltaTime;
+//         }
+//         if (_timeSinceLastPacket >= _clientTimeoutTime) 
+//         { 
+//             this->Disconnect(); 
+//             return;
+//         }
+//         if (_sendingPackets) _packetSendFunction.invoke();
+//         updateLimit.wait();
+//     }
+// }
 
 void Client::Disconnect()
 {
@@ -280,10 +297,12 @@ void Client::Disconnect()
     {
         sf::Packet close = this->ConnectionCloseTemplate();
         this->SendToServer(close);
-    }
-    
-    if (_connectionOpen) 
         this->onConnectionClose.invoke(_threadSafeEvents);
+    }
+    else
+    {
+        return;
+    }
  
     _connectionOpen = false;
     _needsPassword = false;
@@ -293,7 +312,8 @@ void Client::Disconnect()
     _timeSinceLastPacket = 0.f;
     _serverIP = sf::IpAddress::None;
 
-    StopThreads();
+    stopThreads();
+    close();
 }
 
 float Client::getTimeSinceLastPacket()

@@ -12,6 +12,7 @@
 namespace EventHelper
 {
 
+/// @note when using dynamic events in threads make sure the thread safe var is set true when invoking
 class Event
 {
 public:
@@ -127,7 +128,6 @@ public:
     private:
         inline ThreadSafe() = default;
 
-        // static std::list<std::pair<Event*, std::deque<void*>>> _events; // TODO check if making this a lambda would work
         static std::list<std::pair<Event*, std::function<void()>>> _events;
         friend Event;
     };

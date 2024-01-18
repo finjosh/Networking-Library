@@ -7,6 +7,8 @@
 #include <utility>
 #include <deque>
 
+#include <mutex>
+
 namespace funcHelper
 {
 template<typename _ReturnType = void>
@@ -87,6 +89,7 @@ protected:
     std::function<_ReturnType()> m_function;
 
     static std::deque<const void*> m_parameters;
+    static std::mutex _dynamic;
 
     static void setMaxParameters(size_t extraParameters = 0);
 
@@ -103,6 +106,9 @@ protected:
         return std::invoke(std::forward<Func>(_function), std::forward<BoundArgs>(args)...);
     }
 };
+
+template <typename T>
+std::mutex func<T>::_dynamic;
 
 template <typename T>
 std::deque<const void*> func<T>::m_parameters;
@@ -148,16 +154,20 @@ public:
 
     /// @brief invokes the currently set function
     inline void invoke(T param) const
-    { 
+    {
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         func::invoke();
+        _dynamic.unlock();
     }
 
     /// @brief invokes the currently set function
     inline void operator() (T param)
     { 
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         func::invoke(); 
+        _dynamic.unlock();
     }
 
     /// @returns a copy of the bound std::function that is stored in this class
@@ -222,17 +232,21 @@ public:
     /// @brief invokes the currently set function
     inline void invoke(T param, T2 param2)
     { 
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         m_parameters[1] = static_cast<const void*>(&param2);
         func::invoke();
+        _dynamic.unlock();
     }
 
     /// @brief invokes the currently set function
     inline void operator() (T param, T2 param2)
     { 
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         m_parameters[1] = static_cast<const void*>(&param2);
-        func::invoke(); 
+        func::invoke();
+        _dynamic.unlock(); 
     }
 
     /// @returns a copy of the bound std::function that is stored in this class
@@ -305,19 +319,23 @@ public:
     /// @brief invokes the currently set function
     inline void invoke(T param, T2 param2, T3 param3)
     { 
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         m_parameters[1] = static_cast<const void*>(&param2);
         m_parameters[2] = static_cast<const void*>(&param3);
         func::invoke();
+        _dynamic.unlock();
     }
 
     /// @brief invokes the currently set function
     inline void operator() (T param, T2 param2, T3 param3)
     { 
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         m_parameters[1] = static_cast<const void*>(&param2);
         m_parameters[2] = static_cast<const void*>(&param3);
-        func::invoke(); 
+        func::invoke();
+        _dynamic.unlock(); 
     }
 
     /// @returns a copy of the bound std::function that is stored in this class
@@ -398,21 +416,25 @@ public:
     /// @brief invokes the currently set function
     inline void invoke(T param, T2 param2, T3 param3, T4 param4)
     { 
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         m_parameters[1] = static_cast<const void*>(&param2);
         m_parameters[2] = static_cast<const void*>(&param3);
         m_parameters[3] = static_cast<const void*>(&param4);
         func::invoke();
+        _dynamic.unlock();
     }
 
     /// @brief invokes the currently set function
     inline void operator() (T param, T2 param2, T3 param3, T4 param4)
     { 
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         m_parameters[1] = static_cast<const void*>(&param2);
         m_parameters[2] = static_cast<const void*>(&param3);
         m_parameters[3] = static_cast<const void*>(&param4);
-        func::invoke(); 
+        func::invoke();
+        _dynamic.unlock(); 
     }
 
     /// @returns a copy of the bound std::function that is stored in this class
@@ -501,23 +523,27 @@ public:
     /// @brief invokes the currently set function
     inline void invoke(T param, T2 param2, T3 param3, T4 param4, T5 param5)
     { 
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         m_parameters[1] = static_cast<const void*>(&param2);
         m_parameters[2] = static_cast<const void*>(&param3);
         m_parameters[3] = static_cast<const void*>(&param4);
         m_parameters[4] = static_cast<const void*>(&param5);
         func::invoke();
+        _dynamic.unlock();
     }
 
     /// @brief invokes the currently set function
     inline void operator() (T param, T2 param2, T3 param3, T4 param4, T5 param5)
     { 
+        _dynamic.lock();
         m_parameters[0] = static_cast<const void*>(&param);
         m_parameters[1] = static_cast<const void*>(&param2);
         m_parameters[2] = static_cast<const void*>(&param3);
         m_parameters[3] = static_cast<const void*>(&param4);
         m_parameters[4] = static_cast<const void*>(&param5);
-        func::invoke(); 
+        func::invoke();
+        _dynamic.unlock(); 
     }
 
     /// @returns a copy of the bound std::function that is stored in this class

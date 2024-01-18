@@ -17,10 +17,6 @@ void addThemeCommands();
 // TODO UPDATE NETWORKING CLASSES
 int main()
 {
-    //! If you want Terminating functions to be attached to the CommandHandler you need to call the initializer
-    TFunc::initCommands();
-    //! --------------------------
-
     // setup for sfml and tgui
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Networking Library");
     window.setFramerateLimit(144);

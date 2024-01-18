@@ -23,12 +23,14 @@ class Server : public SocketPlus
             //* Pure Virtual Definition
 
                 virtual void thread_receive_packets(std::stop_token stoken);
-                virtual void thread_update(std::stop_token stoken);
+                // virtual void thread_update(std::stop_token stoken);
+                virtual void initThreadFunctions();
 
             // ------------------------
-            
-            // Starts the receiving packets thread so that the client can communicate to the server
-            void StartThreads();
+
+            void update(const float& deltaTime);
+            /// @brief the function to be called every second in update
+            void secondUpdate();
 
         // -----------------
 
@@ -47,6 +49,7 @@ class Server : public SocketPlus
         
         // ----------------------------------------------
 
+        // TODO organize this
         Server(Port port, bool passwordRequired = false);
         ~Server();
         void RequirePassword(bool requirePassword);

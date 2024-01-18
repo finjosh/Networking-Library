@@ -24,11 +24,12 @@ class Client : public SocketPlus
             //* Pure Virtual Definition
         
                 virtual void thread_receive_packets(std::stop_token stoken);
-                virtual void thread_update(std::stop_token stoken);
+                // virtual void thread_update(std::stop_token stoken);
+                virtual void initThreadFunctions();
             
             // ------------------------
 
-            void StopThreads();
+            void update(const float& deltaTime);
 
         // -----------------
 
@@ -41,6 +42,7 @@ class Client : public SocketPlus
 
         // -------
 
+        // TODO organize this
         Client(sf::IpAddress serverIP, Port serverPort);
         Client(unsigned short serverPort);
         ~Client();
