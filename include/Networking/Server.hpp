@@ -5,7 +5,12 @@
 
 #include "SocketPlus.hpp"
 
+// TODO make a function that resets all value to default state
+
 // TODO Update all names for camel case
+
+// TODO make the password requirement able to be changed while the server is open
+
 class Server : public SocketPlus
 {
     private:  
@@ -20,30 +25,44 @@ class Server : public SocketPlus
 
         //* Thread Functions
 
-            //* Pure Virtual Definition
+            //* Pure Virtual Definitions
 
-                virtual void thread_receive_packets(std::stop_token stoken);
-                // virtual void thread_update(std::stop_token stoken);
-                virtual void initThreadFunctions();
+                virtual void _initThreadFunctions();
 
             // ------------------------
 
-            void update(const float& deltaTime);
+            void _update(const float& deltaTime);
             /// @brief the function to be called every second in update
-            void secondUpdate();
+            void _secondUpdate();
 
         // -----------------
+
+        //* Packet Parsing Functions
+
+            //* Pure Virtual Definitions
+
+                /// @brief initializes the packet parsing functions
+                virtual void _initPacketParsingFunctions();
+
+            // -------------
+
+            void _parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, Port senderPort);
+            void _parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress senderIP, Port senderPort);
+            void _parseConnectionClosePacket(sf::Packet* packet, sf::IpAddress senderIP);
+            void _parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, Port senderPort);
+
+        // -------------------------
 
     public:
         //* Public data that the main will need access to 
             
-            std::deque<ID> deletedClientIDs;
-            std::deque<ID> newClientIDs;
+            std::deque<ID> deletedClientIDs; // TODO remove this once 
+            std::deque<ID> newClientIDs; // TODO remove this once 
 
             //* Events
 
-                EventHelper::Event onClientConnected;
-                EventHelper::Event onClientDisconnected;
+                EventHelper::EventDynamic<ID> onClientConnected;
+                EventHelper::EventDynamic<ID> onClientDisconnected;
 
             // -------
         
@@ -60,23 +79,6 @@ class Server : public SocketPlus
         // resets all the data stored in the server
         void CloseServer();
         void setPort(unsigned short port);
-        // returns true if the given packet is a connection request **removes the identifier from the packet
-        // if the server requires a password then this is false
-        // - adds client to client list
-        // - adds ID to current ID list
-        virtual bool isConnectionRequest(sf::Packet& packet, sf::IpAddress senderIPAddress, unsigned short senderPort);
-        // returns true if the given packet is a connection close **removes the identifier from the packet
-        // - removes the client from client list
-        // - adds the ID to the list of closed connections by ID
-        virtual bool isConnectionClose(sf::Packet& packet, sf::IpAddress senderIPAddress, unsigned short senderPort);
-        // returns true if the given password is correct **removes the identifier from the packet
-        // - if the password is wrong it requests a password again
-        // if the password is correct
-        // - removes the client from client list
-        // - adds the ID to the list of closed connections by ID
-        virtual bool isPassword(sf::Packet& packet, sf::IpAddress senderIPAddress, unsigned short senderPort);
-        // returns true if the given packet is a data packet **removes the identifier from the packet
-        virtual bool isData(sf::Packet& packet);
         // Sends the given packet to every client currently connected
         void SendToAll(sf::Packet& packet);
         // Tries to send the given packet to the client with the given ID

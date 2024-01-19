@@ -15,16 +15,15 @@ Client::Client(unsigned short serverPort)
 
 // ----------------
 
-void Client::initThreadFunctions()
+void Client::_initThreadFunctions()
 {
-    _update.setFunction(&update, this);
+    _updateFunc.setFunction(&_update, this);
 }
 
-void Client::update(const float& deltaTime)
+void Client::_update(const float& deltaTime)
 {
     if (this->isConnectionOpen()) 
     {
-        _connectionTime += deltaTime;
         _timeSinceLastPacket += deltaTime;
     }
     if (_timeSinceLastPacket >= _clientTimeoutTime) 
@@ -35,22 +34,27 @@ void Client::update(const float& deltaTime)
 }
 
 Client::~Client()
-{}
+{
+    Disconnect();
+}
 
 bool Client::WasIncorrectPassword()
-{ bool temp = _wrongPassword; _wrongPassword = false; return temp; }
+{ return _wrongPassword; }
 
 void Client::setAndSendPassword(std::string password)
 { setPassword(password); this->sendPasswordToServer(); }
 
 void Client::sendPasswordToServer()
 {
+    _wrongPassword = false;
     sf::Packet temp = this->PasswordPacket(_password);
         if (this->send(temp, _serverIP, _serverPort)) throw std::runtime_error("could not send password to host");
 }
 
 bool Client::ConnectToServer()
 {
+    _wrongPassword = false;
+
     sf::Packet connectionRequest = this->ConnectionRequestTemplate();
 
     if (_serverIP != sf::IpAddress::None)
@@ -105,191 +109,51 @@ void Client::setServerData(Port port)
 
 void Client::SendToServer(sf::Packet& packet)
 {
+    if (!_connectionOpen) return;
+    _wrongPassword = false;
     if (this->send(packet, _serverIP, _serverPort))
         throw std::runtime_error("ERROR - could not send packet to the server");
 }
 
-bool Client::isData(sf::Packet& packet)
+void Client::_initPacketParsingFunctions()
 {
-    int temp;
-
-    // making a copy of the packet in case that it is not a connection request
-    // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    sf::Packet c_packet = packet;
-    
-    if ((c_packet >> temp) && temp == PacketType::Data)
-    {
-        packet >> temp; // removing the packet type infomation from the packet
-        return true;
-    }
-
-    // returning false if this packet is not a data packet
-    return false;
+    _parseData.setFunction(&_parseDataPacket, this);
+    _parseConnectionConfirm.setFunction(&_parseConnectionConfirmPacket, this);
+    _parseConnectionClose.setFunction(&_parseConnectionClosePacket, this);
+    _parsePasswordRequest.setFunction(&_parsePasswordRequestPacket, this);
 }
 
-bool Client::isConnectionClose(sf::Packet packet)
+void Client::_parseDataPacket(sf::Packet* packet)
 {
-    int temp;
-
-    // making a copy of the packet in case that it is not a connection request
-    // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    sf::Packet c_packet = packet;
-    
-    if ((c_packet >> temp) && temp == PacketType::ConnectionClose)
-    {
-        packet >> temp; // removing the packet type infomation from the packet
-
-        packet.clear();
-
-        _connectionOpen = false;
-
-        return true;
-    }
-
-    // returning false if this packet is not a connection close
-    return false;
+    _timeSinceLastPacket = 0.f;
+    this->onDataReceived.invoke(*packet, _threadSafeEvents);
 }
 
-bool Client::isConnectionConfirm(sf::Packet& packet)
+void Client::_parseConnectionClosePacket(sf::Packet* packet)
 {
-    int temp;
-
-    // making a copy of the packet in case that it is not a connection request
-    // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    sf::Packet c_packet = packet;
-    
-    if ((c_packet >> temp) && temp == PacketType::ConnectionConfirm)
-    {
-        packet >> temp;
-        packet >> _ip;
-        _connectionTime = 0;
-        return true;
-    }
-
-    // returning false if this packet is not a connection confirm
-    return false;
+    _connectionOpen = false;
+    _connectionTime = 0.f;
+    Disconnect();
+    this->onConnectionClose.invoke(_threadSafeEvents);
 }
 
-bool Client::isWrongPassword(sf::Packet& packet)
+void Client::_parseConnectionConfirmPacket(sf::Packet* packet)
 {
-    int temp;
+    _connectionOpen = true;
+    _connectionTime = 0.f;
+    (*packet) >> _ip; // getting the ip from the packet
+    this->onConnectionOpen.invoke(_threadSafeEvents);
+}
 
-    // making a copy of the packet in case that it is not a connection request
-    // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    sf::Packet c_packet = packet;
-    
-    if ((c_packet >> temp) && temp == PacketType::WrongPassword)
-    {
-        packet >> temp;
+void Client::_parsePasswordRequestPacket(sf::Packet* packet)
+{
+    if (_needsPassword)
         _wrongPassword = true;
-        return true;
-    }
-
-    _wrongPassword = false;
-    // returning false if this packet is not a connection confirm
-    return false;
+    else
+        _wrongPassword = false;
+    _needsPassword = true;
+    this->onPasswordRequest.invoke(_threadSafeEvents);
 }
-
-bool Client::isPasswordRequest(sf::Packet& packet)
-{
-    int temp;
-
-    // making a copy of the packet in case that it is not a connection request
-    // if it is a connection request we then remove that int from the packet to make the main script simpler and no need to remember to remove it
-    sf::Packet c_packet = packet;
-    
-    if ((c_packet >> temp) && temp == PacketType::RequestPassword)
-    {
-        packet >> temp;
-        this->_needsPassword = true;
-        return true;
-    }
-
-    // returning false if this packet is not a connection confirm
-    return false;
-}
-
-void Client::thread_receive_packets(std::stop_token stoken)
-{
-    sf::Packet packet;
-    sf::IpAddress senderIP;
-    unsigned short senderPort;
-
-    while (!stoken.stop_requested()) {
-        Status receiveStatus = this->receive(packet, senderIP, senderPort);
-        if (receiveStatus == sf::Socket::Error)
-        {
-            if (stoken.stop_requested()) break;
-            throw std::runtime_error("ERROR - receiving packet");
-            // restarting the socket
-            this->unbind();
-            this->close();
-            this->bind(sf::Socket::AnyPort);
-            packet.clear();
-            // skip over rest of loop to prevent crash
-            continue;
-        }
-        // TODO same as server
-        else if (receiveStatus != sf::Socket::Done)
-        {
-            packet.clear();
-            continue;
-        }
-
-        if (this->isData(packet))
-        {            
-            // this->DataPackets.push_back(DataPacket(packet)); // TODO remove this after ensuring that the event works
-            _timeSinceLastPacket = 0.0;
-            this->onDataReceived.invoke(packet, _threadSafeEvents);
-        }
-        else if (this->isConnectionClose(packet))
-        {              
-            _connectionOpen = false;
-            // _port = 0;
-            this->onConnectionClose.invoke(_threadSafeEvents);
-        }
-        else if (this->isConnectionConfirm(packet))
-        {
-            _connectionOpen = true;
-            // _port = this->getLocalPort();
-            this->onConnectionOpen.invoke(_threadSafeEvents);
-        }
-        else if (this->isPasswordRequest(packet))
-        {
-            this->onPasswordRequest.invoke(_threadSafeEvents);
-        }
-        else if (this->isWrongPassword(packet))
-        {
-            this->onWrongPassword.invoke(_threadSafeEvents);
-        }
-
-        packet.clear();
-    }
-}
-
-// void Client::thread_update(std::stop_token stoken)
-// {
-//     UpdateLimiter updateLimit(_socketUpdateRate);
-//     sf::Clock deltaClock;
-//     float deltaTime;
-
-//     while (!stoken.stop_requested())
-//     {
-//         deltaTime = deltaClock.restart().asSeconds();
-//         if (this->isConnectionOpen()) 
-//         {
-//             _connectionTime += deltaTime;
-//             _timeSinceLastPacket += deltaTime;
-//         }
-//         if (_timeSinceLastPacket >= _clientTimeoutTime) 
-//         { 
-//             this->Disconnect(); 
-//             return;
-//         }
-//         if (_sendingPackets) _packetSendFunction.invoke();
-//         updateLimit.wait();
-//     }
-// }
 
 void Client::Disconnect()
 {

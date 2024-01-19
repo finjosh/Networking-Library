@@ -25,13 +25,12 @@ typedef unsigned short Port;
 
 enum PacketType
 {
-    ConnectionRequest = 0,
-    ConnectionClose = 1,
-    Data = 2,
+    Data = 0,
+    ConnectionRequest = 1,
+    ConnectionClose = 2,
     ConnectionConfirm = 3,
-    RequestPassword = 4,
-    Password = 5,
-    WrongPassword = 6
+    PasswordRequest = 4,
+    Password = 5
 };
 
 // TODO make a function to handle packets here (do it with a switch case)
@@ -47,10 +46,10 @@ class SocketPlus : protected sf::UdpSocket
         bool _connectionOpen = false; // if the server is open or the client is connected
         double _connectionTime = 0.0; // time that the connection has been up
         int _clientTimeoutTime = 20; 
-        bool _threadSafeEvents = true;
+        const bool _threadSafeEvents = true;
         funcHelper::func<void> _packetSendFunction = {[](){}};
 
-        //* thread variables
+        //* Thread Variables
 
             // stop source is universal
             std::stop_source* _sSource = nullptr;
@@ -62,23 +61,76 @@ class SocketPlus : protected sf::UdpSocket
             bool _sendingPackets = true;
             // in updates/second
             unsigned int _socketUpdateRate = 64;
-            /// @brief called every update
+            /// @brief called every update (at the socket update rate)
             /// @note not thread safe
-            funcHelper::funcDynamic<float> _update = {[](){}};
-            /// @brief called every second in when the update thread is running
+            funcHelper::funcDynamic<float> _updateFunc = {[](){}};
+            /// @brief called every second when the update thread is running
             /// @note not thread safe
-            funcHelper::func<void> _secondUpdate = {[](){}};
+            funcHelper::func<void> _secondUpdateFunc = {[](){}};
 
         // ----------------
 
-        //* Protected thread functions
+        //* Protected Thread Functions
                             
-            virtual void thread_receive_packets(std::stop_token sToken) = 0;
-            virtual void thread_update(std::stop_token sToken);
+            virtual void _thread_receive_packets(std::stop_token sToken);
+            virtual void _thread_update(std::stop_token sToken);
 
-            //* Pure virtual
+            //* Pure Virtual Functions
 
-                virtual void initThreadFunctions() = 0;
+                /// @brief Initializes the update and second update functions
+                virtual void _initThreadFunctions() = 0;
+
+            // -------------
+
+        // -------------------------
+
+        //* Packet Parsing Variables
+
+            /// @brief Called when a data packet is received
+            /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
+            /// @note Optional parameter sf::IpAddress, the senders IpAddress
+            /// @note Optional parameter Port, the sender Port
+            /// @note the packet only contains the data after the packet identifier
+            funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parseData = {[](){}};
+            /// @brief Called when a connection request packet is received
+            /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
+            /// @note Optional parameter sf::IpAddress, the senders IpAddress
+            /// @note Optional parameter Port, the sender Port
+            /// @note the packet only contains the data after the packet identifier
+            funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parseConnectionRequest = {[](){}};
+            /// @brief Called when a connection close packet is received
+            /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
+            /// @note Optional parameter sf::IpAddress, the senders IpAddress
+            /// @note Optional parameter Port, the sender Port
+            /// @note the packet only contains the data after the packet identifier
+            funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parseConnectionClose = {[](){}};
+            /// @brief Called when a connection confirm packet is received
+            /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
+            /// @note Optional parameter sf::IpAddress, the senders IpAddress
+            /// @note Optional parameter Port, the sender Port
+            /// @note the packet only contains the data after the packet identifier
+            funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parseConnectionConfirm = {[](){}};
+            /// @brief Called when a password request packet is received
+            /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
+            /// @note Optional parameter sf::IpAddress, the senders IpAddress
+            /// @note Optional parameter Port, the sender Port
+            /// @note the packet only contains the data after the packet identifier
+            funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parsePasswordRequest = {[](){}};
+            /// @brief Called when a password packet is received
+            /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
+            /// @note Optional parameter sf::IpAddress, the senders IpAddress
+            /// @note Optional parameter Port, the sender Port
+            /// @note the packet only contains the data after the packet identifier
+            funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parsePassword = {[](){}};
+
+        // -----------------------
+
+        //* Packet Parsing Functions
+
+            //* Pure Virtual Functions
+
+                /// @brief initializes the packet parsing functions
+                virtual void _initPacketParsingFunctions() = 0;
 
             // -------------
 
@@ -86,27 +138,27 @@ class SocketPlus : protected sf::UdpSocket
 
     public:
 
-        //* Event stuff
+        //* Events
             
-            /// @brief invoked when data is received
-            /// @note optional parameter sf::Packet
+            /// @brief Invoked when data is received
+            /// @note Optional parameter sf::Packet
             EventHelper::EventDynamic<sf::Packet> onDataReceived;
-            /// @brief invoked when the update rate is changed
-            /// @note optional parameter unsigned int
+            /// @brief Invoked when the update rate is changed
+            /// @note Optional parameter unsigned int
             EventHelper::EventDynamic<unsigned int> onUpdateRateChanged;
-            /// @brief invoked when the client timeout time has been changed
-            /// @note optional parameter unsigned int
+            /// @brief Invoked when the client timeout time has been changed
+            /// @note Optional parameter unsigned int
             EventHelper::EventDynamic<unsigned int> onClientTimeoutChanged;
-            /// @brief invoked when this port is changed 
-            /// @note optional parameter Port (unsigned short)
+            /// @brief Invoked when this port is changed 
+            /// @note Optional parameter Port (unsigned short)
             EventHelper::EventDynamic<Port> onPortChanged; // TODO implement this
-            /// @brief invoked when the server port is changed 
-            /// @note optional parameter Port (unsigned short)
+            /// @brief Invoked when the server port is changed 
+            /// @note Optional parameter Port (unsigned short)
             EventHelper::EventDynamic<Port> onServerPortChanged; // TODO implement this
-            /// @brief invoked when the password is changed
-            /// @note optional parameter New Password (string)
+            /// @brief Invoked when the password is changed
+            /// @note Optional parameter New Password (string)
             EventHelper::EventDynamic<std::string> onPasswordChanged;
-            /// @brief invoked when the packet send function is changed
+            /// @brief Invoked when the packet send function is changed
             EventHelper::Event onPacketSendChanged;
             /// @note Server -> Open
             /// @note Client -> Connection Confirmed
@@ -115,28 +167,23 @@ class SocketPlus : protected sf::UdpSocket
             /// @note Client -> Disconnected
             EventHelper::Event onConnectionClose;
 
-            // /// @brief will determine if events are called in thread safe mode
-            // /// @param threadSafe Default true
-            // void setThreadSafeEvents(bool threadSafe = true);
-            // bool isThreadSafeEvents();
-
         // ------
 
-        //* initializer and deconstructor
+        //* Initializer and Deconstructor
 
             SocketPlus();
             ~SocketPlus();
 
         // ------------------------------
 
-        //* Public thread functions
+        //* Public Thread Functions
 
             void startThreads();
             void stopThreads();
 
         // ---------------------
 
-        //* Getter
+        //* Getters
 
             /// @returns ID
             ID getID();
@@ -182,22 +229,25 @@ class SocketPlus : protected sf::UdpSocket
 
         // --------
 
-        //* Boolean question Functions
+        //* Boolean Question Functions
 
-            /// @returns true if the given packet is a connection request **Does NOT change ANYTHING about the packet
-            virtual bool isConnectionRequest(sf::Packet packet);
-            /// @returns true if the given packet is a connection close **Does NOT change ANYTHING about the packet
-            virtual bool isConnectionClose(sf::Packet packet);
-            /// @returns true if the given packet is a data packet **Does NOT change ANYTHING about the packet
-            virtual bool isData(sf::Packet packet);
-            /// @returns true if the given packet is a connection confirmation **Done NOT change ANYTHING about the packet
-            virtual bool isConnectionConfirm(sf::Packet packet);
-            /// @returns true if the given packet is a password request **Done NOT change ANYTHING about the packet
-            virtual bool isPasswordRequest(sf::Packet packet);
-            /// @returns true if the given packet is a password **Done NOT change ANYTHING about the packet
-            virtual bool isPassword(sf::Packet packet);
-            /// @returns true if the given packet is informing of a wrong packet **Done NOT change ANYTHING about the packet
-            virtual bool isWrongPassword(sf::Packet packet);
+            // // TODO do these better
+            // /// @returns true if the given packet is a connection request **Does NOT change ANYTHING about the packet
+            // static bool isConnectionRequest(sf::Packet packet);
+            // /// @returns true if the given packet is a connection close **Does NOT change ANYTHING about the packet
+            // static bool isConnectionClose(sf::Packet packet);
+            // /// @returns true if the given packet is a data packet **Does NOT change ANYTHING about the packet
+            // static bool isData(sf::Packet packet);
+            // /// @returns true if the given packet is a connection confirmation **Done NOT change ANYTHING about the packet
+            // static bool isConnectionConfirm(sf::Packet packet);
+            // /// @returns true if the given packet is a password request **Done NOT change ANYTHING about the packet
+            // static bool isPasswordRequest(sf::Packet packet);
+            // /// @returns true if the given packet is a password **Done NOT change ANYTHING about the packet
+            // static bool isPassword(sf::Packet packet);
+            // /// @returns true if the given packet is informing of a wrong packet **Done NOT change ANYTHING about the packet
+            // static bool isWrongPassword(sf::Packet packet);
+            // // ---------------------
+
             /// @returns true if the client is connected or server is open
             bool isConnectionOpen();
             /// @brief if the receiving thread is running
@@ -227,7 +277,7 @@ class SocketPlus : protected sf::UdpSocket
             static sf::Packet ConnectionConfirmPacket(sf::Uint32 id);
             static sf::Packet PasswordRequestPacket();
             static sf::Packet PasswordPacket(std::string password);
-            static sf::Packet WrongPasswordPacket();
+            // static sf::Packet WrongPasswordPacket();
 
         // -------------------
 };

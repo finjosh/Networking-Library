@@ -5,11 +5,14 @@
 
 #include "SocketPlus.hpp"
 
+// TODO make a function that resets all value to default state
+// TODO update functions to camel case
+
 class Client : public SocketPlus
 {
     private:
 
-        //* Server variables
+        //* Client Variables
 
             sf::IpAddress _serverIP;
             // unsigned short _serverPort;
@@ -21,23 +24,37 @@ class Client : public SocketPlus
 
         //* Thread Functions
 
-            //* Pure Virtual Definition
+            //* Pure Virtual Definitions
         
-                virtual void thread_receive_packets(std::stop_token stoken);
-                // virtual void thread_update(std::stop_token stoken);
-                virtual void initThreadFunctions();
+                virtual void _initThreadFunctions();
             
             // ------------------------
 
-            void update(const float& deltaTime);
+            void _update(const float& deltaTime);
 
         // -----------------
+
+        //* Packet Parsing Functions
+
+            //* Pure Virtual Definition
+
+                /// @brief initializes the packet parsing functions
+                virtual void _initPacketParsingFunctions();
+
+            // -------------
+
+            void _parseDataPacket(sf::Packet* packet);
+            void _parseConnectionClosePacket(sf::Packet* packet);
+            void _parseConnectionConfirmPacket(sf::Packet* packet);
+            void _parsePasswordRequestPacket(sf::Packet* packet);
+            void _parseWrongPasswordPacket(sf::Packet* packet);
+
+        // -------------------------
 
     public:
 
         //* Events
 
-            EventHelper::Event onWrongPassword;
             EventHelper::Event onPasswordRequest;
 
         // -------
@@ -46,10 +63,9 @@ class Client : public SocketPlus
         Client(sf::IpAddress serverIP, Port serverPort);
         Client(unsigned short serverPort);
         ~Client();
-        // CAN only be used once per wrong password sent as the bool is reset after call
-        // if the password is not wrong that mean that the connection has started 
-        // OR
-        // the server has not responded yet
+        /// @brief is true until another password is sent
+        /// @note password status is unknown until this is true or connection is open
+        /// @return true is wrong password
         bool WasIncorrectPassword();
         void setAndSendPassword(std::string password);
         void sendPasswordToServer(); // TODO put this into connect to server
@@ -61,22 +77,6 @@ class Client : public SocketPlus
         void setServerData(Port port);
         // sends the packet to the server
         void SendToServer(sf::Packet& packet);
-        // returns true if the given packet is a data packet 
-        // - removes the packet type
-        virtual bool isData(sf::Packet& packet);
-        // returns true if the given packet is a connection close 
-        // - removes the ID
-        // - sets isConnected to false
-        virtual bool isConnectionClose(sf::Packet packet);
-        // returns true if the given packet is a connection confirmation
-        // - resets ID to the given one if the ID is different
-        virtual bool isConnectionConfirm(sf::Packet& packet);
-        // returns true if the given packet is a indication that the wrong password was given
-        // - sets the "wrongPassword" to true
-        virtual bool isWrongPassword(sf::Packet& packet);
-        // returns true if the given packet is a password request
-        // - sets "serverNeedsPassword" to true
-        virtual bool isPasswordRequest(sf::Packet& packet);
         // resets all the data stored in the client
         void Disconnect();
         // returns the time in seconds

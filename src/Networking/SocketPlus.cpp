@@ -30,7 +30,65 @@ SocketPlus::~SocketPlus()
 
 //* Protected Thread Functions
 
-void SocketPlus::thread_update(std::stop_token sToken)
+void SocketPlus::_thread_receive_packets(std::stop_token sToken)
+{
+    sf::Packet packet;
+    sf::IpAddress senderIP;
+    unsigned short senderPort;
+
+    while (!sToken.stop_requested()) {
+        Status receiveStatus = this->receive(packet, senderIP, senderPort);
+        if (receiveStatus == sf::Socket::Error)
+        {
+            if (sToken.stop_requested()) break;
+            throw std::runtime_error("ERROR - receiving packet");
+        }
+        else if (receiveStatus != sf::Socket::Done)
+        {
+            std::cerr << "Error receiving packet: " << std::to_string(receiveStatus) << std::endl;
+            packet.clear();
+            continue;
+        }
+
+        int packetType;
+        packet >> packetType;
+
+        switch (packetType)
+        {
+        case PacketType::Data:
+            _parseData.invoke(&packet, senderIP, senderPort);
+            break;
+        
+        case PacketType::ConnectionRequest:
+            _parseConnectionRequest.invoke(&packet, senderIP, senderPort);
+            break;
+
+        case PacketType::ConnectionClose:
+            _parseConnectionClose.invoke(&packet, senderIP, senderPort);
+            break;
+
+        case PacketType::ConnectionConfirm:
+            _parseConnectionConfirm.invoke(&packet, senderIP, senderPort);
+            break;
+
+        case PacketType::PasswordRequest:
+            _parsePasswordRequest.invoke(&packet, senderIP, senderPort);
+            break;
+
+        case PacketType::Password:
+            _parsePassword.invoke(&packet, senderIP, senderPort);
+            break;
+
+        default:
+            std::cerr << "Packet Type not given... Value received: " << std::to_string(packetType) << std::endl;
+            break;
+        }
+
+        packet.clear();
+    }
+}
+
+void SocketPlus::_thread_update(std::stop_token sToken)
 {
     UpdateLimiter updateLimit(_socketUpdateRate);
 
@@ -40,7 +98,6 @@ void SocketPlus::thread_update(std::stop_token sToken)
     
     while (!sToken.stop_requested())
     {
-        // TODO do this with an event
         if (updateLimit.getUpdateLimit() != _socketUpdateRate)
         {
             updateLimit.updateLimit(_socketUpdateRate);
@@ -53,12 +110,12 @@ void SocketPlus::thread_update(std::stop_token sToken)
         // checking if second update should be called
         if (secondTime >= 1.f)
         {
-            _secondUpdate.invoke();
+            _secondUpdateFunc.invoke();
             secondTime = 0.f;
         }
 
         // calling the fixed update function
-        _update.invoke(deltaTime);
+        _updateFunc.invoke(deltaTime);
         
         // if we are sending packets call the sending function
         if (_sendingPackets) 
@@ -74,15 +131,16 @@ void SocketPlus::thread_update(std::stop_token sToken)
 
 void SocketPlus::startThreads()
 {
-    this->initThreadFunctions();
+    this->_initThreadFunctions();
+    this->_initPacketParsingFunctions();
 
     if (_receive_thread == nullptr)
     {
         if (_sSource != nullptr) delete(_sSource);
         _sSource = new std::stop_source;
-        _receive_thread = new std::jthread{thread_receive_packets, this, _sSource->get_token()};
+        _receive_thread = new std::jthread{_thread_receive_packets, this, _sSource->get_token()};
     }
-    if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token()};
+    if (_update_thread == nullptr) _update_thread = new std::jthread{_thread_update, this, _sSource->get_token()};
 }
 
 void SocketPlus::stopThreads()
@@ -183,82 +241,82 @@ bool SocketPlus::setPacketSendFunction(funcHelper::func<void> packetSendFunction
 
 //* Boolean question Functions
 
-bool SocketPlus::isConnectionRequest(sf::Packet packet)
-{
-    int temp;
+// bool SocketPlus::isConnectionRequest(sf::Packet packet)
+// {
+//     int temp;
     
-    if ((packet >> temp) && temp == PacketType::ConnectionClose)
-        return true;
+//     if ((packet >> temp) && temp == PacketType::ConnectionClose)
+//         return true;
 
-    // returning false if this packet is not a connection close
-    return false;
-}
+//     // returning false if this packet is not a connection close
+//     return false;
+// }
 
-bool SocketPlus::isConnectionClose(sf::Packet packet)
-{
-    int temp;
+// bool SocketPlus::isConnectionClose(sf::Packet packet)
+// {
+//     int temp;
     
-    if ((packet >> temp) && temp == PacketType::ConnectionClose)
-        return true;
+//     if ((packet >> temp) && temp == PacketType::ConnectionClose)
+//         return true;
 
 
-    // returning false if this packet is not a connection close
-    return false;
-}
+//     // returning false if this packet is not a connection close
+//     return false;
+// }
 
-bool SocketPlus::isData(sf::Packet packet)
-{
-    int temp;
+// bool SocketPlus::isData(sf::Packet packet)
+// {
+//     int temp;
     
-    if ((packet >> temp) && temp == PacketType::ConnectionClose)
-        return true;
+//     if ((packet >> temp) && temp == PacketType::ConnectionClose)
+//         return true;
 
-    // returning false if this packet is not a connection close
-    return false;
-}
+//     // returning false if this packet is not a connection close
+//     return false;
+// }
 
-bool SocketPlus::isConnectionConfirm(sf::Packet packet)
-{
-    int temp;
+// bool SocketPlus::isConnectionConfirm(sf::Packet packet)
+// {
+//     int temp;
     
-    if ((packet >> temp) && temp == PacketType::ConnectionConfirm)
-        return true;
+//     if ((packet >> temp) && temp == PacketType::ConnectionConfirm)
+//         return true;
 
-    // returning false if this packet is not a connection confirm
-    return false;
-}
+//     // returning false if this packet is not a connection confirm
+//     return false;
+// }
 
-bool SocketPlus::isPasswordRequest(sf::Packet packet)
-{
-    int temp;
+// bool SocketPlus::isPasswordRequest(sf::Packet packet)
+// {
+//     int temp;
     
-    if ((packet >> temp) && temp == PacketType::RequestPassword)
-        return true;
+//     if ((packet >> temp) && temp == PacketType::RequestPassword)
+//         return true;
 
-    // returning false if this packet is not a connection confirm
-    return false;
-}
+//     // returning false if this packet is not a connection confirm
+//     return false;
+// }
 
-bool SocketPlus::isPassword(sf::Packet packet)
-{
-    int temp;
+// bool SocketPlus::isPassword(sf::Packet packet)
+// {
+//     int temp;
     
-    if ((packet >> temp) && temp == PacketType::Password)
-        return true;
+//     if ((packet >> temp) && temp == PacketType::Password)
+//         return true;
 
-    // returning false if this packet is not a connection confirm
-    return false;
-}
+//     // returning false if this packet is not a connection confirm
+//     return false;
+// }
 
-bool SocketPlus::isWrongPassword(sf::Packet packet)
-{
-    int temp;
+// bool SocketPlus::isWrongPassword(sf::Packet packet)
+// {
+//     int temp;
     
-    if ((packet >> temp) && temp == PacketType::WrongPassword)
-        return true;
-    // returning false if this packet is not a connection confirm
-    return false;
-}
+//     if ((packet >> temp) && temp == PacketType::WrongPassword)
+//         return true;
+//     // returning false if this packet is not a connection confirm
+//     return false;
+// }
 
 bool SocketPlus::isConnectionOpen()
 { return _connectionOpen; }
@@ -343,7 +401,7 @@ sf::Packet SocketPlus::ConnectionConfirmPacket(sf::Uint32 id)
 sf::Packet SocketPlus::PasswordRequestPacket()
 {
     sf::Packet out;
-    out << PacketType::RequestPassword;
+    out << PacketType::PasswordRequest;
     return out;
 }
 
@@ -355,11 +413,11 @@ sf::Packet SocketPlus::PasswordPacket(std::string password)
     return out;
 }
 
-sf::Packet SocketPlus::WrongPasswordPacket()
-{
-    sf::Packet out;
-    out << PacketType::WrongPassword;
-    return out;
-}
+// sf::Packet SocketPlus::WrongPasswordPacket()
+// {
+//     sf::Packet out;
+//     out << PacketType::WrongPassword;
+//     return out;
+// }
 
 // -------------------

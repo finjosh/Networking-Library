@@ -388,8 +388,8 @@ void SocketUI::updateConnectionDisplay()
         if (_client.NeedsPassword())
         {
             _passEdit->setText("");
-            addWidgetToConnection(_passEdit);
-            addWidgetToConnection(_sendPassword);
+            addWidgetToConnection(_passEdit, 2);
+            addWidgetToConnection(_sendPassword, 2);
         }
 
         if (_client.isConnectionOpen()) // need to check here as the connection confirmation can take time
