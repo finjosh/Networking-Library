@@ -11,18 +11,7 @@ SocketPlus::SocketPlus()
 
 SocketPlus::~SocketPlus()
 {   
-    if (_sSource != nullptr) _sSource->request_stop();
-    if (_receive_thread != nullptr) 
-    {
-        _receive_thread->detach();
-    }
-    if (_update_thread != nullptr)
-    {
-        _update_thread->detach();
-    }
-    delete(_receive_thread);
-    delete(_update_thread);
-    delete(_sSource);
+    stopThreads();
     this->close();
 }
 
@@ -149,12 +138,14 @@ void SocketPlus::stopThreads()
     _sSource->request_stop();
     if (_update_thread != nullptr)
     {
+        _update_thread->join();
         _update_thread->detach();
         delete(_update_thread);
         _update_thread = nullptr;
     }
     if (_receive_thread != nullptr)
     {
+        _receive_thread->join();
         _receive_thread->detach();
         delete(_receive_thread);
         _receive_thread = nullptr;
@@ -241,83 +232,6 @@ bool SocketPlus::setPacketSendFunction(funcHelper::func<void> packetSendFunction
 
 //* Boolean question Functions
 
-// bool SocketPlus::isConnectionRequest(sf::Packet packet)
-// {
-//     int temp;
-    
-//     if ((packet >> temp) && temp == PacketType::ConnectionClose)
-//         return true;
-
-//     // returning false if this packet is not a connection close
-//     return false;
-// }
-
-// bool SocketPlus::isConnectionClose(sf::Packet packet)
-// {
-//     int temp;
-    
-//     if ((packet >> temp) && temp == PacketType::ConnectionClose)
-//         return true;
-
-
-//     // returning false if this packet is not a connection close
-//     return false;
-// }
-
-// bool SocketPlus::isData(sf::Packet packet)
-// {
-//     int temp;
-    
-//     if ((packet >> temp) && temp == PacketType::ConnectionClose)
-//         return true;
-
-//     // returning false if this packet is not a connection close
-//     return false;
-// }
-
-// bool SocketPlus::isConnectionConfirm(sf::Packet packet)
-// {
-//     int temp;
-    
-//     if ((packet >> temp) && temp == PacketType::ConnectionConfirm)
-//         return true;
-
-//     // returning false if this packet is not a connection confirm
-//     return false;
-// }
-
-// bool SocketPlus::isPasswordRequest(sf::Packet packet)
-// {
-//     int temp;
-    
-//     if ((packet >> temp) && temp == PacketType::RequestPassword)
-//         return true;
-
-//     // returning false if this packet is not a connection confirm
-//     return false;
-// }
-
-// bool SocketPlus::isPassword(sf::Packet packet)
-// {
-//     int temp;
-    
-//     if ((packet >> temp) && temp == PacketType::Password)
-//         return true;
-
-//     // returning false if this packet is not a connection confirm
-//     return false;
-// }
-
-// bool SocketPlus::isWrongPassword(sf::Packet packet)
-// {
-//     int temp;
-    
-//     if ((packet >> temp) && temp == PacketType::WrongPassword)
-//         return true;
-//     // returning false if this packet is not a connection confirm
-//     return false;
-// }
-
 bool SocketPlus::isConnectionOpen()
 { return _connectionOpen; }
 
@@ -359,11 +273,6 @@ bool SocketPlus::isValidIpAddress(std::string ipAddress)
         return false;
     }
 }
-
-// bool SocketPlus::isThreadSafeEvents()
-// {
-//     return _threadSafeEvents;
-// }
 
 // ---------------------------
 
@@ -412,12 +321,5 @@ sf::Packet SocketPlus::PasswordPacket(std::string password)
     out << password;
     return out;
 }
-
-// sf::Packet SocketPlus::WrongPasswordPacket()
-// {
-//     sf::Packet out;
-//     out << PacketType::WrongPassword;
-//     return out;
-// }
 
 // -------------------
