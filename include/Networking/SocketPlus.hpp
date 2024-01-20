@@ -231,23 +231,6 @@ class SocketPlus : protected sf::UdpSocket
 
         //* Boolean Question Functions
 
-            // // TODO do these better
-            // /// @returns true if the given packet is a connection request **Does NOT change ANYTHING about the packet
-            // static bool isConnectionRequest(sf::Packet packet);
-            // /// @returns true if the given packet is a connection close **Does NOT change ANYTHING about the packet
-            // static bool isConnectionClose(sf::Packet packet);
-            // /// @returns true if the given packet is a data packet **Does NOT change ANYTHING about the packet
-            // static bool isData(sf::Packet packet);
-            // /// @returns true if the given packet is a connection confirmation **Done NOT change ANYTHING about the packet
-            // static bool isConnectionConfirm(sf::Packet packet);
-            // /// @returns true if the given packet is a password request **Done NOT change ANYTHING about the packet
-            // static bool isPasswordRequest(sf::Packet packet);
-            // /// @returns true if the given packet is a password **Done NOT change ANYTHING about the packet
-            // static bool isPassword(sf::Packet packet);
-            // /// @returns true if the given packet is informing of a wrong packet **Done NOT change ANYTHING about the packet
-            // static bool isWrongPassword(sf::Packet packet);
-            // // ---------------------
-
             /// @returns true if the client is connected or server is open
             bool isConnectionOpen();
             /// @brief if the receiving thread is running
@@ -277,7 +260,6 @@ class SocketPlus : protected sf::UdpSocket
             static sf::Packet ConnectionConfirmPacket(sf::Uint32 id);
             static sf::Packet PasswordRequestPacket();
             static sf::Packet PasswordPacket(std::string password);
-            // static sf::Packet WrongPasswordPacket();
 
         // -------------------
 };
