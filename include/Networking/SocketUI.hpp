@@ -19,8 +19,7 @@
 #include "include/Networking/Client.hpp"
 #include "include/Networking/Server.hpp"
 #include "include/Utils/TerminatingFunction.hpp"
-// TODO add a request to stop 
-//      ^ so that we can delete this socket UI without leaking memory
+
 class SocketUI
 {
 public:

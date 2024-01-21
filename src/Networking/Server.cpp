@@ -8,16 +8,24 @@ Server::Server(unsigned short port, bool passwordRequired)
 
 Server::~Server()
 {
-    CloseServer();
+    closeConnection();
 }
 
-void Server::RequirePassword(bool requirePassword)
-{ this->_needsPassword = requirePassword; if (!this->_needsPassword) setPassword(""); }
+//* Protected Connection Functions
+    
+void Server::_resetConnectionData()
+{
+    SocketPlus::_resetConnectionData();
+    _clientData.clear();
+}
 
-void Server::RequirePassword(bool requirePassword, std::string password)
-{ this->_needsPassword = requirePassword; setPassword(password); }
+// ---------------------
 
-bool Server::openServer()
+//* Connection Functions
+
+//* Pure Virtual Definitions
+
+bool Server::tryOpenConnection()
 {
     if (this->bind(_port))
         return false;
@@ -28,36 +36,36 @@ bool Server::openServer()
     return true;
 }
 
-void Server::CloseServer()
+void Server::closeConnection()
 {
-    if (!this->isConnectionOpen()) return;
+    if (!isConnectionOpen()) return;
 
-    sf::Packet closeConnection = this->ConnectionCloseTemplate();
-    this->SendToAll(closeConnection);
+    sf::Packet closeConnection = SocketPlus::ConnectionCloseTemplate();
+    sendToAll(closeConnection);
 
-    this->stopThreads();
-    this->close();
+    _resetConnectionData();
+    stopThreads();
+    close();
 
-    if (_connectionOpen)
-        this->onConnectionClose.invoke(_threadSafeEvents);
-
-    _needsPassword = false;
-    this->setPassword("");
-    _connectionOpen = false;
-    // _lastID = 0;
-    this->deletedClientIDs.clear();
-    this->newClientIDs.clear();
-    // this->DataPackets.clear();
-    _clientData.clear();
-    _connectionTime = 0.0;
+    onConnectionClose.invoke(_threadSafeEvents);
 }
+
+// -------------------------
+
+// ------------------------------------------------
+
+void Server::requirePassword(bool requirePassword)
+{ this->_needsPassword = requirePassword; if (!this->_needsPassword) setPassword(""); }
+
+void Server::requirePassword(bool requirePassword, std::string password)
+{ this->_needsPassword = requirePassword; setPassword(password); }
 
 void Server::setPort(unsigned short port)
 {
     _port = port;
 }
 
-void Server::SendToAll(sf::Packet& packet)
+void Server::sendToAll(sf::Packet& packet)
 {
     for (auto& c: _clientData)
     {
@@ -66,7 +74,7 @@ void Server::SendToAll(sf::Packet& packet)
     }
 }
 
-void Server::SendTo(sf::Packet& packet, ID id)
+void Server::sendTo(sf::Packet& packet, ID id)
 {
     if (id != 0) 
     {
@@ -86,9 +94,8 @@ bool Server::disconnectClient(ID id)
     if (_clientData.find(id) != _clientData.end())
     {
         sf::Packet RemoveClient = this->ConnectionCloseTemplate();
-        SendTo(RemoveClient, id);
+        sendTo(RemoveClient, id);
         _clientData.erase(id);
-        this->deletedClientIDs.push_back(id);
         return true;
     }
     else return false;
@@ -99,10 +106,8 @@ void Server::disconnectAllClients()
 {
     sf::Packet RemoveClient = this->ConnectionCloseTemplate();
 
-    this->SendToAll(RemoveClient);
+    this->sendToAll(RemoveClient);
 
-    for (auto& c: _clientData)
-        this->deletedClientIDs.push_back(c.first);
     _clientData.clear();
 }
 
@@ -112,7 +117,7 @@ std::unordered_map<ID, ClientData>& Server::getClients()
 ClientData Server::getClientData(std::pair<const ID, ClientData> client)
 { return client.second; }
 
-sf::Uint32 Server::NumberOfClients()
+sf::Uint32 Server::getNumberOfClients()
 { return (sf::Uint32)_clientData.size();}
 
 float Server::getClientTimeSinceLastPacket(ID clientID)
@@ -181,7 +186,7 @@ void Server::_parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, Port s
             sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
             if (this->send(Confirmation, senderIP, senderPort))
                 throw std::runtime_error("ERROR - could not send connection confirmation");
-            this->onClientConnected.invoke(_threadSafeEvents);
+            this->onClientConnected.invoke((ID)(senderIP.toInteger()), _threadSafeEvents);
         }
         else
         {
@@ -209,7 +214,6 @@ void Server::_parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress sen
         if (_clientData.find(ip) == _clientData.end())
         {
             _clientData.insert({(ID)ip, ClientData(senderPort, (ID)ip)});
-            this->newClientIDs.push_back((ID)ip); 
         }
         else // Client is already connected
         {
@@ -238,13 +242,12 @@ void Server::_parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, Po
     if (_password == sentPassword && _clientData.find(ip) == _clientData.end()) // if password is correct and client is not already connected
     {
         _clientData.insert({(ID)ip, ClientData(senderPort, (ID)ip)});
-        this->newClientIDs.push_back((ID)ip); // TODO remove this
        
         // send confirmation as password was correct
         sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
         if (this->send(Confirmation, senderIP, senderPort))
             throw std::runtime_error("ERROR - could not send ID Assign packet");
-        this->onClientConnected.invoke(_threadSafeEvents);
+        this->onClientConnected.invoke((ID)ip, _threadSafeEvents);
     }
     else
     {

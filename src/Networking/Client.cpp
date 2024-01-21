@@ -15,43 +15,23 @@ Client::Client(unsigned short serverPort)
 
 // ----------------
 
-void Client::_initThreadFunctions()
+//* Protected Connection Functions
+    
+void Client::_resetConnectionData()
 {
-    _updateFunc.setFunction(&_update, this);
-}
-
-void Client::_update(const float& deltaTime)
-{
-    if (this->isConnectionOpen()) 
-    {
-        _timeSinceLastPacket += deltaTime;
-    }
-    if (_timeSinceLastPacket >= _clientTimeoutTime) 
-    { 
-        this->Disconnect(); 
-        return;
-    }
-}
-
-Client::~Client()
-{
-    Disconnect();
-}
-
-bool Client::WasIncorrectPassword()
-{ return _wrongPassword; }
-
-void Client::setAndSendPassword(std::string password)
-{ setPassword(password); this->sendPasswordToServer(); }
-
-void Client::sendPasswordToServer()
-{
+    SocketPlus::_resetConnectionData();
+    _serverIP = sf::IpAddress::None;
     _wrongPassword = false;
-    sf::Packet temp = this->PasswordPacket(_password);
-        if (this->send(temp, _serverIP, _serverPort)) throw std::runtime_error("could not send password to host");
+    _timeSinceLastPacket = 0.f;
 }
+    
+// ---------------------
 
-bool Client::ConnectToServer()
+//* Connection Functions
+
+// * Pure Virtual Definitions
+
+bool Client::tryOpenConnection()
 {
     _wrongPassword = false;
 
@@ -61,14 +41,9 @@ bool Client::ConnectToServer()
     {
         if (!this->isReceivingPackets())
         {
-            // delete(_sSource);
-            // _sSource = nullptr;
-            // _sSource = new std::stop_source;
             this->bind(Socket::AnyPort);
-            startThreads(); //! needs to be started after the socket has been bind
-            // _receive_thread = new std::jthread{thread_receive_packets, this, _sSource->get_token()};
+            startThreads(); //! needs to be called AFTER port binding
         }
-        // if (_update_thread == nullptr) _update_thread = new std::jthread{thread_update, this, _sSource->get_token()};
     }
     else
     {
@@ -86,6 +61,64 @@ bool Client::ConnectToServer()
     }
 
     return true;
+}
+
+void Client::closeConnection()
+{
+    if (this->isConnectionOpen())
+    {
+        sf::Packet close = this->ConnectionCloseTemplate();
+        this->sendToServer(close);
+        this->onConnectionClose.invoke(_threadSafeEvents);
+    }
+    else
+    {
+        return;
+    }
+ 
+    _resetConnectionData();
+    stopThreads();
+    close();
+}
+
+// --------------------------
+
+// ------------------------------------------------
+
+void Client::_initThreadFunctions()
+{
+    _updateFunc.setFunction(&_update, this);
+}
+
+void Client::_update(const float& deltaTime)
+{
+    if (this->isConnectionOpen()) 
+    {
+        _timeSinceLastPacket += deltaTime;
+    }
+    if (_timeSinceLastPacket >= _clientTimeoutTime) 
+    { 
+        this->closeConnection(); 
+        return;
+    }
+}
+
+Client::~Client()
+{
+    closeConnection();
+}
+
+bool Client::wasIncorrectPassword()
+{ return _wrongPassword; }
+
+void Client::setAndSendPassword(std::string password)
+{ setPassword(password); this->sendPasswordToServer(); }
+
+void Client::sendPasswordToServer()
+{
+    _wrongPassword = false;
+    sf::Packet temp = this->PasswordPacket(_password);
+        if (this->send(temp, _serverIP, _serverPort)) throw std::runtime_error("could not send password to host");
 }
 
 void Client::setServerData(sf::IpAddress serverIP, unsigned short serverPort)
@@ -107,7 +140,7 @@ void Client::setServerData(Port port)
     _serverPort = port;
 }
 
-void Client::SendToServer(sf::Packet& packet)
+void Client::sendToServer(sf::Packet& packet)
 {
     if (!_connectionOpen) return;
     _wrongPassword = false;
@@ -133,7 +166,7 @@ void Client::_parseConnectionClosePacket(sf::Packet* packet)
 {
     _connectionOpen = false;
     _connectionTime = 0.f;
-    Disconnect();
+    closeConnection();
     this->onConnectionClose.invoke(_threadSafeEvents);
 }
 
@@ -153,31 +186,6 @@ void Client::_parsePasswordRequestPacket(sf::Packet* packet)
         _wrongPassword = false;
     _needsPassword = true;
     this->onPasswordRequest.invoke(_threadSafeEvents);
-}
-
-void Client::Disconnect()
-{
-    if (this->isConnectionOpen())
-    {
-        sf::Packet close = this->ConnectionCloseTemplate();
-        this->SendToServer(close);
-        this->onConnectionClose.invoke(_threadSafeEvents);
-    }
-    else
-    {
-        return;
-    }
- 
-    _connectionOpen = false;
-    _needsPassword = false;
-    _wrongPassword = false;
-    this->setPassword("");
-    _connectionTime = 0.f;
-    _timeSinceLastPacket = 0.f;
-    _serverIP = sf::IpAddress::None;
-
-    stopThreads();
-    close();
 }
 
 float Client::getTimeSinceLastPacket()

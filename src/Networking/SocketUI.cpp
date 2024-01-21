@@ -5,6 +5,9 @@ SocketUI::SocketUI(Port serverPort, funcHelper::func<void> serverCustomPacketSen
 
 SocketUI::~SocketUI()
 {
+    _server.closeConnection();
+    _client.closeConnection();
+
     if (_infoParent != nullptr) _infoParent->destroy();
     if (_connectionParent != nullptr) _connectionParent->destroy();
 }
@@ -229,14 +232,12 @@ SocketPlus* SocketUI::getSocket()
     return &_client;    
 }
 
-// TODO update this to use more evert instead of updates
+// TODO update this to use more events instead of updates
 void SocketUI::updateInfoDisplay()
 {
     if (isEmpty() || !isConnectionOpen()) return;
     _list->changeItem(5, {"Connection Open Time", std::to_string(_socket->getConnectionTime())});
-    // _list->changeItem(6,{"Packets Stored", std::to_string(_socket->DataPackets.size())});
 
-    // TODO check if this works
     if (_isServer)
     {
         _clientData->setVisible(true);
@@ -244,37 +245,18 @@ void SocketUI::updateInfoDisplay()
         auto scroll = _clientData->getVerticalScrollbarValue();
         _clientData->removeAllItems();
         _clientData->addItem({"Client Data"});
-        _clientData->addItem({"New Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")"});
-        _clientData->addItem({"Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()) + ")"});
+
         for (auto data: _server.getClients())
         {
             tgui::String id(data.first);
-            // if (_clientData->addItem({"Client Data", id}, false))
-            // {
-                _clientData->addItem({"Client Data", id, {"IP: " + sf::IpAddress(data.second.id).toString()}});
-                _clientData->addItem({"Client Data", id, {"Port: " + std::to_string(data.second.port)}});
-                _clientData->addItem({"Client Data", id, {"Packets/s: " + std::to_string(data.second.PacketsPerSecond)}});
-                _clientData->addItem({"Client Data", id, {"Last packet (s): " + std::to_string(data.second.TimeSinceLastPacket)}});
-                _clientData->addItem({"Client Data", id, {"Connection Time (s): " + std::to_string(data.second.ConnectionTime)}});
-            // } 
-            // else
-            // {
-            //     // std::string temp = _clientData->getNodes().
-            //     _clientData->changeItem({"Client Data", id}, {"Packets/s: " + std::to_string(data.second.PacketsPerSecond)});
-            //     _clientData->changeItem({"Client Data", id}, {"Last packet (s): " + std::to_string(data.second.TimeSinceLastPacket)});
-            //     _clientData->changeItem({"Client Data", id}, {"Connection Time (s): " + std::to_string(data.second.ConnectionTime)});
-            // }
+
+            _clientData->addItem({"Client Data", id, {"IP: " + sf::IpAddress(data.second.id).toString()}});
+            _clientData->addItem({"Client Data", id, {"Port: " + std::to_string(data.second.port)}});
+            _clientData->addItem({"Client Data", id, {"Packets/s: " + std::to_string(data.second.PacketsPerSecond)}});
+            _clientData->addItem({"Client Data", id, {"Last packet (s): " + std::to_string(data.second.TimeSinceLastPacket)}});
+            _clientData->addItem({"Client Data", id, {"Connection Time (s): " + std::to_string(data.second.ConnectionTime)}});
         }
-        for (auto data: _server.newClientIDs)
-        {
-            // _clientData->changeItem({"New Client IDs (" + std::to_string(_server.newClientIDs.size()-1) + ")"}, "New Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")");
-            _clientData->addItem({"New Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")", {std::to_string(data)}});
-        }
-        for (auto data: _server.deletedClientIDs)
-        {
-            // _clientData->changeItem({"Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()-1) + ")"}, "Deleted Client IDs (" + std::to_string(_server.deletedClientIDs.size()) + ")");
-            _clientData->addItem({"Deleted Client IDs (" + std::to_string(_server.newClientIDs.size()) + ")", {std::to_string(data)}});
-        }
+
         _clientData->setVerticalScrollbarValue(scroll);
     }
     else
@@ -294,7 +276,6 @@ void SocketUI::initData()
     _list->addItem({"Port", std::to_string(_socket->getPort())});
     _list->addItem({"Connection Open", (_socket->isConnectionOpen() ? "True" : "False")});
     _list->addItem({"Connection Open Time", std::to_string(_socket->getConnectionTime())});
-    // _list->addItem({"Packets Stored", std::to_string(_socket->DataPackets.size())});
     updateUISize();
 }
 
@@ -335,14 +316,7 @@ void SocketUI::setClient()
 void SocketUI::setEmpty()
 {
     if (this->getSocket() == nullptr) return;
-    if (_isServer)
-    {
-        _server.CloseServer();
-    }
-    else
-    {
-        _client.Disconnect();
-    }   
+    _socket->closeConnection();
     _socket = nullptr;
 }
 
@@ -433,18 +407,18 @@ void SocketUI::tryOpenConnection()
     if (!isEmpty() && isServer())
     {
         if (_passCheck->isChecked())
-            _server.RequirePassword(true, _passEdit->getText().toStdString());
+            _server.requirePassword(true, _passEdit->getText().toStdString());
         else
-            _server.RequirePassword(false);
+            _server.requirePassword(false);
         _server.setPacketSendFunction(_sSendFunc);
-        _server.openServer();
+        _server.tryOpenConnection();
     }
     else
     {
         if (!_client.NeedsPassword())
         {
             _client.setPacketSendFunction(_cSendFunc);
-            _client.ConnectToServer();
+            _client.tryOpenConnection();
         }
         else
         {
@@ -455,8 +429,8 @@ void SocketUI::tryOpenConnection()
 
 void SocketUI::closeConnection()
 {
-    _server.CloseServer();
-    _client.Disconnect();
+    _server.closeConnection();
+    _client.closeConnection();
     resetUIConnectionStates();
     _socket = nullptr;
 }

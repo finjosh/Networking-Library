@@ -45,6 +45,7 @@ void SocketPlus::_thread_receive_packets(std::stop_token sToken)
         switch (packetType)
         {
         case PacketType::Data:
+            if (packet.endOfPacket()) continue;
             _parseData.invoke(&packet, senderIP, senderPort);
             break;
         
@@ -116,6 +117,18 @@ void SocketPlus::_thread_update(std::stop_token sToken)
 
 // ---------------------------
 
+//* Protected Connection Functions
+
+void SocketPlus::_resetConnectionData()
+{
+    _needsPassword = false;
+    setPassword("");
+    _connectionOpen = false;
+    _connectionTime = 0.f;
+}
+
+// -------------------------------
+
 //* Public Thread functions
 
 void SocketPlus::startThreads()
@@ -138,14 +151,17 @@ void SocketPlus::stopThreads()
     _sSource->request_stop();
     if (_update_thread != nullptr)
     {
-        _update_thread->join();
         _update_thread->detach();
         delete(_update_thread);
         _update_thread = nullptr;
     }
     if (_receive_thread != nullptr)
     {
-        _receive_thread->join();
+        // Sending a packet to its self so the receive thread can continue execution and exit
+        // TODO make a send packet function
+        sf::Packet temp = DataPacketTemplate();
+        if (sf::UdpSocket::send(temp, sf::IpAddress(_ip), _port))
+            throw std::runtime_error("ERROR - Could not send packet to client");
         _receive_thread->detach();
         delete(_receive_thread);
         _receive_thread = nullptr;

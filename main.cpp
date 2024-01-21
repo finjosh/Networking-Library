@@ -14,7 +14,7 @@ using namespace std;
 using namespace sf;
 
 void addThemeCommands();
-// TODO UPDATE NETWORKING CLASSES
+
 int main()
 {
     // setup for sfml and tgui
@@ -28,7 +28,7 @@ int main()
     Command::color::setDefaultColor({255,255,255,255});
     // -----------------------
 
-    SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->SendToAll(SocketPlus::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->SendToServer(SocketPlus::DataPacketTemplate() << "Some Data"); }});
+    SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->sendToAll(SocketPlus::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->sendToServer(SocketPlus::DataPacketTemplate() << "Some Data"); }});
     // sDisplay.init(gui);
     // sDisplay.setSocket(server);
     sDisplay.initConnectionDisplay(gui);
