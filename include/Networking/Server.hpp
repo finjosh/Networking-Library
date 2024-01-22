@@ -5,8 +5,6 @@
 
 #include "SocketPlus.hpp"
 
-// TODO make a function that resets all value to default state
-
 class Server : public SocketPlus
 {
 private:  
@@ -48,10 +46,10 @@ private:
 
         // -------------
 
-        void _parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, Port senderPort);
-        void _parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress senderIP, Port senderPort);
+        void _parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort);
+        void _parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort);
         void _parseConnectionClosePacket(sf::Packet* packet, sf::IpAddress senderIP);
-        void _parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, Port senderPort);
+        void _parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort);
 
     // -------------------------
 
@@ -81,11 +79,11 @@ public:
     // ------------------------------------------------
 
     // TODO organize this
-    Server(Port port, bool passwordRequired = false);
+    Server(PORT port, bool passwordRequired = false);
     ~Server();
     void requirePassword(bool requirePassword);
     void requirePassword(bool requirePassword, std::string password);
-    void setPort(unsigned short port);
+    void setPort(PORT port);
     /// @brief Sends the given packet to every client currently connected
     void sendToAll(sf::Packet& packet);
     /// @brief tries to send the given packet to the client with the given ID

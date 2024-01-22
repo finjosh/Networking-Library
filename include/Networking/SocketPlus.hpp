@@ -21,7 +21,7 @@
 typedef sf::Uint32 ID;
 // IP = ID (Uint32)
 typedef ID IP;
-typedef unsigned short Port;
+typedef unsigned short PORT;
 
 enum PacketType
 {
@@ -44,8 +44,10 @@ protected:
         std::string _password = "";
         unsigned short _port = 777; // TODO reimplement _port
         unsigned short _serverPort = 777; // TODO reimplement _serverPort
-        bool _connectionOpen = false; // if the server is open or the client is connected
-        double _connectionTime = 0.f; // time that the connection has been up
+        /// @brief if the server is open or the client is connected
+        bool _connectionOpen = false;
+        /// @brief time that the connection has been up
+        double _connectionTime = 0.f;
         int _clientTimeoutTime = 20; 
         funcHelper::func<void> _packetSendFunction = {[](){}};
 
@@ -94,49 +96,44 @@ protected:
     
     // ---------------------
 
-
-    //* Packet Parsing Variables
+    //* Packet Parsing
 
         /// @brief Called when a data packet is received
         /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
         /// @note Optional parameter sf::IpAddress, the senders IpAddress
         /// @note Optional parameter Port, the sender Port
         /// @note the packet only contains the data after the packet identifier
-        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parseData = {[](){}};
+        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, PORT> _parseData = {[](){}};
         /// @brief Called when a connection request packet is received
         /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
         /// @note Optional parameter sf::IpAddress, the senders IpAddress
         /// @note Optional parameter Port, the sender Port
         /// @note the packet only contains the data after the packet identifier
-        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parseConnectionRequest = {[](){}};
+        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, PORT> _parseConnectionRequest = {[](){}};
         /// @brief Called when a connection close packet is received
         /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
         /// @note Optional parameter sf::IpAddress, the senders IpAddress
         /// @note Optional parameter Port, the sender Port
         /// @note the packet only contains the data after the packet identifier
-        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parseConnectionClose = {[](){}};
+        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, PORT> _parseConnectionClose = {[](){}};
         /// @brief Called when a connection confirm packet is received
         /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
         /// @note Optional parameter sf::IpAddress, the senders IpAddress
         /// @note Optional parameter Port, the sender Port
         /// @note the packet only contains the data after the packet identifier
-        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parseConnectionConfirm = {[](){}};
+        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, PORT> _parseConnectionConfirm = {[](){}};
         /// @brief Called when a password request packet is received
         /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
         /// @note Optional parameter sf::IpAddress, the senders IpAddress
         /// @note Optional parameter Port, the sender Port
         /// @note the packet only contains the data after the packet identifier
-        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parsePasswordRequest = {[](){}};
+        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, PORT> _parsePasswordRequest = {[](){}};
         /// @brief Called when a password packet is received
         /// @note Optional parameter sf::Packet* (Do NOT store this packet, ONLY parse the data)
         /// @note Optional parameter sf::IpAddress, the senders IpAddress
         /// @note Optional parameter Port, the sender Port
         /// @note the packet only contains the data after the packet identifier
-        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, Port> _parsePassword = {[](){}};
-
-    // -----------------------
-
-    //* Packet Parsing Functions
+        funcHelper::funcDynamic3<sf::Packet*, sf::IpAddress, PORT> _parsePassword = {[](){}};
 
         //* Pure Virtual Functions
 
@@ -146,6 +143,14 @@ protected:
         // -------------
 
     // -------------------------
+
+    //* Socket Functions
+
+        /// @brief attempts to send a packet to the given ip and port
+        /// @note if the packet fails to send throws runtime error
+        void _sendTo(sf::Packet& packet, const sf::IpAddress& ip, const PORT& port);
+
+    // -----------------
 
 public:
 
@@ -162,10 +167,10 @@ public:
         EventHelper::EventDynamic<unsigned int> onClientTimeoutChanged;
         /// @brief Invoked when this port is changed 
         /// @note Optional parameter Port (unsigned short)
-        EventHelper::EventDynamic<Port> onPortChanged; // TODO implement this
+        EventHelper::EventDynamic<PORT> onPortChanged; // TODO implement this
         /// @brief Invoked when the server port is changed 
         /// @note Optional parameter Port (unsigned short)
-        EventHelper::EventDynamic<Port> onServerPortChanged; // TODO implement this
+        EventHelper::EventDynamic<PORT> onServerPortChanged; // TODO implement this
         /// @brief Invoked when the password is changed
         /// @note Optional parameter New Password (string)
         EventHelper::EventDynamic<std::string> onPasswordChanged;

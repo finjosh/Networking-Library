@@ -5,8 +5,6 @@
 
 #include "SocketPlus.hpp"
 
-// TODO make a function that resets all value to default state
-
 class Client : public SocketPlus
 {
 private:
@@ -80,7 +78,7 @@ public:
     // ------------------------------------------------
 
     // TODO organize this
-    Client(sf::IpAddress serverIP, Port serverPort);
+    Client(sf::IpAddress serverIP, PORT serverPort);
     Client(unsigned short serverPort);
     ~Client();
     /// @brief is true until another password is sent
@@ -89,9 +87,9 @@ public:
     bool wasIncorrectPassword();
     void setAndSendPassword(std::string password);
     void sendPasswordToServer();
-    void setServerData(sf::IpAddress serverIP, Port serverPort);
+    void setServerData(sf::IpAddress serverIP, PORT serverPort);
     void setServerData(sf::IpAddress serverIP);
-    void setServerData(Port port);
+    void setServerData(PORT port);
     /// @brief sends the packet to the server
     void sendToServer(sf::Packet& packet);
     /// @brief returns the time in seconds

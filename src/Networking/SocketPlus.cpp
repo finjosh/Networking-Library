@@ -129,6 +129,16 @@ void SocketPlus::_resetConnectionData()
 
 // -------------------------------
 
+//* Socket Functions
+
+void SocketPlus::_sendTo(sf::Packet& packet, const sf::IpAddress& ip, const PORT& port)
+{
+    if (sf::UdpSocket::send(packet, sf::IpAddress(_ip), _port))
+        throw std::runtime_error("ERROR - Could not send packet (_sendTo Function)");
+}
+
+// -----------------
+
 //* Public Thread functions
 
 void SocketPlus::startThreads()
@@ -158,10 +168,9 @@ void SocketPlus::stopThreads()
     if (_receive_thread != nullptr)
     {
         // Sending a packet to its self so the receive thread can continue execution and exit
-        // TODO make a send packet function
         sf::Packet temp = DataPacketTemplate();
-        if (sf::UdpSocket::send(temp, sf::IpAddress(_ip), _port))
-            throw std::runtime_error("ERROR - Could not send packet to client");
+        _sendTo(temp, sf::IpAddress{_ip}, _port);
+        
         _receive_thread->detach();
         delete(_receive_thread);
         _receive_thread = nullptr;

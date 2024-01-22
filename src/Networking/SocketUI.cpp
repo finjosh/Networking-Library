@@ -1,6 +1,6 @@
 #include "include/Networking/SocketUI.hpp"
 
-SocketUI::SocketUI(Port serverPort, funcHelper::func<void> serverCustomPacketSendFunction, funcHelper::func<void> clientCustomPacketSendFunction) : 
+SocketUI::SocketUI(PORT serverPort, funcHelper::func<void> serverCustomPacketSendFunction, funcHelper::func<void> clientCustomPacketSendFunction) : 
     _client(sf::IpAddress::LocalHost, serverPort), _server(serverPort), _sSendFunc(serverCustomPacketSendFunction), _cSendFunc(clientCustomPacketSendFunction) {}
 
 SocketUI::~SocketUI()

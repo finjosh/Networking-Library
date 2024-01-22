@@ -40,8 +40,7 @@ void Server::closeConnection()
 {
     if (!isConnectionOpen()) return;
 
-    sf::Packet closeConnection = SocketPlus::ConnectionCloseTemplate();
-    sendToAll(closeConnection);
+    disconnectAllClients();
 
     _resetConnectionData();
     stopThreads();
@@ -67,10 +66,9 @@ void Server::setPort(unsigned short port)
 
 void Server::sendToAll(sf::Packet& packet)
 {
-    for (auto& c: _clientData)
+    for (auto& client: _clientData)
     {
-        if (this->send(packet, sf::IpAddress((IP)c.first), c.second.port))
-            throw std::runtime_error("ERROR - Server.h (Could not send packet to all client data)");
+        _sendTo(packet, sf::IpAddress((IP)client.second.id), client.second.port);
     }
 }
 
@@ -83,12 +81,10 @@ void Server::sendTo(sf::Packet& packet, ID id)
         // if the ID is not a client anymore dont send packet
         if (temp == &_clientData.end()->second) return;
         
-        if (this->send(packet, sf::IpAddress((IP)id), temp->port))
-            throw std::runtime_error("ERROR - Could not send packet to client");
+        _sendTo(packet, sf::IpAddress((IP)id), temp->port);
     }
 }
 
-// TODO move the disconnect event to these functions
 bool Server::disconnectClient(ID id)
 {
     if (_clientData.find(id) != _clientData.end())
@@ -101,7 +97,6 @@ bool Server::disconnectClient(ID id)
     else return false;
 }
 
-// TODO move the disconnect event to these functions
 void Server::disconnectAllClients()
 {
     sf::Packet RemoveClient = this->ConnectionCloseTemplate();
@@ -166,7 +161,7 @@ void Server::_initPacketParsingFunctions()
     _parsePassword.setFunction(&_parsePasswordPacket, this);
 }
 
-void Server::_parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, Port senderPort)
+void Server::_parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort)
 {
     // checking if the sender is a current client
     auto client = _clientData.find((ID)senderIP.toInteger()); 
@@ -184,26 +179,24 @@ void Server::_parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, Port s
             _clientData.insert({(ID)(senderIP.toInteger()), ClientData(senderPort, (ID)_ip)});
 
             sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
-            if (this->send(Confirmation, senderIP, senderPort))
-                throw std::runtime_error("ERROR - could not send connection confirmation");
+            _sendTo(Confirmation, senderIP, senderPort);
+
             this->onClientConnected.invoke((ID)(senderIP.toInteger()), _threadSafeEvents);
         }
         else
         {
             sf::Packet needPassword = this->PasswordRequestPacket();
-            if (this->send(needPassword, senderIP, senderPort) != Socket::Done) 
-                throw std::runtime_error("ERROR - could not send password request");
+            _sendTo(needPassword, senderIP, senderPort);
         }
     }
 }
 
-void Server::_parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress senderIP, Port senderPort)
+void Server::_parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort)
 {
     if (this->_needsPassword)
     {
         sf::Packet needPassword = this->PasswordRequestPacket();
-        if (this->send(needPassword, senderIP, senderPort) != Socket::Done) 
-            throw std::runtime_error("ERROR - could not send password request");
+        _sendTo(needPassword, senderIP, senderPort);
         return; // dont want to confirm a connection if need password
     }
     else
@@ -222,8 +215,7 @@ void Server::_parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress sen
     }
 
     sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
-    if (this->send(Confirmation, senderIP, senderPort))
-        throw std::runtime_error("ERROR - could not send connection confirmation");
+    _sendTo(Confirmation, senderIP, senderPort);
     this->onClientConnected.invoke((ID)senderIP.toInteger(), _threadSafeEvents);
 }
 
@@ -233,7 +225,7 @@ void Server::_parseConnectionClosePacket(sf::Packet* packet, sf::IpAddress sende
     this->onClientDisconnected.invoke((ID)senderIP.toInteger(), _threadSafeEvents);
 }
 
-void Server::_parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, Port senderPort)
+void Server::_parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort)
 {
     std::string sentPassword;
     (*packet) >> sentPassword;
@@ -245,15 +237,13 @@ void Server::_parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, Po
        
         // send confirmation as password was correct
         sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
-        if (this->send(Confirmation, senderIP, senderPort))
-            throw std::runtime_error("ERROR - could not send ID Assign packet");
+        _sendTo(Confirmation, senderIP, senderPort);
         this->onClientConnected.invoke((ID)ip, _threadSafeEvents);
     }
     else
     {
         sf::Packet passwordRequest;
         passwordRequest = this->PasswordRequestPacket();
-        if (this->send(passwordRequest, senderIP, senderPort)) 
-            throw std::runtime_error("ERROR - could not send request for password");
+        _sendTo(passwordRequest, senderIP, senderPort);
     }
 }

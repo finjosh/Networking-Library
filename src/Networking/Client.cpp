@@ -53,7 +53,12 @@ bool Client::tryOpenConnection()
     if (_serverIP == sf::IpAddress::LocalHost) _ip = sf::IpAddress::LocalHost.toInteger();
     else _ip = _ip;
 
-    if (this->send(connectionRequest, _serverIP, _serverPort) != Socket::Done)
+    try
+    {
+        // if this fails socket did not open
+        _sendTo(connectionRequest, _serverIP, _serverPort);
+    }
+    catch(const std::exception& e)
     {
         stopThreads();
         close();
@@ -118,7 +123,7 @@ void Client::sendPasswordToServer()
 {
     _wrongPassword = false;
     sf::Packet temp = this->PasswordPacket(_password);
-        if (this->send(temp, _serverIP, _serverPort)) throw std::runtime_error("could not send password to host");
+    _sendTo(temp, _serverIP, _serverPort);
 }
 
 void Client::setServerData(sf::IpAddress serverIP, unsigned short serverPort)
@@ -135,7 +140,7 @@ void Client::setServerData(sf::IpAddress serverIP)
         _serverIP = serverIP; 
 }
 
-void Client::setServerData(Port port)
+void Client::setServerData(PORT port)
 {
     _serverPort = port;
 }
@@ -144,8 +149,7 @@ void Client::sendToServer(sf::Packet& packet)
 {
     if (!_connectionOpen) return;
     _wrongPassword = false;
-    if (this->send(packet, _serverIP, _serverPort))
-        throw std::runtime_error("ERROR - could not send packet to the server");
+    _sendTo(packet, _serverIP, _serverPort);
 }
 
 void Client::_initPacketParsingFunctions()
