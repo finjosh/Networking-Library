@@ -1,5 +1,7 @@
 #include "include/Networking/SocketUI.hpp"
 
+using namespace udp;
+
 SocketUI::SocketUI(PORT serverPort, funcHelper::func<void> serverCustomPacketSendFunction, funcHelper::func<void> clientCustomPacketSendFunction) : 
     _client(sf::IpAddress::LocalHost, serverPort), _server(serverPort), _sSendFunc(serverCustomPacketSendFunction), _cSendFunc(clientCustomPacketSendFunction) {}
 
@@ -69,7 +71,7 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
 
             std::thread* tempThread = new std::thread([this](){
                 std::string pass = _IPEdit->getText().toStdString();
-                if (SocketPlus::isValidIpAddress(pass))
+                if (Socket::isValidIpAddress(pass))
                 {
                     this->getClient()->setServerData(sf::IpAddress(pass)); 
                     this->_validIPState = validIP::valid;
@@ -222,7 +224,7 @@ Client* SocketUI::getClient()
     return &_client;
 }
 
-SocketPlus* SocketUI::getSocket()
+Socket* SocketUI::getSocket()
 {
     if (!isConnectionOpen())
         return nullptr;
@@ -407,9 +409,9 @@ void SocketUI::tryOpenConnection()
     if (!isEmpty() && isServer())
     {
         if (_passCheck->isChecked())
-            _server.requirePassword(true, _passEdit->getText().toStdString());
+            _server.setPasswordRequired(true, _passEdit->getText().toStdString());
         else
-            _server.requirePassword(false);
+            _server.setPasswordRequired(false);
         _server.setPacketSendFunction(_sSendFunc);
         _server.tryOpenConnection();
     }

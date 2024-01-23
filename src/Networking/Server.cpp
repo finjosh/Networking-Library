@@ -1,8 +1,10 @@
 #include "include/Networking/Server.hpp"
 
+using namespace udp;
+
 //* Initializer and Deconstructor
 
-Server::Server(unsigned short port, bool passwordRequired)
+Server::Server(const unsigned short& port, const bool& passwordRequired)
 {
     _port = port;
 }
@@ -18,7 +20,7 @@ Server::~Server()
     
 void Server::_resetConnectionData()
 {
-    SocketPlus::_resetConnectionData();
+    Socket::_resetConnectionData();
     _clientData.clear();
 }
 
@@ -63,7 +65,7 @@ void Server::_initThreadFunctions()
 
 //* Packet Parsing Functions
 
-void Server::_parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort)
+void Server::_parseDataPacket(sf::Packet* packet, const sf::IpAddress& senderIP, const PORT& senderPort)
 {
     // checking if the sender is a current client
     auto client = _clientData.find((ID)senderIP.toInteger()); 
@@ -93,7 +95,7 @@ void Server::_parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT s
     }
 }
 
-void Server::_parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort)
+void Server::_parseConnectionRequestPacket(sf::Packet* packet, const sf::IpAddress& senderIP, const PORT& senderPort)
 {
     if (this->_needsPassword)
     {
@@ -121,13 +123,13 @@ void Server::_parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress sen
     this->onClientConnected.invoke((ID)senderIP.toInteger(), _threadSafeEvents);
 }
 
-void Server::_parseConnectionClosePacket(sf::Packet* packet, sf::IpAddress senderIP)
+void Server::_parseConnectionClosePacket(sf::Packet* packet, const sf::IpAddress& senderIP)
 {
     disconnectClient(senderIP.toInteger());
     this->onClientDisconnected.invoke((ID)senderIP.toInteger(), _threadSafeEvents);
 }
 
-void Server::_parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort)
+void Server::_parsePasswordPacket(sf::Packet* packet, const sf::IpAddress& senderIP, const PORT& senderPort)
 {
     std::string sentPassword;
     (*packet) >> sentPassword;
@@ -166,18 +168,44 @@ void Server::_initPacketParsingFunctions()
 
 //* Connection Functions
 
-void Server::requirePassword(bool requirePassword)
+void Server::setPasswordRequired(const bool& requirePassword)
 { this->_needsPassword = requirePassword; if (!this->_needsPassword) setPassword(""); }
 
-void Server::requirePassword(bool requirePassword, std::string password)
+void Server::setPasswordRequired(const bool& requirePassword, const std::string& password)
 { this->_needsPassword = requirePassword; setPassword(password); }
 
-void Server::setPort(unsigned short port)
+bool Server::isPasswordRequired() const
+{
+    return _needsPassword;
+}
+
+void Server::setPort(const unsigned short& port)
 {
     _port = port;
 }
 
-bool Server::disconnectClient(ID id)
+void Server::sendToAll(sf::Packet& packet)
+{
+    for (auto& client: _clientData)
+    {
+        _sendTo(packet, sf::IpAddress((IP)client.second.id), client.second.port);
+    }
+}
+
+void Server::sendTo(sf::Packet& packet, const ID& id)
+{
+    if (id != 0) 
+    {
+        ClientData* temp = &_clientData.find(id)->second;
+
+        // if the ID is not a client anymore dont send packet
+        if (temp == &_clientData.end()->second) return;
+
+        _sendTo(packet, sf::IpAddress((IP)id), temp->port);
+    }
+}
+
+bool Server::disconnectClient(const ID& id)
 {
     if (_clientData.find(id) != _clientData.end())
     {
@@ -201,19 +229,19 @@ void Server::disconnectAllClients()
 const std::unordered_map<ID, ClientData>& Server::getClients() const
 { return _clientData;}
 
-ClientData Server::getClientData(std::pair<const ID, ClientData> client)
+ClientData Server::getClientData(const std::pair<const ID, ClientData>& client)
 { return client.second; }
 
-sf::Uint32 Server::getClientsSize()
+sf::Uint32 Server::getClientsSize() const
 { return (sf::Uint32)_clientData.size();}
 
-float Server::getClientTimeSinceLastPacket(ID clientID)
+float Server::getClientTimeSinceLastPacket(const ID& clientID) const
 { return _clientData.find(clientID)->second.TimeSinceLastPacket; }
 
-double Server::getClientConnectionTime(ID clientID)
+double Server::getClientConnectionTime(const ID& clientID) const
 { return _clientData.find(clientID)->second.ConnectionTime; }
 
-unsigned int Server::getClientPacketsPerSec(ID clientID)
+unsigned int Server::getClientPacketsPerSec(const ID& clientID) const
 { return _clientData.find(clientID)->second.PacketsPerSecond; }
 
 //* Pure Virtual Definitions

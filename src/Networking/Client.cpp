@@ -1,14 +1,16 @@
 #include "include/Networking/Client.hpp"
 
+using namespace udp;
+
 //* Initializer and Deconstructor
 
-Client::Client(sf::IpAddress serverIP, unsigned short serverPort) 
+Client::Client(const sf::IpAddress& serverIP, const PORT& serverPort) 
 { 
     _serverIP = serverIP; 
     _serverPort = serverPort;  
 }
 
-Client::Client(unsigned short serverPort)
+Client::Client(const PORT& serverPort)
 {
     _serverPort = serverPort;  
 }
@@ -47,10 +49,10 @@ void Client::_initThreadFunctions()
 // -----------------
 
 //* Protected Connection Functions
-    
+
 void Client::_resetConnectionData()
 {
-    SocketPlus::_resetConnectionData();
+    Socket::_resetConnectionData();
     _serverIP = sf::IpAddress::None;
     _wrongPassword = false;
     _timeSinceLastPacket = 0.f;
@@ -111,7 +113,7 @@ void Client::_initPacketParsingFunctions()
 bool Client::wasIncorrectPassword()
 { return _wrongPassword; }
 
-void Client::setAndSendPassword(std::string password)
+void Client::setAndSendPassword(const std::string& password)
 { setPassword(password); this->sendPasswordToServer(); }
 
 void Client::sendPasswordToServer()
@@ -121,13 +123,13 @@ void Client::sendPasswordToServer()
     _sendTo(temp, _serverIP, _serverPort);
 }
 
-void Client::setServerData(sf::IpAddress serverIP, unsigned short serverPort)
+void Client::setServerData(const sf::IpAddress& serverIP, const PORT& serverPort)
 {
     setServerData(serverIP);
     setServerData(serverPort);  
 }
 
-void Client::setServerData(sf::IpAddress serverIP)
+void Client::setServerData(const sf::IpAddress& serverIP)
 {
     if (_serverIP == "")
         _serverIP = sf::IpAddress::LocalHost;
@@ -135,7 +137,7 @@ void Client::setServerData(sf::IpAddress serverIP)
         _serverIP = serverIP; 
 }
 
-void Client::setServerData(PORT port)
+void Client::setServerData(const PORT& port)
 {
     _serverPort = port;
 }
@@ -147,13 +149,13 @@ void Client::sendToServer(sf::Packet& packet)
     _sendTo(packet, _serverIP, _serverPort);
 }
 
-float Client::getTimeSinceLastPacket()
+float Client::getTimeSinceLastPacket() const
 { return _timeSinceLastPacket; }
 
-sf::IpAddress Client::getServerIP()
+sf::IpAddress Client::getServerIP() const
 { return _serverIP; }
 
-unsigned int Client::getServerPort()
+unsigned int Client::getServerPort() const
 { return _serverPort; }
 
 // * Pure Virtual Definitions
@@ -177,6 +179,7 @@ bool Client::tryOpenConnection()
         return false;
     }
 
+    // checking if connecting to localhost as ID will be different then
     if (_serverIP == sf::IpAddress::LocalHost) _ip = sf::IpAddress::LocalHost.toInteger();
     else _ip = _ip;
 

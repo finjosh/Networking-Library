@@ -20,11 +20,14 @@
 #include "include/Networking/Server.hpp"
 #include "include/Utils/TerminatingFunction.hpp"
 
+namespace udp
+{
+
 class SocketUI
 {
 public:
 
-    SocketUI(Port serverPort, funcHelper::func<void> serverCustomPacketSendFunction, funcHelper::func<void> clientCustomPacketSendFunction);
+    SocketUI(PORT serverPort, funcHelper::func<void> serverCustomPacketSendFunction, funcHelper::func<void> clientCustomPacketSendFunction);
     ~SocketUI();
 
     /// @brief creates the UI for opening a server or client connection
@@ -54,7 +57,7 @@ public:
     Client* getClient();
     /// @note nullptr if no socket is in use
     /// @returns the pointer to the socket that is currently in use
-    SocketPlus* getSocket();
+    Socket* getSocket();
     // /// @param server true if server false if client
     // void setServer(bool server);
 
@@ -111,7 +114,7 @@ private:
     tgui::Button::Ptr _sendPassword;
     tgui::ScrollablePanel::Ptr _panel;
 
-    SocketPlus* _socket = nullptr;
+    Socket* _socket = nullptr;
     Server _server;
     funcHelper::func<void> _sSendFunc;
     Client _client;
@@ -119,5 +122,7 @@ private:
     bool _isServer = false;
 
 };
+
+}
 
 #endif

@@ -3,9 +3,13 @@
 
 #pragma once
 
-#include "SocketPlus.hpp"
+#include "Socket.hpp"
 
-class Client : public SocketPlus
+namespace udp
+
+{
+
+class Client : public Socket
 {
 private:
 
@@ -59,8 +63,8 @@ public:
 
     //* Initializer and Deconstructor
 
-        Client(sf::IpAddress serverIP, PORT serverPort);
-        Client(unsigned short serverPort);
+        Client(const sf::IpAddress& serverIP, const PORT& serverPort);
+        Client(const PORT& serverPort);
         ~Client();
 
     // ------------------------------
@@ -79,17 +83,17 @@ public:
         /// @note password status is unknown until this is true or connection is open
         /// @return true is wrong password
         bool wasIncorrectPassword();
-        void setAndSendPassword(std::string password);
+        void setAndSendPassword(const std::string& password);
         void sendPasswordToServer();
-        void setServerData(sf::IpAddress serverIP, PORT serverPort);
-        void setServerData(sf::IpAddress serverIP);
-        void setServerData(PORT port);
+        void setServerData(const sf::IpAddress& serverIP, const PORT& serverPort);
+        void setServerData(const sf::IpAddress& serverIP);
+        void setServerData(const PORT& port);
         /// @brief sends the packet to the server
         void sendToServer(sf::Packet& packet);
         /// @brief returns the time in seconds
-        float getTimeSinceLastPacket();
-        sf::IpAddress getServerIP();
-        unsigned int getServerPort();
+        float getTimeSinceLastPacket() const;
+        sf::IpAddress getServerIP() const;
+        unsigned int getServerPort() const;
 
         //* Pure Virtual Definitions
 
@@ -104,5 +108,7 @@ public:
     // ------------------------------------------------
 
 };
+
+}
 
 #endif

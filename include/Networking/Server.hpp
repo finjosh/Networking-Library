@@ -3,9 +3,12 @@
 
 #pragma once
 
-#include "SocketPlus.hpp"
+#include "Socket.hpp"
 
-class Server : public SocketPlus
+namespace udp
+{
+
+class Server : public Socket
 {
 private:  
 
@@ -46,10 +49,10 @@ private:
 
         // -------------
 
-        void _parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort);
-        void _parseConnectionRequestPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort);
-        void _parseConnectionClosePacket(sf::Packet* packet, sf::IpAddress senderIP);
-        void _parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort);
+        void _parseDataPacket(sf::Packet* packet, const sf::IpAddress& senderIP, const PORT& senderPort);
+        void _parseConnectionRequestPacket(sf::Packet* packet, const sf::IpAddress& senderIP, const PORT& senderPort);
+        void _parseConnectionClosePacket(sf::Packet* packet, const sf::IpAddress& senderIP);
+        void _parsePasswordPacket(sf::Packet* packet, const sf::IpAddress& senderIP, const PORT& senderPort);
 
     // -------------------------
 
@@ -57,7 +60,7 @@ public:
 
     //* Initializer and Deconstructor
 
-        Server(PORT port, bool passwordRequired = false);
+        Server(const PORT& port, const bool& passwordRequired = false);
         ~Server();
 
     // ------------------------------
@@ -71,25 +74,26 @@ public:
 
     //* Connection Functions
 
-        void requirePassword(bool requirePassword);
-        void requirePassword(bool requirePassword, std::string password);
-        void setPort(PORT port);
+        void setPasswordRequired(const bool& requirePassword);
+        void setPasswordRequired(const bool& requirePassword, const std::string& password);
+        bool isPasswordRequired() const;
+        void setPort(const PORT& port);
         void disconnectAllClients();
         /// @brief removes the client with the given ID
         /// @returns true if the client was removed returns false if it was not found
-        bool disconnectClient(ID id);
+        bool disconnectClient(const ID& id);
         /// @returns a pointer to the clients map
         const std::unordered_map<ID, ClientData>& getClients() const;
-        static ClientData getClientData(std::pair<const ID, ClientData> client);
+        static ClientData getClientData(const std::pair<const ID, ClientData>& client);
         /// @returns the number of clients
-        sf::Uint32 getClientsSize();
-        float getClientTimeSinceLastPacket(ID clientID);
-        double getClientConnectionTime(ID clientID);
-        unsigned int getClientPacketsPerSec(ID clientID);
+        sf::Uint32 getClientsSize() const;
+        float getClientTimeSinceLastPacket(const ID& clientID) const;
+        double getClientConnectionTime(const ID& clientID) const;
+        unsigned int getClientPacketsPerSec(const ID& clientID) const;
         /// @brief Sends the given packet to every client currently connected
         void sendToAll(sf::Packet& packet);
         /// @brief tries to send the given packet to the client with the given ID
-        void sendTo(sf::Packet& packet, ID id);
+        void sendTo(sf::Packet& packet, const ID& id);
 
         //* Pure Virtual Definitions
             
@@ -102,5 +106,7 @@ public:
 
     // ------------------------------------------------
 };
+
+}
 
 #endif

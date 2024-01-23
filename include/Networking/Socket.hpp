@@ -17,6 +17,9 @@
 #include "include/Utils/EventHelper.hpp"
 #include "include/Utils/UpdateLimiter.hpp"
 
+namespace udp
+{
+
 // ID = Uint32
 typedef sf::Uint32 ID;
 // IP = ID (Uint32)
@@ -33,7 +36,7 @@ enum PacketType
     Password = 5
 };
 
-class SocketPlus : protected sf::UdpSocket
+class Socket : protected sf::UdpSocket
 {
 protected:
 
@@ -187,8 +190,8 @@ public:
 
     //* Initializer and Deconstructor
 
-        SocketPlus();
-        ~SocketPlus();
+        Socket();
+        ~Socket();
 
     // ------------------------------
 
@@ -213,27 +216,27 @@ public:
     //* Getters
 
         /// @returns ID
-        ID getID();
+        ID getID() const;
         /// @returns IP as IPAddress
-        sf::IpAddress getIP();
+        sf::IpAddress getIP() const;
         /// @returns Local IP as IPAddress
-        sf::IpAddress getLocalIP();
+        sf::IpAddress getLocalIP() const;
         /// @returns IP as integer
-        IP getIP_I();
+        IP getIP_I() const;
         /// @returns the time in seconds
-        double getConnectionTime();
+        double getConnectionTime() const;
         /// @returns the time in seconds
-        double getOpenTime();
+        double getOpenTime() const;
         /// @returns the update interval in updates per second
-        unsigned int getUpdateInterval();
+        unsigned int getUpdateInterval() const;
         /// @returns this port
-        unsigned int getPort();
+        unsigned int getPort() const;
         /// @returns current client timeout time in seconds
-        int getClientTimeout();
+        int getClientTimeout() const;
         /// @returns the current password
-        std::string getPassword();
+        std::string getPassword() const;
         /// @returns the function that is called when sending a packet
-        const funcHelper::func<void>& getPacketSendFunction();
+        const funcHelper::func<void>& getPacketSendFunction() const;
 
     // -------
 
@@ -241,41 +244,41 @@ public:
 
         /// @brief sets the update interval in updates/second 
         /// @note DEFAULT = 64 (64 updates/second)
-        void setUpdateInterval(unsigned int interval);
+        void setUpdateInterval(const unsigned int& interval);
         /// @returns true if packets are being sent at the interval that was set
-        void sendingPackets(bool sendPackets);
+        void sendingPackets(const bool& sendPackets);
         /// @brief sets this password
         /// @note if this derived class is the server, sets the server password, else sets the password that will be sent to server
-        void setPassword(std::string password);
+        void setPassword(const std::string& password);
         /// @brief sets the time for a client to timeout if no packets are sent (seconds)
         void setClientTimeout(const int& timeout);
         /// @brief sets the sending packet function
         /// @note if the socket connection is open then you cannot set the function
         /// @returns true if the function was set
-        bool setPacketSendFunction(funcHelper::func<void> packetSendFunction = {[](){}});
+        bool setPacketSendFunction(const funcHelper::func<void>& packetSendFunction = {[](){}});
 
     // --------
 
     //* Boolean Question Functions
 
         /// @returns true if the client is connected or server is open
-        bool isConnectionOpen();
+        bool isConnectionOpen() const;
         /// @brief if the receiving thread is running
         /// @returns true
-        bool isReceivingPackets();
+        bool isReceivingPackets() const;
         /// @brief if this is sending packets
-        bool isSendingPackets();
+        bool isSendingPackets() const;
         /// @brief if this needs a password
-        bool NeedsPassword();
+        bool NeedsPassword() const;
         /// @brief Checks if the given ipAddress is valid
         /// @note if it is invalid program will freeze for a few seconds
-        static bool isValidIpAddress(sf::IpAddress ipAddress);
+        static bool isValidIpAddress(const  sf::IpAddress& ipAddress);
         /// @brief Checks if the given ipAddress is valid
         /// @note if it is invalid program will freeze for a few seconds
-        static bool isValidIpAddress(sf::Uint32 ipAddress);
+        static bool isValidIpAddress(const  sf::Uint32& ipAddress);
         /// @brief Checks if the given ipAddress is valid
         /// @note if it is invalid program will freeze for a few seconds
-        static bool isValidIpAddress(std::string ipAddress);
+        static bool isValidIpAddress(const  std::string& ipAddress);
 
     // ---------------------------
 
@@ -284,11 +287,13 @@ public:
         static sf::Packet ConnectionCloseTemplate();
         static sf::Packet ConnectionRequestTemplate();
         static sf::Packet DataPacketTemplate();
-        static sf::Packet ConnectionConfirmPacket(sf::Uint32 id);
+        static sf::Packet ConnectionConfirmPacket(const sf::Uint32& id);
         static sf::Packet PasswordRequestPacket();
-        static sf::Packet PasswordPacket(std::string password);
+        static sf::Packet PasswordPacket(const std::string& password);
 
     // -------------------
 };
+
+}
 
 #endif // SOCKETBASE_H

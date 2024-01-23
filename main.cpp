@@ -28,7 +28,7 @@ int main()
     Command::color::setDefaultColor({255,255,255,255});
     // -----------------------
 
-    SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->sendToAll(SocketPlus::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->sendToServer(SocketPlus::DataPacketTemplate() << "Some Data"); }});
+    udp::SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->sendToAll(udp::Socket::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->sendToServer(udp::Socket::DataPacketTemplate() << "Some Data"); }});
     // sDisplay.init(gui);
     // sDisplay.setSocket(server);
     sDisplay.initConnectionDisplay(gui);

@@ -1,15 +1,17 @@
-#include "include/Networking/SocketPlus.hpp"
+#include "include/Networking/Socket.hpp"
+
+using namespace udp;
 
 //* initializer and deconstructor
 
-SocketPlus::SocketPlus()
+Socket::Socket()
 {
     _ip = sf::IpAddress::getPublicAddress().toInteger();
     _port = getLocalPort();
     // onPortChanged.invoke(_threadSafeEvents);
 }
 
-SocketPlus::~SocketPlus()
+Socket::~Socket()
 {   
     stopThreads();
     close();
@@ -19,7 +21,7 @@ SocketPlus::~SocketPlus()
 
 //* Protected Thread Functions
 
-void SocketPlus::_thread_receive_packets(std::stop_token sToken)
+void Socket::_thread_receive_packets(std::stop_token sToken)
 {
     sf::Packet packet;
     sf::IpAddress senderIP;
@@ -78,7 +80,7 @@ void SocketPlus::_thread_receive_packets(std::stop_token sToken)
     }
 }
 
-void SocketPlus::_thread_update(std::stop_token sToken)
+void Socket::_thread_update(std::stop_token sToken)
 {
     UpdateLimiter updateLimit(_socketUpdateRate);
 
@@ -119,7 +121,7 @@ void SocketPlus::_thread_update(std::stop_token sToken)
 
 //* Protected Connection Functions
 
-void SocketPlus::_resetConnectionData()
+void Socket::_resetConnectionData()
 {
     _needsPassword = false;
     setPassword("");
@@ -131,17 +133,17 @@ void SocketPlus::_resetConnectionData()
 
 //* Socket Functions
 
-void SocketPlus::_sendTo(sf::Packet& packet, const sf::IpAddress& ip, const PORT& port)
+void Socket::_sendTo(sf::Packet& packet, const sf::IpAddress& ip, const PORT& port)
 {
-    if (sf::UdpSocket::send(packet, sf::IpAddress(_ip), _port))
-        throw std::runtime_error("ERROR - Could not send packet (_sendTo Function)");
+    if (sf::UdpSocket::send(packet, sf::IpAddress(ip), port))
+        throw std::runtime_error("ERROR - Could not send packet (Socket::_sendTo Function)");
 }
 
 // -----------------
 
 //* Public Thread functions
 
-void SocketPlus::startThreads()
+void Socket::startThreads()
 {
     this->_initThreadFunctions();
     this->_initPacketParsingFunctions();
@@ -155,7 +157,7 @@ void SocketPlus::startThreads()
     if (_update_thread == nullptr) _update_thread = new std::jthread{_thread_update, this, _sSource->get_token()};
 }
 
-void SocketPlus::stopThreads()
+void Socket::stopThreads()
 {
     if (_sSource == nullptr) return;
     _sSource->request_stop();
@@ -183,39 +185,39 @@ void SocketPlus::stopThreads()
 
 //* Getter
 
-ID SocketPlus::getID()
+ID Socket::getID() const
 { return (ID)_ip; }
 
-sf::IpAddress SocketPlus::getIP()
+sf::IpAddress Socket::getIP() const
 { return sf::IpAddress(_ip); }
 
-sf::IpAddress SocketPlus::getLocalIP()
+sf::IpAddress Socket::getLocalIP() const
 { return sf::IpAddress::getLocalAddress(); }
 
-IP SocketPlus::getIP_I()
+IP Socket::getIP_I() const
 { return _ip; }
 
-double SocketPlus::getConnectionTime()
+double Socket::getConnectionTime() const
 { return _connectionTime; }
 
-double SocketPlus::getOpenTime()
+double Socket::getOpenTime() const
 { return _connectionTime; }
 
-unsigned int SocketPlus::getUpdateInterval()
+unsigned int Socket::getUpdateInterval() const
 { return _socketUpdateRate; }
 
-unsigned int SocketPlus::getPort()
+unsigned int Socket::getPort() const
 { return _port; }
 
-int SocketPlus::getClientTimeout()
+int Socket::getClientTimeout() const
 { return _clientTimeoutTime; }
 
-std::string SocketPlus::getPassword()
+std::string Socket::getPassword() const
 {
     return _password;
 }
 
-const funcHelper::func<void>& SocketPlus::getPacketSendFunction()
+const funcHelper::func<void>& Socket::getPacketSendFunction() const
 {
     return _packetSendFunction;
 }
@@ -224,28 +226,28 @@ const funcHelper::func<void>& SocketPlus::getPacketSendFunction()
 
 //* Setters
 
-void SocketPlus::setUpdateInterval(unsigned int interval)
+void Socket::setUpdateInterval(const unsigned int& interval)
 { 
     this->_socketUpdateRate = interval;
     onUpdateRateChanged.invoke(interval, _threadSafeEvents);
 }
 
-void SocketPlus::sendingPackets(bool sendPackets)
+void Socket::sendingPackets(const bool& sendPackets)
 { this->_sendingPackets = sendPackets; }
 
-void SocketPlus::setPassword(std::string password)
+void Socket::setPassword(const std::string& password)
 { 
     this->_password = password; 
     onPasswordChanged.invoke(password, _threadSafeEvents);
 }
 
-void SocketPlus::setClientTimeout(const int& timeout)
+void Socket::setClientTimeout(const int& timeout)
 { 
     _clientTimeoutTime = timeout; 
     onClientTimeoutChanged.invoke(timeout, _threadSafeEvents);
 }
 
-bool SocketPlus::setPacketSendFunction(funcHelper::func<void> packetSendFunction)
+bool Socket::setPacketSendFunction(const funcHelper::func<void>& packetSendFunction)
 {
     if (this->isConnectionOpen()) return false;
     _packetSendFunction = packetSendFunction;
@@ -257,27 +259,27 @@ bool SocketPlus::setPacketSendFunction(funcHelper::func<void> packetSendFunction
 
 //* Boolean question Functions
 
-bool SocketPlus::isConnectionOpen()
+bool Socket::isConnectionOpen() const
 { return _connectionOpen; }
 
-bool SocketPlus::isReceivingPackets()
+bool Socket::isReceivingPackets() const
 {
     return (_receive_thread != nullptr);
 }
 
-bool SocketPlus::isSendingPackets()
+bool Socket::isSendingPackets() const
 { return _sendingPackets && _connectionOpen; }
 
-bool SocketPlus::NeedsPassword()
+bool Socket::NeedsPassword() const
 { return this->_needsPassword; }
 
-bool SocketPlus::isValidIpAddress(sf::IpAddress ipAddress)
+bool Socket::isValidIpAddress(const sf::IpAddress& ipAddress)
 {
     if (ipAddress != sf::IpAddress::None) return true;
     else return false;
 }
 
-bool SocketPlus::isValidIpAddress(sf::Uint32 ipAddress)
+bool Socket::isValidIpAddress(const sf::Uint32& ipAddress)
 {
     if (sf::IpAddress(ipAddress) != sf::IpAddress::None) return true;
     else return false;
@@ -285,7 +287,7 @@ bool SocketPlus::isValidIpAddress(sf::Uint32 ipAddress)
 
 // #include "include/Utils/Stopwatch.hpp"
 
-bool SocketPlus::isValidIpAddress(std::string ipAddress)
+bool Socket::isValidIpAddress(const std::string& ipAddress)
 {
     // timer::Stopwatch timer;
     if (sf::IpAddress(ipAddress) != sf::IpAddress::None) 
@@ -303,28 +305,28 @@ bool SocketPlus::isValidIpAddress(std::string ipAddress)
 
 //* Template Functions
 
-sf::Packet SocketPlus::ConnectionCloseTemplate()
+sf::Packet Socket::ConnectionCloseTemplate()
 {
     sf::Packet out;
     out << PacketType::ConnectionClose;
     return out;
 }
 
-sf::Packet SocketPlus::ConnectionRequestTemplate()
+sf::Packet Socket::ConnectionRequestTemplate()
 {
     sf::Packet out;
     out << PacketType::ConnectionRequest;
     return out;
 }
 
-sf::Packet SocketPlus::DataPacketTemplate()
+sf::Packet Socket::DataPacketTemplate()
 {
     sf::Packet out;
     out << PacketType::Data;
     return out;
 }
 
-sf::Packet SocketPlus::ConnectionConfirmPacket(sf::Uint32 id)
+sf::Packet Socket::ConnectionConfirmPacket(const sf::Uint32& id)
 {
     sf::Packet out;
     out << PacketType::ConnectionConfirm;
@@ -332,14 +334,14 @@ sf::Packet SocketPlus::ConnectionConfirmPacket(sf::Uint32 id)
     return out;
 }
 
-sf::Packet SocketPlus::PasswordRequestPacket()
+sf::Packet Socket::PasswordRequestPacket()
 {
     sf::Packet out;
     out << PacketType::PasswordRequest;
     return out;
 }
 
-sf::Packet SocketPlus::PasswordPacket(std::string password)
+sf::Packet Socket::PasswordPacket(const std::string& password)
 {
     sf::Packet out;
     out << PacketType::Password;
