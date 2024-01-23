@@ -5,7 +5,8 @@
             "includePath": [
                 "${default}",
                 "${workspaceFolder}",
-                "${workspaceFolder}/include"
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/ExampleGame/include"
             ],
             "defines": [
                 "_DEBUG",

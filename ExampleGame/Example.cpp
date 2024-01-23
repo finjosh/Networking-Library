@@ -11,6 +11,7 @@
 #include "Networking/SocketUI.hpp"
 #include "Networking/Client.hpp"
 #include "Networking/Server.hpp"
+#include "Utils/Graphics/WindowHandler.hpp"
 
 using namespace std;
 using namespace sf;
@@ -26,6 +27,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Example Game");
     window.setFramerateLimit(144);
     window.setPosition(Vector2i(-8, -8));
+    WindowHandler::setRenderWindow(&window);
 
     tgui::Gui gui{window};
     gui.setRelativeView({0, 0, 1920/(float)window.getSize().x, 1080/(float)window.getSize().y});
@@ -49,7 +51,7 @@ int main()
     TFuncDisplay::setVisible();
 
     //! ---------------------------------------------------
-    
+
     sf::Clock deltaClock;
     while (window.isOpen())
     {
