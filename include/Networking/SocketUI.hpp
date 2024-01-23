@@ -58,8 +58,6 @@ public:
     /// @note nullptr if no socket is in use
     /// @returns the pointer to the socket that is currently in use
     Socket* getSocket();
-    // /// @param server true if server false if client
-    // void setServer(bool server);
 
     /// @brief call this every frame
     void updateInfoDisplay();
@@ -120,7 +118,6 @@ private:
     Client _client;
     funcHelper::func<void> _cSendFunc;
     bool _isServer = false;
-
 };
 
 }

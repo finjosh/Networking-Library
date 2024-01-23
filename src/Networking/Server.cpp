@@ -6,7 +6,7 @@ using namespace udp;
 
 Server::Server(const unsigned short& port, const bool& passwordRequired)
 {
-    _port = port;
+    setPort(port);
 }
 
 Server::~Server()
@@ -179,11 +179,6 @@ bool Server::isPasswordRequired() const
     return _needsPassword;
 }
 
-void Server::setPort(const unsigned short& port)
-{
-    _port = port;
-}
-
 void Server::sendToAll(sf::Packet& packet)
 {
     for (auto& client: _clientData)
@@ -248,7 +243,7 @@ unsigned int Server::getClientPacketsPerSec(const ID& clientID) const
 
 bool Server::tryOpenConnection()
 {
-    if (this->bind(_port))
+    if (this->bind(getPort()))
         return false;
 
     _connectionOpen = true;

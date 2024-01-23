@@ -7,8 +7,7 @@ using namespace udp;
 Socket::Socket()
 {
     _ip = sf::IpAddress::getPublicAddress().toInteger();
-    _port = getLocalPort();
-    // onPortChanged.invoke(_threadSafeEvents);
+    setPort(getLocalPort());
 }
 
 Socket::~Socket()
@@ -253,6 +252,12 @@ bool Socket::setPacketSendFunction(const funcHelper::func<void>& packetSendFunct
     _packetSendFunction = packetSendFunction;
     onPacketSendChanged.invoke(_threadSafeEvents);
     return true;
+}
+
+void Socket::setPort(const PORT& port)
+{
+    _port = port;
+    onPortChanged.invoke(_port, _threadSafeEvents);
 }
 
 // --------

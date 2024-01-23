@@ -20,6 +20,7 @@ private:
         bool _wrongPassword = false;
         /// @brief Time since last packet from server
         float _timeSinceLastPacket = 0.0;
+        unsigned short _serverPort = 777;
 
     // -----------------
 
@@ -74,6 +75,12 @@ public:
         /// @brief Called when ever password is requested
         /// @note password is requested when wrong password is sent
         EventHelper::Event onPasswordRequest;
+        /// @brief Invoked when the server port is changed 
+        /// @note Optional parameter PORT (unsigned short)
+        EventHelper::EventDynamic<PORT> onServerPortChanged;
+        /// @brief Invoked when the server ip is changed
+        /// @note Optional parameter sf::IpAddress
+        EventHelper::EventDynamic<sf::IpAddress> onServerIpChanged;
 
     // -------
 

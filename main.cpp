@@ -79,23 +79,6 @@ int main()
 
             if (event.type == sf::Event::Closed)
                 window.close();
-
-            //! TEST for sending packets
-            // if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P)
-            // {
-            //     if (!sDisplay.isEmpty() && sDisplay.isServer())
-            //     {
-            //         auto temp = SocketPlus::DataPacketTemplate();
-            //         temp << "Some Other Data";
-            //         sDisplay.getServer()->SendToAll(temp);
-            //     }
-            //     else if (!sDisplay.isEmpty())
-            //     {
-            //         auto temp = SocketPlus::DataPacketTemplate();
-            //         temp << "Some Other Data";
-            //         sDisplay.getClient()->SendToServer(temp);
-            //     }
-            // } 
         }
         //! Updates all the vars being displayed
         VarDisplay::Update();

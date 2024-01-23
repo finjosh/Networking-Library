@@ -77,7 +77,6 @@ public:
         void setPasswordRequired(const bool& requirePassword);
         void setPasswordRequired(const bool& requirePassword, const std::string& password);
         bool isPasswordRequired() const;
-        void setPort(const PORT& port);
         void disconnectAllClients();
         /// @brief removes the client with the given ID
         /// @returns true if the client was removed returns false if it was not found

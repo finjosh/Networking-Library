@@ -45,8 +45,7 @@ protected:
         IP _ip = 0;
         bool _needsPassword = false;
         std::string _password = "";
-        unsigned short _port = 777; // TODO reimplement _port
-        unsigned short _serverPort = 777; // TODO reimplement _serverPort
+        unsigned short _port = 777;
         /// @brief if the server is open or the client is connected
         bool _connectionOpen = false;
         /// @brief time that the connection has been up
@@ -170,10 +169,7 @@ public:
         EventHelper::EventDynamic<unsigned int> onClientTimeoutChanged;
         /// @brief Invoked when this port is changed 
         /// @note Optional parameter Port (unsigned short)
-        EventHelper::EventDynamic<PORT> onPortChanged; // TODO implement this
-        /// @brief Invoked when the server port is changed 
-        /// @note Optional parameter Port (unsigned short)
-        EventHelper::EventDynamic<PORT> onServerPortChanged; // TODO implement this
+        EventHelper::EventDynamic<PORT> onPortChanged;
         /// @brief Invoked when the password is changed
         /// @note Optional parameter New Password (string)
         EventHelper::EventDynamic<std::string> onPasswordChanged;
@@ -256,6 +252,7 @@ public:
         /// @note if the socket connection is open then you cannot set the function
         /// @returns true if the function was set
         bool setPacketSendFunction(const funcHelper::func<void>& packetSendFunction = {[](){}});
+        void setPort(const PORT& port);
 
     // --------
 
