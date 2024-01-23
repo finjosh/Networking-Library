@@ -11,8 +11,8 @@
 #include "TGUI/Widgets/ListBox.hpp"
 #include "TGUI/Widgets/ChildWindow.hpp"
 
-#include "include/Utils/Debug/CommandHandler.hpp"
-#include "include/Utils/StringHelper.hpp"
+#include "Utils/Debug/CommandHandler.hpp"
+#include "Utils/StringHelper.hpp"
 
 namespace Command
 {

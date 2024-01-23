@@ -29,8 +29,6 @@ int main()
     // -----------------------
 
     udp::SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->sendToAll(udp::Socket::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->sendToServer(udp::Socket::DataPacketTemplate() << "Some Data"); }});
-    // sDisplay.init(gui);
-    // sDisplay.setSocket(server);
     sDisplay.initConnectionDisplay(gui);
     sDisplay.setInfoVisible();
     sDisplay.initInfoDisplay(gui);

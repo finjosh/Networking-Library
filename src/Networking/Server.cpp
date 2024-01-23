@@ -1,4 +1,4 @@
-#include "include/Networking/Server.hpp"
+#include "Networking/Server.hpp"
 
 using namespace udp;
 
@@ -78,7 +78,7 @@ void Server::_parseDataPacket(sf::Packet* packet, const sf::IpAddress& senderIP,
     // if the sender is not a current client add them if possible
     else
     {   
-        if (!this->_needsPassword)
+        if (!_needsPassword && _allowClientConnection)
         {
             _clientData.insert({(ID)(senderIP.toInteger()), ClientData(senderPort, (ID)_ip)});
 
@@ -97,6 +97,7 @@ void Server::_parseDataPacket(sf::Packet* packet, const sf::IpAddress& senderIP,
 
 void Server::_parseConnectionRequestPacket(sf::Packet* packet, const sf::IpAddress& senderIP, const PORT& senderPort)
 {
+    if (!_allowClientConnection) return;
     if (this->_needsPassword)
     {
         sf::Packet needPassword = this->PasswordRequestPacket();
@@ -238,6 +239,16 @@ double Server::getClientConnectionTime(const ID& clientID) const
 
 unsigned int Server::getClientPacketsPerSec(const ID& clientID) const
 { return _clientData.find(clientID)->second.PacketsPerSecond; }
+
+void Server::allowClientConnection(const bool& allowed)
+{
+    _allowClientConnection = allowed;
+}
+
+bool Server::isClientConnectionAllowed()
+{
+    return _allowClientConnection;
+}
 
 //* Pure Virtual Definitions
 

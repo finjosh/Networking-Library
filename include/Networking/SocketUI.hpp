@@ -16,13 +16,14 @@
 #include "TGUI/Widgets/ScrollablePanel.hpp"
 #include "TGUI/Widgets/Label.hpp"
 
-#include "include/Networking/Client.hpp"
-#include "include/Networking/Server.hpp"
-#include "include/Utils/TerminatingFunction.hpp"
+#include "Networking/Client.hpp"
+#include "Networking/Server.hpp"
+#include "Utils/TerminatingFunction.hpp"
 
 namespace udp
 {
 
+// TODO update this to be done with events
 class SocketUI
 {
 public:

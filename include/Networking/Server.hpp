@@ -16,6 +16,7 @@ private:
 
         /// @brief first value is for the ID and the second is for the client data
         std::unordered_map<ID, ClientData> _clientData;
+        std::atomic<bool> _allowClientConnection = true;
 
     // ------------
 
@@ -93,6 +94,12 @@ public:
         void sendToAll(sf::Packet& packet);
         /// @brief tries to send the given packet to the client with the given ID
         void sendTo(sf::Packet& packet, const ID& id);
+        /// @brief allows clients to connect
+        /// @note if there is a password the client still needs to enter it 
+        /// @note if false the client cannot connect until set true
+        void allowClientConnection(const bool& allowed = true);
+        /// @returns true if clients are able to connect
+        bool isClientConnectionAllowed();
 
         //* Pure Virtual Definitions
             

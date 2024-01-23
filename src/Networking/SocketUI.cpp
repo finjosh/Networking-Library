@@ -1,4 +1,4 @@
-#include "include/Networking/SocketUI.hpp"
+#include "Networking/SocketUI.hpp"
 
 using namespace udp;
 
@@ -234,7 +234,6 @@ Socket* SocketUI::getSocket()
     return &_client;    
 }
 
-// TODO update this to use more events instead of updates
 void SocketUI::updateInfoDisplay()
 {
     if (isEmpty() || !isConnectionOpen()) return;

@@ -10,8 +10,8 @@
 
 #include "SFML/Window/Event.hpp"
 
-#include "include/Utils/funcHelper.hpp"
-#include "include/Utils/EventHelper.hpp"
+#include "Utils/funcHelper.hpp"
+#include "Utils/EventHelper.hpp"
 
 #define VALUE_SET std::pair<sf::Keyboard::Key, float>
 

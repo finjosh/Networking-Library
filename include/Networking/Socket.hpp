@@ -13,9 +13,9 @@
 #include <SFML\Network.hpp>
 
 #include "ClientData.hpp"
-#include "include/Utils/funcHelper.hpp"
-#include "include/Utils/EventHelper.hpp"
-#include "include/Utils/UpdateLimiter.hpp"
+#include "Utils/funcHelper.hpp"
+#include "Utils/EventHelper.hpp"
+#include "Utils/UpdateLimiter.hpp"
 
 namespace udp
 {

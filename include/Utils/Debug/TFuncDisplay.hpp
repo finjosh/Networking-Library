@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "include/Utils/TerminatingFunction.hpp"
+#include "Utils/TerminatingFunction.hpp"
 
 #include "TGUI/Backend/SFML-Graphics.hpp"
 #include "TGUI/Widgets/ChildWindow.hpp"
