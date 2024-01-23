@@ -1,6 +1,7 @@
 #include "include/Networking/Server.hpp"
 
-// TODO organize this
+//* Initializer and Deconstructor
+
 Server::Server(unsigned short port, bool passwordRequired)
 {
     _port = port;
@@ -10,6 +11,8 @@ Server::~Server()
 {
     closeConnection();
 }
+
+// ------------------------------
 
 //* Protected Connection Functions
     
@@ -21,114 +24,7 @@ void Server::_resetConnectionData()
 
 // ---------------------
 
-//* Connection Functions
-
-//* Pure Virtual Definitions
-
-bool Server::tryOpenConnection()
-{
-    if (this->bind(_port))
-        return false;
-
-    _connectionOpen = true;
-    startThreads();
-    this->onConnectionOpen.invoke(_threadSafeEvents);
-    return true;
-}
-
-void Server::closeConnection()
-{
-    if (!isConnectionOpen()) return;
-
-    disconnectAllClients();
-
-    _resetConnectionData();
-    stopThreads();
-    close();
-
-    onConnectionClose.invoke(_threadSafeEvents);
-}
-
-// -------------------------
-
-// ------------------------------------------------
-
-void Server::requirePassword(bool requirePassword)
-{ this->_needsPassword = requirePassword; if (!this->_needsPassword) setPassword(""); }
-
-void Server::requirePassword(bool requirePassword, std::string password)
-{ this->_needsPassword = requirePassword; setPassword(password); }
-
-void Server::setPort(unsigned short port)
-{
-    _port = port;
-}
-
-void Server::sendToAll(sf::Packet& packet)
-{
-    for (auto& client: _clientData)
-    {
-        _sendTo(packet, sf::IpAddress((IP)client.second.id), client.second.port);
-    }
-}
-
-void Server::sendTo(sf::Packet& packet, ID id)
-{
-    if (id != 0) 
-    {
-        ClientData* temp = &_clientData.find(id)->second;
-
-        // if the ID is not a client anymore dont send packet
-        if (temp == &_clientData.end()->second) return;
-        
-        _sendTo(packet, sf::IpAddress((IP)id), temp->port);
-    }
-}
-
-bool Server::disconnectClient(ID id)
-{
-    if (_clientData.find(id) != _clientData.end())
-    {
-        sf::Packet RemoveClient = this->ConnectionCloseTemplate();
-        sendTo(RemoveClient, id);
-        _clientData.erase(id);
-        return true;
-    }
-    else return false;
-}
-
-void Server::disconnectAllClients()
-{
-    sf::Packet RemoveClient = this->ConnectionCloseTemplate();
-
-    this->sendToAll(RemoveClient);
-
-    _clientData.clear();
-}
-
-std::unordered_map<ID, ClientData>& Server::getClients()
-{ return _clientData;}
-
-ClientData Server::getClientData(std::pair<const ID, ClientData> client)
-{ return client.second; }
-
-sf::Uint32 Server::getNumberOfClients()
-{ return (sf::Uint32)_clientData.size();}
-
-float Server::getClientTimeSinceLastPacket(ID clientID)
-{ return _clientData.find(clientID)->second.TimeSinceLastPacket; }
-
-double Server::getClientConnectionTime(ID clientID)
-{ return _clientData.find(clientID)->second.ConnectionTime; }
-
-unsigned int Server::getClientPacketsPerSec(ID clientID)
-{ return _clientData.find(clientID)->second.PacketsPerSecond; }
-
-void Server::_initThreadFunctions() 
-{
-    _secondUpdateFunc.setFunction(&_secondUpdate, this);
-    _updateFunc.setFunction(&_update, this);
-}
+//* Thread functions
 
 void Server::_update(const float& deltaTime) 
 {
@@ -153,13 +49,19 @@ void Server::_secondUpdate()
     }
 }
 
-void Server::_initPacketParsingFunctions()
+//* Pure Virtual Defintions
+
+void Server::_initThreadFunctions() 
 {
-    _parseData.setFunction(&_parseDataPacket, this);
-    _parseConnectionRequest.setFunction(&_parseConnectionRequestPacket, this);
-    _parseConnectionClose.setFunction(&_parseConnectionClosePacket, this);
-    _parsePassword.setFunction(&_parsePasswordPacket, this);
+    _secondUpdateFunc.setFunction(&_secondUpdate, this);
+    _updateFunc.setFunction(&_update, this);
 }
+
+// ------------------------
+
+// -----------------
+
+//* Packet Parsing Functions
 
 void Server::_parseDataPacket(sf::Packet* packet, sf::IpAddress senderIP, PORT senderPort)
 {
@@ -247,3 +149,99 @@ void Server::_parsePasswordPacket(sf::Packet* packet, sf::IpAddress senderIP, PO
         _sendTo(passwordRequest, senderIP, senderPort);
     }
 }
+
+//* Pure Virtual Definitions
+
+void Server::_initPacketParsingFunctions()
+{
+    _parseData.setFunction(&_parseDataPacket, this);
+    _parseConnectionRequest.setFunction(&_parseConnectionRequestPacket, this);
+    _parseConnectionClose.setFunction(&_parseConnectionClosePacket, this);
+    _parsePassword.setFunction(&_parsePasswordPacket, this);
+}
+
+// -------------------------
+
+// --------------------------
+
+//* Connection Functions
+
+void Server::requirePassword(bool requirePassword)
+{ this->_needsPassword = requirePassword; if (!this->_needsPassword) setPassword(""); }
+
+void Server::requirePassword(bool requirePassword, std::string password)
+{ this->_needsPassword = requirePassword; setPassword(password); }
+
+void Server::setPort(unsigned short port)
+{
+    _port = port;
+}
+
+bool Server::disconnectClient(ID id)
+{
+    if (_clientData.find(id) != _clientData.end())
+    {
+        sf::Packet RemoveClient = this->ConnectionCloseTemplate();
+        sendTo(RemoveClient, id);
+        _clientData.erase(id);
+        return true;
+    }
+    else return false;
+}
+
+void Server::disconnectAllClients()
+{
+    sf::Packet RemoveClient = this->ConnectionCloseTemplate();
+
+    this->sendToAll(RemoveClient);
+
+    _clientData.clear();
+}
+
+const std::unordered_map<ID, ClientData>& Server::getClients() const
+{ return _clientData;}
+
+ClientData Server::getClientData(std::pair<const ID, ClientData> client)
+{ return client.second; }
+
+sf::Uint32 Server::getClientsSize()
+{ return (sf::Uint32)_clientData.size();}
+
+float Server::getClientTimeSinceLastPacket(ID clientID)
+{ return _clientData.find(clientID)->second.TimeSinceLastPacket; }
+
+double Server::getClientConnectionTime(ID clientID)
+{ return _clientData.find(clientID)->second.ConnectionTime; }
+
+unsigned int Server::getClientPacketsPerSec(ID clientID)
+{ return _clientData.find(clientID)->second.PacketsPerSecond; }
+
+//* Pure Virtual Definitions
+
+bool Server::tryOpenConnection()
+{
+    if (this->bind(_port))
+        return false;
+
+    _connectionOpen = true;
+    startThreads();
+    this->onConnectionOpen.invoke(_threadSafeEvents);
+    return true;
+}
+
+void Server::closeConnection()
+{
+    if (!isConnectionOpen()) return;
+
+    disconnectAllClients();
+
+    _resetConnectionData();
+    stopThreads();
+    close();
+
+    onConnectionClose.invoke(_threadSafeEvents);
+}
+
+// -------------------------
+
+// ---------------------

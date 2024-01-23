@@ -54,19 +54,43 @@ private:
     // -------------------------
 
 public:
-    //* Public data that the main will need access to 
-        
-        //* Events
 
-            EventHelper::EventDynamic<ID> onClientConnected;
-            EventHelper::EventDynamic<ID> onClientDisconnected;
+    //* Initializer and Deconstructor
 
-        // -------
-    
-    // ----------------------------------------------
+        Server(PORT port, bool passwordRequired = false);
+        ~Server();
+
+    // ------------------------------
+
+    //* Events
+
+        EventHelper::EventDynamic<ID> onClientConnected;
+        EventHelper::EventDynamic<ID> onClientDisconnected;
+
+    // -------
 
     //* Connection Functions
-    
+
+        void requirePassword(bool requirePassword);
+        void requirePassword(bool requirePassword, std::string password);
+        void setPort(PORT port);
+        void disconnectAllClients();
+        /// @brief removes the client with the given ID
+        /// @returns true if the client was removed returns false if it was not found
+        bool disconnectClient(ID id);
+        /// @returns a pointer to the clients map
+        const std::unordered_map<ID, ClientData>& getClients() const;
+        static ClientData getClientData(std::pair<const ID, ClientData> client);
+        /// @returns the number of clients
+        sf::Uint32 getClientsSize();
+        float getClientTimeSinceLastPacket(ID clientID);
+        double getClientConnectionTime(ID clientID);
+        unsigned int getClientPacketsPerSec(ID clientID);
+        /// @brief Sends the given packet to every client currently connected
+        void sendToAll(sf::Packet& packet);
+        /// @brief tries to send the given packet to the client with the given ID
+        void sendTo(sf::Packet& packet, ID id);
+
         //* Pure Virtual Definitions
             
             /// @returns true if server was started with the port that was previously set
@@ -77,28 +101,6 @@ public:
         // -------------------------
 
     // ------------------------------------------------
-
-    // TODO organize this
-    Server(PORT port, bool passwordRequired = false);
-    ~Server();
-    void requirePassword(bool requirePassword);
-    void requirePassword(bool requirePassword, std::string password);
-    void setPort(PORT port);
-    /// @brief Sends the given packet to every client currently connected
-    void sendToAll(sf::Packet& packet);
-    /// @brief tries to send the given packet to the client with the given ID
-    void sendTo(sf::Packet& packet, ID id);
-    void disconnectAllClients();
-    /// @brief removes the client with the given ID
-    /// @returns true if the client was removed returns false if it was not found
-    bool disconnectClient(ID id);
-    /// @returns a pointer to the clients map
-    std::unordered_map<ID, ClientData>& getClients();
-    static ClientData getClientData(std::pair<const ID, ClientData> client);
-    sf::Uint32 getNumberOfClients();
-    float getClientTimeSinceLastPacket(ID clientID);
-    double getClientConnectionTime(ID clientID);
-    unsigned int getClientPacketsPerSec(ID clientID);
 };
 
 #endif

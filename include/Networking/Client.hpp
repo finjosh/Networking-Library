@@ -57,14 +57,40 @@ private:
 
 public:
 
+    //* Initializer and Deconstructor
+
+        Client(sf::IpAddress serverIP, PORT serverPort);
+        Client(unsigned short serverPort);
+        ~Client();
+
+    // ------------------------------
+
     //* Events
 
+        /// @brief Called when ever password is requested
+        /// @note password is requested when wrong password is sent
         EventHelper::Event onPasswordRequest;
 
     // -------
 
     //* Connection Functions
         
+        /// @brief is true until another password is sent
+        /// @note password status is unknown until this is true or connection is open
+        /// @return true is wrong password
+        bool wasIncorrectPassword();
+        void setAndSendPassword(std::string password);
+        void sendPasswordToServer();
+        void setServerData(sf::IpAddress serverIP, PORT serverPort);
+        void setServerData(sf::IpAddress serverIP);
+        void setServerData(PORT port);
+        /// @brief sends the packet to the server
+        void sendToServer(sf::Packet& packet);
+        /// @brief returns the time in seconds
+        float getTimeSinceLastPacket();
+        sf::IpAddress getServerIP();
+        unsigned int getServerPort();
+
         //* Pure Virtual Definitions
 
             /// @brief attempts to connect to the server with the current server data
@@ -77,25 +103,6 @@ public:
 
     // ------------------------------------------------
 
-    // TODO organize this
-    Client(sf::IpAddress serverIP, PORT serverPort);
-    Client(unsigned short serverPort);
-    ~Client();
-    /// @brief is true until another password is sent
-    /// @note password status is unknown until this is true or connection is open
-    /// @return true is wrong password
-    bool wasIncorrectPassword();
-    void setAndSendPassword(std::string password);
-    void sendPasswordToServer();
-    void setServerData(sf::IpAddress serverIP, PORT serverPort);
-    void setServerData(sf::IpAddress serverIP);
-    void setServerData(PORT port);
-    /// @brief sends the packet to the server
-    void sendToServer(sf::Packet& packet);
-    /// @brief returns the time in seconds
-    float getTimeSinceLastPacket();
-    sf::IpAddress getServerIP();
-    unsigned int getServerPort();
 };
 
 #endif

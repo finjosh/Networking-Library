@@ -5,14 +5,14 @@
 SocketPlus::SocketPlus()
 {
     _ip = sf::IpAddress::getPublicAddress().toInteger();
-    _port = this->getLocalPort();
+    _port = getLocalPort();
     // onPortChanged.invoke(_threadSafeEvents);
 }
 
 SocketPlus::~SocketPlus()
 {   
     stopThreads();
-    this->close();
+    close();
 }
 
 // ------------------------------
