@@ -14,7 +14,7 @@ public:
     static void setRenderWindow(sf::RenderWindow* renderWindow);
 
 private:
-    WindowHandler() = default;
+    inline WindowHandler() = default;
     
     static sf::RenderWindow* _renderWindow;
 };

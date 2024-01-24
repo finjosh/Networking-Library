@@ -9,7 +9,7 @@ PROJECT:=Example
 # the directory in which all .o and .d files will be made
 OBJ_O_DIR:=bin
 # assumes that source directories are the same as include
-SRCDIRS:=. src src/Utils/Graphics
+SRCDIRS:=. src src/Utils/Graphics src/Utils/Physics
 # the include flags for compilation
 INCLUDES:=-I /VSCodeFolder/Libraries/SFML-2.6.1/include -D SFML_STATIC -I /VSCodeFolder/Libraries/TGUI-1.1/include -I $(project_dir) -I /Git_projects/Networking-Library/include -I /VSCodeFolder/Libraries/Box2D -I $(project_dir)/include
 # the paths to libs for linking

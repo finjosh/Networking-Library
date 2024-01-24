@@ -12,6 +12,7 @@
 #include "Networking/Client.hpp"
 #include "Networking/Server.hpp"
 #include "Utils/Graphics/WindowHandler.hpp"
+#include "Utils/Physics/WorldHandler.hpp"
 
 using namespace std;
 using namespace sf;
@@ -35,6 +36,8 @@ int main()
     Command::color::setDefaultColor({255,255,255,255});
     // -----------------------
 
+    WorldHandler::getWorld().SetGravity({0.f,0.f});
+
     udp::SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->sendToAll(udp::Socket::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->sendToServer(udp::Socket::DataPacketTemplate() << "Some Data"); }});
     sDisplay.initConnectionDisplay(gui);
     // sDisplay.setConnectionVisible();
@@ -51,7 +54,7 @@ int main()
     TFuncDisplay::setVisible();
 
     //! ---------------------------------------------------
-
+    
     sf::Clock deltaClock;
     while (window.isOpen())
     {
@@ -87,6 +90,7 @@ int main()
 
         sDisplay.updateInfoDisplay();
 
+        WorldHandler::getWorld().Step(deltaTime.asSeconds() + deltaClock.getElapsedTime().asSeconds(), int32(8), int32(3));
         // draw for tgui
         gui.draw();
         // display for sfml window
