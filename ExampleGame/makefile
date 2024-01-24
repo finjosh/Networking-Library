@@ -11,9 +11,9 @@ OBJ_O_DIR:=bin
 # assumes that source directories are the same as include
 SRCDIRS:=. src src/Utils/Graphics src/Utils/Physics
 # the include flags for compilation
-INCLUDES:=-I /VSCodeFolder/Libraries/SFML-2.6.1/include -D SFML_STATIC -I /VSCodeFolder/Libraries/TGUI-1.1/include -I $(project_dir) -I /Git_projects/Networking-Library/include -I /VSCodeFolder/Libraries/Box2D -I $(project_dir)/include
+INCLUDES:=-I /VSCodeFolder/Libraries/SFML-2.6.1/include -D SFML_STATIC -I /VSCodeFolder/Libraries/TGUI-1.1/include -I $(project_dir) -I /Git_projects/Networking-Library/include -I /VSCodeFolder/Libraries/box2d-3.0/include -I $(project_dir)/include
 # the paths to libs for linking
-LIBS=-L /VSCodeFolder/Libraries/SFML-2.6.1/lib -L /VSCodeFolder/Libraries/TGUI-1.1/lib -L /Git_projects/Networking-Library/lib/Utils -L /Git_projects/Networking-Library/lib/Utils/Debug -L /Git_projects/Networking-Library/lib -L /Git_projects/Networking-Library/lib/src/Networking -L $(project_dir) -L /VSCodeFolder/Libraries/Box2D
+LIBS=-L /VSCodeFolder/Libraries/SFML-2.6.1/lib -L /VSCodeFolder/Libraries/TGUI-1.1/lib -L /Git_projects/Networking-Library/lib/Utils -L /Git_projects/Networking-Library/lib/Utils/Debug -L /Git_projects/Networking-Library/lib -L /Git_projects/Networking-Library/lib/src/Networking -L $(project_dir) -L /VSCodeFolder/Libraries/box2d-3.0/bin
 # linker flags for compilation
 # add "-mwindows" to disable the terminal
 LINKERFLAGS=$(LIBS) \

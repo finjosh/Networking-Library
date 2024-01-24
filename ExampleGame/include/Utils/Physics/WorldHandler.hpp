@@ -3,7 +3,9 @@
 
 #pragma once
 
-#include "Box2D/Box2D.h"
+#include "box2d/Box2D.h"
+
+const float PIXELS_PER_METER = 10;
 
 class WorldHandler
 {

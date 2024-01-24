@@ -5,7 +5,7 @@
 #include "TGUI/TGUI.hpp"
 #include "TGUI/Backend/SFML-Graphics.hpp"
 
-#include "Box2D/Box2D.h"
+#include "box2d/Box2D.h"
 
 #include "Utils/Utils.hpp"
 #include "Networking/SocketUI.hpp"
@@ -14,11 +14,10 @@
 #include "Utils/Graphics/WindowHandler.hpp"
 #include "Utils/Physics/WorldHandler.hpp"
 
+#include "Player.hpp"
+
 using namespace std;
 using namespace sf;
-
-#define pixelsToMeters 1/10;
-#define MetersToPixels 10;
 
 void addThemeCommands();
 
@@ -54,7 +53,10 @@ int main()
     TFuncDisplay::setVisible();
 
     //! ---------------------------------------------------
-    
+
+    Player player(100,100);
+    Player test(200,200);
+
     sf::Clock deltaClock;
     while (window.isOpen())
     {
@@ -90,7 +92,15 @@ int main()
 
         sDisplay.updateInfoDisplay();
 
+        player.updateInput();
+
+        //! Do physics before this
         WorldHandler::getWorld().Step(deltaTime.asSeconds() + deltaClock.getElapsedTime().asSeconds(), int32(8), int32(3));
+        //! Draw after this
+
+        player.draw();
+        test.draw();
+
         // draw for tgui
         gui.draw();
         // display for sfml window
