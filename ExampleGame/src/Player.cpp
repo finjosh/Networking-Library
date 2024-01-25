@@ -15,6 +15,8 @@ Player::Player(float x, float y)
     fixtureDef.shape = &b2shape;
 
     _body = WorldHandler::getWorld().CreateBody(&bodyDef);
+    _body->CreateFixture(&fixtureDef);
+
     RectangleShape::setSize({10,10});
     RectangleShape::setOrigin(5,5);
     RectangleShape::setPosition(x,y);

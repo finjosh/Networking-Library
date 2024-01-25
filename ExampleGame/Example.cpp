@@ -95,7 +95,7 @@ int main()
         player.updateInput();
 
         //! Do physics before this
-        WorldHandler::getWorld().Step(deltaTime.asSeconds() + deltaClock.getElapsedTime().asSeconds(), int32(8), int32(3));
+        WorldHandler::getWorld().Step(deltaTime.asSeconds(), int32(8), int32(3));
         //! Draw after this
 
         player.draw();
