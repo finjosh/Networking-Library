@@ -14,6 +14,8 @@
 #include "Utils/Graphics/WindowHandler.hpp"
 #include "Utils/Physics/WorldHandler.hpp"
 
+#include "Utils/UpdateManager.hpp"
+
 #include "Player.hpp"
 
 using namespace std;
@@ -57,13 +59,16 @@ int main()
     Player player(100,100);
     Player test(200,200);
 
+    UpdateManager::Start();
     sf::Clock deltaClock;
+    float fixedUpdate = 0;
     while (window.isOpen())
     {
         EventHelper::Event::ThreadSafe::update();
         window.clear();
         // updating the delta time var
         sf::Time deltaTime = deltaClock.restart();
+        fixedUpdate += deltaTime.asSeconds();
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -77,6 +82,13 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
+        UpdateManager::Update(deltaTime.asSeconds());
+        if (fixedUpdate >= 0.2)
+        {
+            fixedUpdate = 0;
+            UpdateManager::FixedUpdate();
+        }
+        UpdateManager::LateUpdate(deltaTime.asSeconds());
         //! Updates all the vars being displayed
         VarDisplay::Update();
         //! ------------------------------=-----
@@ -91,8 +103,6 @@ int main()
         window.draw(temp);
 
         sDisplay.updateInfoDisplay();
-
-        player.updateInput();
 
         //! Do physics before this
         WorldHandler::getWorld().Step(deltaTime.asSeconds(), int32(8), int32(3));

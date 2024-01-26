@@ -28,7 +28,7 @@ void Player::draw(sf::RenderStates rs)
     WindowHandler::getRenderWindow()->draw(*this, rs);
 }
 
-void Player::updateInput()
+void Player::Update(float deltaTime)
 {
     if (WindowHandler::getRenderWindow()->hasFocus())
     {

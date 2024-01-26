@@ -9,15 +9,16 @@
 
 #include "Utils/Physics/WorldHandler.hpp"
 #include "Utils/Graphics/WindowHandler.hpp"
+#include "Utils/UpdateInterface.hpp"
 
-class Player : public sf::RectangleShape
+class Player : public sf::RectangleShape, private UpdateInterface
 {
 public:
 
     Player(float x, float y);
 
     void draw(sf::RenderStates rs = sf::RenderStates::Default);
-    void updateInput();
+    virtual void Update(float deltaTime) override;
 
 protected:
 
