@@ -12,10 +12,6 @@ class UpdateInterface;
 class UpdateManager
 {
 public:
-
-    static void addUpdateObject(UpdateInterface* obj);
-    static void removeUpdateObject(UpdateInterface* obj);
-
     /// @brief called once every frame
     static void Update(float deltaTime);
     /// @brief called after update
@@ -25,8 +21,14 @@ public:
     /// @brief called just before opening the window
     static void Start();
 
+protected:
+    static void addUpdateObject(UpdateInterface* obj);
+    static void removeUpdateObject(UpdateInterface* obj);
+
+    friend UpdateInterface;
+
 private:
-    UpdateManager() = default;
+    inline UpdateManager() = default;
 
     static std::list<UpdateInterface*> _objects;
 };

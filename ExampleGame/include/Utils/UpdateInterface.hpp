@@ -5,12 +5,16 @@
 
 #include "UpdateManager.hpp"
 
+class UpdateManager;
+
 class UpdateInterface
 {
 public:
 
     UpdateInterface();
     ~UpdateInterface();
+
+protected:
 
     /// @brief called every frame
     virtual void Update(float deltaTime);
@@ -21,7 +25,7 @@ public:
     /// @brief called right before window opens
     virtual void Start();
 
-protected:
+    friend UpdateManager;
 
 private:
     

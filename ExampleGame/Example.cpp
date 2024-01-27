@@ -14,7 +14,9 @@
 #include "Utils/Graphics/WindowHandler.hpp"
 #include "Utils/Physics/WorldHandler.hpp"
 
+// TODO combined these into one class
 #include "Utils/UpdateManager.hpp"
+#include "Utils/Graphics/DrawableManager.hpp"
 
 #include "Player.hpp"
 
@@ -57,7 +59,6 @@ int main()
     //! ---------------------------------------------------
 
     Player player(100,100);
-    Player test(200,200);
 
     UpdateManager::Start();
     sf::Clock deltaClock;
@@ -108,8 +109,7 @@ int main()
         WorldHandler::getWorld().Step(deltaTime.asSeconds(), int32(8), int32(3));
         //! Draw after this
 
-        player.draw();
-        test.draw();
+        DrawableManager::draw(window);
 
         // draw for tgui
         gui.draw();
