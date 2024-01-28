@@ -3,11 +3,13 @@
 
 #pragma once
 
+#include "Utils/Object.hpp"
+
 #include "DrawableManager.hpp"
 
 class DrawableManager;
 
-class DrawableObj
+class DrawableObj : public virtual Object
 {
 public:
     DrawableObj(const int& layer = 0);

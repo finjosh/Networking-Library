@@ -17,6 +17,10 @@ Player::Player(const float& x, const float& y, const int& layer) : DrawableObj(l
     _body = WorldHandler::getWorld().CreateBody(&bodyDef);
     _body->CreateFixture(&fixtureDef);
 
+    //* not optimal as the body could be destroyed 
+    this->onEnabled(b2Body::SetEnabled, this->_body, true);
+    this->onDisabled(b2Body::SetEnabled, this->_body, false);
+
     RectangleShape::setSize({10,10});
     RectangleShape::setOrigin(5,5);
     RectangleShape::setPosition(x,y);
@@ -57,13 +61,23 @@ void Player::Update(float deltaTime)
             vel.x -= 10;
         }
 
-        vel.x = vel.x == 0 ? 0 : (vel.x > 0 ? std::max(vel.x, _body->GetLinearVelocity().x) : std::min(vel.x, _body->GetLinearVelocity().x));
-        vel.y = vel.y == 0 ? 0 : (vel.y > 0 ? std::max(vel.y, _body->GetLinearVelocity().y) : std::min(vel.y, _body->GetLinearVelocity().y));
-        _body->SetLinearVelocity(vel);
-        if (_burstCooldown >= 1 && abs(vel.x) <= 10 && abs(vel.y) <= 10 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        float currentLength = _body->GetLinearVelocity().Length();
+        vel.Normalize();
+        if (currentLength >= 10)
+        {
+            vel.x *= currentLength;
+            vel.y *= currentLength;
+        }
+        else
+        {
+            vel.x *= 10;
+            vel.y *= 10;
+        }
+        if (_burstCooldown >= 1.5 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         {
             _burstCooldown = 0;
-            _body->ApplyForceToCenter({vel.x*250, vel.y*250}, true);
+            _body->ApplyForceToCenter({vel.x*450, vel.y*450}, true);
         }
+        _body->SetLinearVelocity(vel);
     }
 }

@@ -11,7 +11,8 @@ void DrawableManager::draw(sf::RenderWindow& window)
 {
     for (auto drawable: _drawables)    
     {
-        drawable->Draw(window);
+        if (drawable->isEnabled())
+            drawable->Draw(window);
     }
 }
 

@@ -14,7 +14,6 @@
 #include "Utils/Graphics/WindowHandler.hpp"
 #include "Utils/Physics/WorldHandler.hpp"
 
-// TODO combined these into one class
 #include "Utils/UpdateManager.hpp"
 #include "Utils/Graphics/DrawableManager.hpp"
 
@@ -25,6 +24,7 @@ using namespace sf;
 
 void addThemeCommands();
 
+// TODO make a physics body class (will stop physics when the object is disabled)
 int main()
 {
     // setup for sfml and tgui
@@ -59,6 +59,8 @@ int main()
     //! ---------------------------------------------------
 
     Player player(100,100);
+    Player player2(150,150);
+    player2.setEnabled(false);
 
     UpdateManager::Start();
     sf::Clock deltaClock;
@@ -82,6 +84,11 @@ int main()
 
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z)
+            {
+                player2.setEnabled(!player2.isEnabled());
+            }
         }
         UpdateManager::Update(deltaTime.asSeconds());
         if (fixedUpdate >= 0.2)

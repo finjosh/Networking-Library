@@ -16,7 +16,8 @@ void UpdateManager::Update(float deltaTime)
 {
     for (UpdateInterface* obj: _objects)
     {
-        obj->Update(deltaTime);
+        if (obj->isEnabled())
+            obj->Update(deltaTime);
     }
 }
 
@@ -24,7 +25,8 @@ void UpdateManager::LateUpdate(float deltaTime)
 {
     for (UpdateInterface* obj: _objects)
     {
-        obj->LateUpdate(deltaTime);
+        if (obj->isEnabled())
+            obj->LateUpdate(deltaTime);
     }
 }
 
@@ -32,7 +34,8 @@ void UpdateManager::FixedUpdate()
 {
     for (UpdateInterface* obj: _objects)
     {
-        obj->FixedUpdate();
+        if (obj->isEnabled())
+            obj->FixedUpdate();
     }
 }
 
