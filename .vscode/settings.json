@@ -106,6 +106,7 @@
     "cSpell.words": [
         "DRAWABLEMANAGER",
         "GAMEOBJECT",
+        "OBJECTMANAGER",
         "SERVERSOCKET",
         "tgui",
         "UPDATEINTERFACE",

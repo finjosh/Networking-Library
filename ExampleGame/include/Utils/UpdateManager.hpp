@@ -5,7 +5,7 @@
 
 #include "UpdateInterface.hpp"
 
-#include <list>
+#include <set>
 
 class UpdateInterface;
 
@@ -30,7 +30,7 @@ protected:
 private:
     inline UpdateManager() = default;
 
-    static std::list<UpdateInterface*> _objects;
+    static std::set<UpdateInterface*, _objectComp> _objects;
 };
 
 #endif

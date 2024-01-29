@@ -1,15 +1,15 @@
 #include "Utils/UpdateManager.hpp"
 
-std::list<UpdateInterface*> UpdateManager::_objects;
+std::set<UpdateInterface*, _objectComp> UpdateManager::_objects;
 
 void UpdateManager::addUpdateObject(UpdateInterface* obj)
 {
-    _objects.push_back(obj);
+    _objects.insert({obj});
 }
 
 void UpdateManager::removeUpdateObject(UpdateInterface* obj)
 {
-    _objects.remove(obj);
+    _objects.erase(obj);
 }
 
 void UpdateManager::Update(float deltaTime)

@@ -20,6 +20,8 @@ public:
     Player(const float& x, const float& y, const int& layer = 10);
     ~Player();
 
+    virtual void destroy() override;
+
 protected:
     virtual void Update(float deltaTime) override;
     virtual void Draw(sf::RenderWindow& window) override;

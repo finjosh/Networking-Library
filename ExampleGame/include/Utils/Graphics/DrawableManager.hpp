@@ -11,7 +11,7 @@
 
 class DrawableObj;
 
-struct DrawableComp
+struct _drawableComp
 {
     bool operator() (const DrawableObj* lhs, const DrawableObj* rhs) const;
 };
@@ -33,7 +33,7 @@ private:
 
     /// @note first is the layer
     /// @note second is the obj
-    static std::multiset<DrawableObj*, DrawableComp> _drawables;
+    static std::set<DrawableObj*, _drawableComp> _drawables;
 };
 
 #endif

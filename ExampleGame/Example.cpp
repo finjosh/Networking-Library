@@ -16,6 +16,7 @@
 
 #include "Utils/UpdateManager.hpp"
 #include "Utils/Graphics/DrawableManager.hpp"
+#include "Utils/ObjectManager.hpp"
 
 #include "Player.hpp"
 
@@ -58,9 +59,7 @@ int main()
 
     //! ---------------------------------------------------
 
-    Player player(100,100);
-    Player player2(150,150);
-    player2.setEnabled(false);
+    std::list<unsigned long long> ids;
 
     UpdateManager::Start();
     sf::Clock deltaClock;
@@ -85,9 +84,29 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z)
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
             {
-                player2.setEnabled(!player2.isEnabled());
+                for (int i = 0; i < 10000; i++)
+                {
+                    Player* temp = new Player(rand()%window.getSize().x, rand()%window.getSize().y);
+                    ids.push_back(temp->getID());
+                }
+            }
+            
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down)
+            {
+                for (int i = 0; i < 10000; i++)
+                {
+                    if (ids.size() > 0)
+                    {
+                        Object::Ptr obj(ObjectManager::getObject(ids.front()));
+                        if (obj.isValid())
+                        {
+                            obj->destroy();
+                        }
+                        ids.erase(ids.begin());
+                    }
+                }
             }
         }
         UpdateManager::Update(deltaTime.asSeconds());

@@ -153,7 +153,7 @@ protected:
     std::unordered_map<unsigned int, std::function<void()>> m_functions;
 
     // Possible issue if event are constantly removed and added
-    unsigned int m_lastId;
+    unsigned int m_lastId = 0;
     static std::deque<const void*> m_parameters;
 };
 

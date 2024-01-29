@@ -1,11 +1,16 @@
 #include "Utils/Graphics/DrawableManager.hpp"
 
-bool DrawableComp::operator() (const DrawableObj* lhs, const DrawableObj* rhs) const
+bool _drawableComp::operator() (const DrawableObj* lhs, const DrawableObj* rhs) const
 {
-    return lhs->getLayer() < rhs->getLayer();
+    if (lhs->getLayer() < rhs->getLayer())
+        return true;
+    else if (lhs->getLayer() == rhs->getLayer() && lhs->getID() < rhs->getID())
+        return true;
+    else    
+        return false;
 }
 
-std::multiset<DrawableObj*, DrawableComp> DrawableManager::_drawables;
+std::set<DrawableObj*, _drawableComp> DrawableManager::_drawables;
 
 void DrawableManager::draw(sf::RenderWindow& window)
 {

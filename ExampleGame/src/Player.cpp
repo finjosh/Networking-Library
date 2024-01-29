@@ -81,3 +81,8 @@ void Player::Update(float deltaTime)
         _body->SetLinearVelocity(vel);
     }
 }
+
+void Player::destroy()
+{
+    delete(this);
+}
