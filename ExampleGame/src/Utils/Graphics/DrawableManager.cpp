@@ -1,16 +1,14 @@
 #include "Utils/Graphics/DrawableManager.hpp"
 
-bool _drawableComp::operator() (const DrawableObj* lhs, const DrawableObj* rhs) const
+bool _drawableComp::operator() (const DrawableObject* lhs, const DrawableObject* rhs) const
 {
-    if (lhs->getLayer() < rhs->getLayer())
-        return true;
-    else if (lhs->getLayer() == rhs->getLayer() && lhs->getID() < rhs->getID())
+    if (lhs->getLayer() < rhs->getLayer() || lhs->getLayer() == rhs->getLayer() && lhs->getID() < rhs->getID())
         return true;
     else    
         return false;
 }
 
-std::set<DrawableObj*, _drawableComp> DrawableManager::_drawables;
+std::set<DrawableObject*, _drawableComp> DrawableManager::_drawables;
 
 void DrawableManager::draw(sf::RenderWindow& window)
 {
@@ -21,12 +19,12 @@ void DrawableManager::draw(sf::RenderWindow& window)
     }
 }
 
-void DrawableManager::addDrawable(DrawableObj* DrawableObj)
+void DrawableManager::addDrawable(DrawableObject* DrawableObject)
 {
-    _drawables.insert({DrawableObj});
+    _drawables.insert({DrawableObject});
 }
 
-void DrawableManager::removeDrawable(DrawableObj* DrawableObj)
+void DrawableManager::removeDrawable(DrawableObject* DrawableObject)
 {
-    _drawables.erase(DrawableObj);
+    _drawables.erase(DrawableObject);
 }

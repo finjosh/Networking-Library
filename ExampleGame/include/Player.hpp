@@ -11,24 +11,28 @@
 
 #include "Utils/Physics/WorldHandler.hpp"
 #include "Utils/Graphics/WindowHandler.hpp"
-#include "Utils/UpdateInterface.hpp"
-#include "Utils/Graphics/Drawable.hpp"
+#include "Utils/GameObject.hpp"
+#include "Ball.hpp"
 
-class Player : public sf::RectangleShape, public UpdateInterface, public DrawableObj
+class Player : public sf::RectangleShape, public GameObject
 {
 public:
-    Player(const float& x, const float& y, const int& layer = 10);
+    Player(const float& x, const float& y, const int& layer = 0);
     ~Player();
 
     virtual void destroy() override;
 
+    void throwBall() const;
+
 protected:
-    virtual void Update(float deltaTime) override;
+    virtual void Update(const float& deltaTime) override;
     virtual void Draw(sf::RenderWindow& window) override;
 
 private:
     b2Body* _body;
+    // TODO make a const for the cool downs and change these to timers
     float _burstCooldown = 0.f;
+    float _shootCooldown = 0.f;
 };
 
 #endif

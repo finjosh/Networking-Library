@@ -63,7 +63,7 @@ void Object::Ptr::removePtr()
 
 Object::Object()
 {
-    _id = _lastID++;
+    _id = _lastID++; //! could become an issue if lots of creation and deletion happens
     ObjectManager::addObject(this);
 }
 

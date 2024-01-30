@@ -14,28 +14,40 @@ void UpdateManager::removeUpdateObject(UpdateInterface* obj)
 
 void UpdateManager::Update(float deltaTime)
 {
-    for (UpdateInterface* obj: _objects)
+    std::set<UpdateInterface*>::iterator i = _objects.begin();
+    while (i != _objects.end())
     {
-        if (obj->isEnabled())
-            obj->Update(deltaTime);
+        // in the case that the obj is destroyed during call
+        UpdateInterface* temp = *i;
+        i++;
+        if (temp->isEnabled())
+            temp->Update(deltaTime);
     }
 }
 
 void UpdateManager::LateUpdate(float deltaTime)
 {
-    for (UpdateInterface* obj: _objects)
+    std::set<UpdateInterface*>::iterator i = _objects.begin();
+    while (i != _objects.end())
     {
-        if (obj->isEnabled())
-            obj->LateUpdate(deltaTime);
+        // in the case that the obj is destroyed during call
+        UpdateInterface* temp = *i;
+        i++;
+        if (temp->isEnabled())
+            temp->LateUpdate(deltaTime);
     }
 }
 
 void UpdateManager::FixedUpdate()
 {
-    for (UpdateInterface* obj: _objects)
+    std::set<UpdateInterface*>::iterator i = _objects.begin();
+    while (i != _objects.end())
     {
-        if (obj->isEnabled())
-            obj->FixedUpdate();
+        // in the case that the obj is destroyed during call
+        UpdateInterface* temp = *i;
+        i++;
+        if (temp->isEnabled())
+            temp->FixedUpdate();
     }
 }
 

@@ -19,9 +19,9 @@ public:
 protected:
 
     /// @brief called every frame
-    virtual void Update(float deltaTime);
+    virtual void Update(const float& deltaTime);
     /// @brief called every frame after update
-    virtual void LateUpdate(float deltaTime);
+    virtual void LateUpdate(const float& deltaTime);
     /// @brief called up to 50 times a second
     virtual void FixedUpdate();
     /// @brief called right before window opens

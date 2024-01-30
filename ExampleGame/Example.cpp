@@ -26,6 +26,7 @@ using namespace sf;
 void addThemeCommands();
 
 // TODO make a physics body class (will stop physics when the object is disabled)
+// TODO setup a view manager that handles windows size changes
 int main()
 {
     // setup for sfml and tgui
@@ -86,26 +87,20 @@ int main()
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
             {
-                for (int i = 0; i < 10000; i++)
-                {
-                    Player* temp = new Player(rand()%window.getSize().x, rand()%window.getSize().y);
-                    ids.push_back(temp->getID());
-                }
+                Player* temp = new Player(rand()%window.getSize().x, rand()%window.getSize().y);
+                ids.push_back(temp->getID());
             }
             
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down)
             {
-                for (int i = 0; i < 10000; i++)
+                if (ids.size() > 0)
                 {
-                    if (ids.size() > 0)
+                    Object::Ptr obj(ObjectManager::getObject(ids.front()));
+                    if (obj.isValid())
                     {
-                        Object::Ptr obj(ObjectManager::getObject(ids.front()));
-                        if (obj.isValid())
-                        {
-                            obj->destroy();
-                        }
-                        ids.erase(ids.begin());
+                        obj->destroy();
                     }
+                    ids.erase(ids.begin());
                 }
             }
         }

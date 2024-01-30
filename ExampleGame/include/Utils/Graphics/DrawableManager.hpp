@@ -7,13 +7,13 @@
 
 #include "SFML/Graphics/RenderWindow.hpp"
 
-#include "Drawable.hpp"
+#include "DrawableObject.hpp"
 
-class DrawableObj;
+class DrawableObject;
 
 struct _drawableComp
 {
-    bool operator() (const DrawableObj* lhs, const DrawableObj* rhs) const;
+    bool operator() (const DrawableObject* lhs, const DrawableObject* rhs) const;
 };
 
 class DrawableManager
@@ -23,17 +23,17 @@ public:
     static void draw(sf::RenderWindow& window);
 
 protected:
-    static void addDrawable(DrawableObj* DrawableObj);
-    static void removeDrawable(DrawableObj* DrawableObj);
+    static void addDrawable(DrawableObject* DrawableObject);
+    static void removeDrawable(DrawableObject* DrawableObject);
 
-    friend DrawableObj;
+    friend DrawableObject;
 
 private:
     inline DrawableManager() = default;
 
     /// @note first is the layer
     /// @note second is the obj
-    static std::set<DrawableObj*, _drawableComp> _drawables;
+    static std::set<DrawableObject*, _drawableComp> _drawables;
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include "Player.hpp"
 
-Player::Player(const float& x, const float& y, const int& layer) : DrawableObj(layer)
+Player::Player(const float& x, const float& y, const int& layer) : DrawableObject(layer)
 {
     b2BodyDef bodyDef;
     bodyDef.position.Set(x/PIXELS_PER_METER, y/PIXELS_PER_METER);
@@ -37,9 +37,16 @@ void Player::Draw(sf::RenderWindow& window)
     window.draw(*this);
 }
 
-void Player::Update(float deltaTime)
+void Player::throwBall() const
+{
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*WindowHandler::getRenderWindow());
+    new Ball(_body->GetPosition(), _body->GetLocalPoint({mousePos.x/PIXELS_PER_METER, mousePos.y/PIXELS_PER_METER}), 100);
+}
+
+void Player::Update(const float& deltaTime)
 {
     _burstCooldown += deltaTime;
+    _shootCooldown += deltaTime;
 
     if (WindowHandler::getRenderWindow()->hasFocus())
     {
@@ -59,6 +66,12 @@ void Player::Update(float deltaTime)
 
         if (sf::Keyboard::isKeyPressed((sf::Keyboard::A))){
             vel.x -= 10;
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _shootCooldown >= 0.25)
+        {
+            _shootCooldown = 0.f;
+            this->throwBall();
         }
 
         float currentLength = _body->GetLinearVelocity().Length();

@@ -1,5 +1,5 @@
-#ifndef GAMEOBJECT_H
-#define GAMEOBJECT_H
+#ifndef OBJECT_H
+#define OBJECT_H
 
 #pragma once
 
@@ -7,6 +7,10 @@
 
 #include "Utils/EventHelper.hpp"
 
+/// @brief used as a simple implementation of the pure virtual destroy function
+#define createDestroy() inline void destroy() override { delete(this); };
+
+/// @note the pure virtual "destroy" function only has to handle the destruction of the derived object
 class Object
 {
 public:
