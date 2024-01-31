@@ -14,10 +14,30 @@
 #include "Utils/GameObject.hpp"
 #include "Ball.hpp"
 
+struct PlayerState
+{
+    bool up = false;
+    bool down = false;
+    bool right = false;
+    bool left = false;
+    bool burst = false;
+    bool shoot = false;
+
+    inline void reset()
+    {
+        up = false;
+        down = false;
+        right = false;
+        left = false;
+        burst = false;
+        shoot = false;
+    }
+};
+
 class Player : public sf::RectangleShape, public GameObject
 {
 public:
-    Player(const float& x, const float& y, const int& layer = 0);
+    Player(const float& x, const float& y, const bool& handleInput = true, const int& layer = 0);
     ~Player();
 
     virtual void destroy() override;
@@ -27,12 +47,15 @@ public:
 protected:
     virtual void Update(const float& deltaTime) override;
     virtual void Draw(sf::RenderWindow& window) override;
+    void handleInput();
 
 private:
     b2Body* _body;
+    PlayerState _state;
     // TODO make a const for the cool downs and change these to timers
     float _burstCooldown = 0.f;
     float _shootCooldown = 0.f;
+    bool _handleInput = true;
 };
 
 #endif

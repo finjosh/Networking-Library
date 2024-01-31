@@ -4,6 +4,9 @@ Ball::Ball(const b2Vec2& pos, const b2Vec2& direction, const float& speed)
 {
     b2BodyDef bodyDef;
     bodyDef.position.Set(pos.x, pos.y);
+    b2Vec2 temp = direction;
+    temp.Normalize();
+    bodyDef.linearVelocity.Set(temp.x*speed, temp.y*speed);
     bodyDef.type = b2_kinematicBody;
     bodyDef.linearDamping = 0.f;
     bodyDef.bullet = true;
@@ -18,9 +21,6 @@ Ball::Ball(const b2Vec2& pos, const b2Vec2& direction, const float& speed)
 
     _body = WorldHandler::getWorld().CreateBody(&bodyDef);
     _body->CreateFixture(&fixtureDef);
-    b2Vec2 temp = direction;
-    temp.Normalize();
-    _body->SetLinearVelocity({temp.x*speed, temp.y*speed});
 
     //* not optimal as the body could be destroyed 
     this->onEnabled(b2Body::SetEnabled, this->_body, true);

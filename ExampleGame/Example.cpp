@@ -62,6 +62,8 @@ int main()
 
     std::list<unsigned long long> ids;
 
+    new Player(100,100);
+
     UpdateManager::Start();
     sf::Clock deltaClock;
     float fixedUpdate = 0;
@@ -87,7 +89,7 @@ int main()
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
             {
-                Player* temp = new Player(rand()%window.getSize().x, rand()%window.getSize().y);
+                Player* temp = new Player(rand()%window.getSize().x, rand()%window.getSize().y, false);
                 ids.push_back(temp->getID());
             }
             

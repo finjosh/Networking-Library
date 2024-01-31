@@ -1,6 +1,6 @@
 #include "Player.hpp"
 
-Player::Player(const float& x, const float& y, const int& layer) : DrawableObject(layer)
+Player::Player(const float& x, const float& y, const bool& handleInput, const int& layer) : DrawableObject(layer), _handleInput(handleInput)
 {
     b2BodyDef bodyDef;
     bodyDef.position.Set(x/PIXELS_PER_METER, y/PIXELS_PER_METER);
@@ -48,54 +48,87 @@ void Player::Update(const float& deltaTime)
     _burstCooldown += deltaTime;
     _shootCooldown += deltaTime;
 
-    if (WindowHandler::getRenderWindow()->hasFocus())
-    {
-        b2Vec2 vel(0,0);
+    handleInput();
+    
+    b2Vec2 vel(0,0);
 
-        if (sf::Keyboard::isKeyPressed((sf::Keyboard::W))){
-            vel.y -= 10;
-        }
-
-        if (sf::Keyboard::isKeyPressed((sf::Keyboard::S))){
-            vel.y += 10;
-        }
-
-        if (sf::Keyboard::isKeyPressed((sf::Keyboard::D))){
-            vel.x += 10;
-        }
-
-        if (sf::Keyboard::isKeyPressed((sf::Keyboard::A))){
-            vel.x -= 10;
-        }
-
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _shootCooldown >= 0.25)
-        {
-            _shootCooldown = 0.f;
-            this->throwBall();
-        }
-
-        float currentLength = _body->GetLinearVelocity().Length();
-        vel.Normalize();
-        if (currentLength >= 10)
-        {
-            vel.x *= currentLength;
-            vel.y *= currentLength;
-        }
-        else
-        {
-            vel.x *= 10;
-            vel.y *= 10;
-        }
-        if (_burstCooldown >= 1.5 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        {
-            _burstCooldown = 0;
-            _body->ApplyForceToCenter({vel.x*450, vel.y*450}, true);
-        }
-        _body->SetLinearVelocity(vel);
+    if (_state.up){
+        vel.y -= 10;
     }
+
+    if (_state.down){
+        vel.y += 10;
+    }
+
+    if (_state.right){
+        vel.x += 10;
+    }
+
+    if (_state.left){
+        vel.x -= 10;
+    }
+
+    if (_state.shoot && _shootCooldown >= 0.25)
+    {
+        _shootCooldown = 0.f;
+        this->throwBall();
+    }
+
+    float currentLength = _body->GetLinearVelocity().Length();
+    vel.Normalize();
+    if (currentLength >= 10)
+    {
+        vel.x *= currentLength;
+        vel.y *= currentLength;
+    }
+    else
+    {
+        vel.x *= 10;
+        vel.y *= 10;
+    }
+    if (_burstCooldown >= 1.5 && _state.burst)
+    {
+        _burstCooldown = 0;
+        _body->ApplyForceToCenter({vel.x*450, vel.y*450}, true);
+    }
+    _body->SetLinearVelocity(vel);
 }
 
 void Player::destroy()
 {
     delete(this);
+}
+
+void Player::handleInput()
+{
+    if (_handleInput && WindowHandler::getRenderWindow()->hasFocus())
+    {
+        _state.reset();
+
+        if (sf::Keyboard::isKeyPressed((sf::Keyboard::W))){
+            _state.up = true;
+        }
+
+        if (sf::Keyboard::isKeyPressed((sf::Keyboard::S))){
+            _state.down = true;
+        }
+
+        if (sf::Keyboard::isKeyPressed((sf::Keyboard::D))){
+            _state.right = true;
+        }
+
+        if (sf::Keyboard::isKeyPressed((sf::Keyboard::A))){
+            _state.left = true;
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            _state.shoot = true;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        {
+            _state.burst = true;
+        }
+    }
 }
