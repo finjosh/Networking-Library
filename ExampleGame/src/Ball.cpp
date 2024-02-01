@@ -21,6 +21,9 @@ Ball::Ball(const b2Vec2& pos, const b2Vec2& direction, const float& speed)
 
     _body = WorldHandler::getWorld().CreateBody(&bodyDef);
     _body->CreateFixture(&fixtureDef);
+    //! TESTING
+    CollisionCallbacks::setBody(_body);
+    //! -------
 
     //* not optimal as the body could be destroyed 
     this->onEnabled(b2Body::SetEnabled, this->_body, true);
@@ -49,4 +52,16 @@ void Ball::Draw(sf::RenderWindow& window)
 {
     CircleShape::setPosition(_body->GetPosition().x*PIXELS_PER_METER, _body->GetPosition().y*PIXELS_PER_METER);
     window.draw(*this);
+}
+
+#include "Utils/Debug/CommandPrompt.hpp"
+
+void Ball::BeginContact(b2Contact* contact) 
+{
+    Command::Prompt::print("Ball contact begin");
+}
+
+void Ball::EndContact(b2Contact* contact) 
+{
+    Command::Prompt::print("Ball contact end");
 }

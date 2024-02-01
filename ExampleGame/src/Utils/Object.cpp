@@ -98,20 +98,3 @@ Object::Ptr Object::getPtr()
 {
     return Object::Ptr(this);
 }
-
-template<typename type>
-type* Object::cast() const
-{
-    type* temp = nullptr;
-    
-    try
-    {
-        temp = static_cast<type*>(this);    
-    }
-    catch(const std::exception& e)
-    {
-        temp = nullptr;
-    }
-
-    return temp;
-}

@@ -10,7 +10,10 @@
 #include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/Window.hpp"
 
-class Ball : public GameObject, public sf::CircleShape
+//! TESTING
+#include "Utils/Physics/CollisionCallbacks.hpp"
+
+class Ball : public GameObject, public sf::CircleShape, public CollisionCallbacks
 {
 public:
     /// @brief creates a new ball and sets the speed
@@ -26,6 +29,9 @@ public:
 protected:
     void Update(const float& deltaTime) override;
     void Draw(sf::RenderWindow& window) override;
+
+    void BeginContact(b2Contact* contact) override;
+    void EndContact(b2Contact* contact) override;
 
 private:
     b2Body* _body;

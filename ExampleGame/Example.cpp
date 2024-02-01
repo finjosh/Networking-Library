@@ -19,6 +19,7 @@
 #include "Utils/ObjectManager.hpp"
 
 #include "Player.hpp"
+#include "Utils/Physics/CollisionManager.hpp"
 
 using namespace std;
 using namespace sf;
@@ -42,9 +43,11 @@ int main()
     // -----------------------
 
     WorldHandler::getWorld().SetGravity({0.f,0.f});
+    WorldHandler::getWorld().SetContactListener(new CollisionListener);
 
     udp::SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->sendToAll(udp::Socket::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->sendToServer(udp::Socket::DataPacketTemplate() << "Some Data"); }});
     sDisplay.initConnectionDisplay(gui);
+    sDisplay.closeConnectionDisplay();
     // sDisplay.setConnectionVisible();
 
     //! Required to initialize VarDisplay and CommandPrompt
@@ -55,8 +58,6 @@ int main()
     addThemeCommands();
     // create the UI for the TFuncDisplay
     TFuncDisplay::init(gui);
-    
-    TFuncDisplay::setVisible();
 
     //! ---------------------------------------------------
 

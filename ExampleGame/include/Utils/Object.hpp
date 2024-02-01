@@ -49,10 +49,23 @@ public:
     EventHelper::Event onDestroy;
 
     /// @brief tries to cast this object to a given type
-    /// @warning must handle obj destruction
     /// @returns nullptr if cast was unsuccessful  
     template<typename type>
-    type* cast() const;
+    type* cast()
+    {
+        type* temp = nullptr;
+    
+        try
+        {
+            temp = dynamic_cast<type*>(this);    
+        }
+        catch(const std::exception& e)
+        {
+            temp = nullptr;
+        }
+
+        return temp;
+    }
 
     virtual void destroy() = 0;
 

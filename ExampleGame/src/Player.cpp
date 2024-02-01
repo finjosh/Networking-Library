@@ -6,6 +6,7 @@ Player::Player(const float& x, const float& y, const bool& handleInput, const in
     bodyDef.position.Set(x/PIXELS_PER_METER, y/PIXELS_PER_METER);
     bodyDef.type = b2_dynamicBody;
     bodyDef.linearDamping = 1;
+    bodyDef.fixedRotation = true;
     b2PolygonShape b2shape;
     b2shape.SetAsBox(10/PIXELS_PER_METER/2.0, 10/PIXELS_PER_METER/2.0);
     b2FixtureDef fixtureDef;
@@ -16,6 +17,9 @@ Player::Player(const float& x, const float& y, const bool& handleInput, const in
 
     _body = WorldHandler::getWorld().CreateBody(&bodyDef);
     _body->CreateFixture(&fixtureDef);
+    //! TESTING
+    CollisionCallbacks::setBody(_body);
+    //! -------
 
     //* not optimal as the body could be destroyed 
     this->onEnabled(b2Body::SetEnabled, this->_body, true);
@@ -131,4 +135,22 @@ void Player::handleInput()
             _state.burst = true;
         }
     }
+}
+
+#include "Utils/Debug/CommandPrompt.hpp"
+
+void Player::BeginContact(b2Contact* contact) 
+{
+    if (static_cast<CollisionCallbacks*>((void*)contact->GetFixtureB()->GetBody()->GetUserData().pointer)->cast<Ball>() == nullptr)
+        return;
+    
+    Command::Prompt::print("Player contact with ball begin");
+}
+
+void Player::EndContact(b2Contact* contact) 
+{
+    if (static_cast<CollisionCallbacks*>((void*)contact->GetFixtureB()->GetBody()->GetUserData().pointer)->cast<Ball>() == nullptr)
+        return;
+    
+    Command::Prompt::print("Player contact with ball end");
 }
