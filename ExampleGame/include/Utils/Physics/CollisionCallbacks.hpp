@@ -8,6 +8,18 @@
 
 #include "Utils/Object.hpp"
 
+class CollisionData
+{
+public:
+    b2Body* getBody();
+    
+
+protected:
+
+private:
+    b2Body* _body;
+};
+
 class CollisionCallbacks : public virtual Object
 {
 public:

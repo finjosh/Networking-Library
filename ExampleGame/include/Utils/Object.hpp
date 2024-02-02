@@ -44,8 +44,12 @@ public:
     unsigned long int getID() const;
     Object::Ptr getPtr();
 
+    /// @note if derived class, use the virtual function
     EventHelper::Event onEnabled;
+    /// @note if derived class, use the virtual function
     EventHelper::Event onDisabled;
+    /// @note if using this in the object just use deconstructor instead
+    /// @note you should NOT access any thing about the object through this event
     EventHelper::Event onDestroy;
 
     /// @brief tries to cast this object to a given type
@@ -72,6 +76,8 @@ public:
 protected:
     /// @warning only use this if you know what you are doing
     Object(unsigned long long id);
+    inline virtual void onEnable() {};
+    inline virtual void onDisable() {};
 
 private:
     bool _enabled = true;

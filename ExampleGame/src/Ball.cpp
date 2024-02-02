@@ -58,10 +58,10 @@ void Ball::Draw(sf::RenderWindow& window)
 
 void Ball::BeginContact(b2Contact* contact) 
 {
-    Command::Prompt::print("Ball contact begin");
+    // Command::Prompt::print("Ball contact begin");
 }
 
 void Ball::EndContact(b2Contact* contact) 
 {
-    Command::Prompt::print("Ball contact end");
+    // Command::Prompt::print("Ball contact end");
 }

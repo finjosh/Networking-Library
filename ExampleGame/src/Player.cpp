@@ -15,15 +15,17 @@ Player::Player(const float& x, const float& y, const bool& handleInput, const in
     fixtureDef.restitution = 0.1;
     fixtureDef.shape = &b2shape;
 
-    _body = WorldHandler::getWorld().CreateBody(&bodyDef);
-    _body->CreateFixture(&fixtureDef);
+    // _body = WorldHandler::getWorld().CreateBody(&bodyDef);
+    // _body->CreateFixture(&fixtureDef);
+    this->initCollider(bodyDef);
+    this->createFixture(fixtureDef);
     //! TESTING
-    CollisionCallbacks::setBody(_body);
+    CollisionCallbacks::setBody(this->getBody());
     //! -------
 
     //* not optimal as the body could be destroyed 
-    this->onEnabled(b2Body::SetEnabled, this->_body, true);
-    this->onDisabled(b2Body::SetEnabled, this->_body, false);
+    this->onEnabled(b2Body::SetEnabled, this->getBody(), true);
+    this->onDisabled(b2Body::SetEnabled, this->getBody(), false);
 
     RectangleShape::setSize({10,10});
     RectangleShape::setOrigin(5,5);
@@ -32,19 +34,19 @@ Player::Player(const float& x, const float& y, const bool& handleInput, const in
 
 Player::~Player()
 {
-    WorldHandler::getWorld().DestroyBody(_body);
+    WorldHandler::getWorld().DestroyBody(this->getBody());
 }
 
 void Player::Draw(sf::RenderWindow& window)
 {
-    RectangleShape::setPosition({_body->GetPosition().x*PIXELS_PER_METER, _body->GetPosition().y*PIXELS_PER_METER});
+    RectangleShape::setPosition({this->getBody()->GetPosition().x*PIXELS_PER_METER, this->getBody()->GetPosition().y*PIXELS_PER_METER});
     window.draw(*this);
 }
 
 void Player::throwBall() const
 {
     sf::Vector2i mousePos = sf::Mouse::getPosition(*WindowHandler::getRenderWindow());
-    new Ball(_body->GetPosition(), _body->GetLocalPoint({mousePos.x/PIXELS_PER_METER, mousePos.y/PIXELS_PER_METER}), 100);
+    new Ball(this->getBody()->GetPosition(), this->getBody()->GetLocalPoint({mousePos.x/PIXELS_PER_METER, mousePos.y/PIXELS_PER_METER}), 100);
 }
 
 void Player::Update(const float& deltaTime)
@@ -78,7 +80,7 @@ void Player::Update(const float& deltaTime)
         this->throwBall();
     }
 
-    float currentLength = _body->GetLinearVelocity().Length();
+    float currentLength = this->getBody()->GetLinearVelocity().Length();
     vel.Normalize();
     if (currentLength >= 10)
     {
@@ -93,9 +95,9 @@ void Player::Update(const float& deltaTime)
     if (_burstCooldown >= 1.5 && _state.burst)
     {
         _burstCooldown = 0;
-        _body->ApplyForceToCenter({vel.x*450, vel.y*450}, true);
+        this->getBody()->ApplyForceToCenter({vel.x*450, vel.y*450}, true);
     }
-    _body->SetLinearVelocity(vel);
+    this->getBody()->SetLinearVelocity(vel);
 }
 
 void Player::destroy()
@@ -143,7 +145,7 @@ void Player::BeginContact(b2Contact* contact)
 {
     if (static_cast<CollisionCallbacks*>((void*)contact->GetFixtureB()->GetBody()->GetUserData().pointer)->cast<Ball>() == nullptr)
         return;
-    
+
     Command::Prompt::print("Player contact with ball begin");
 }
 

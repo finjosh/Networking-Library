@@ -11,6 +11,7 @@
 
 #include "Utils/Physics/WorldHandler.hpp"
 #include "Utils/Graphics/WindowHandler.hpp"
+#include "Utils/Physics/Collider.hpp"
 #include "Utils/GameObject.hpp"
 #include "Ball.hpp"
 
@@ -37,7 +38,7 @@ struct PlayerState
     }
 };
 
-class Player : public sf::RectangleShape, public GameObject, public CollisionCallbacks
+class Player : public sf::RectangleShape, public GameObject, public CollisionCallbacks, public Collider
 {
 public:
     Player(const float& x, const float& y, const bool& handleInput = true, const int& layer = 0);
@@ -56,7 +57,6 @@ protected:
     void EndContact(b2Contact* contact) override;
 
 private:
-    b2Body* _body;
     PlayerState _state;
     // TODO make a const for the cool downs and change these to timers
     float _burstCooldown = 0.f;
