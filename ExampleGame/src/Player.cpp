@@ -2,30 +2,20 @@
 
 Player::Player(const float& x, const float& y, const bool& handleInput, const int& layer) : DrawableObject(layer), _handleInput(handleInput)
 {
-    b2BodyDef bodyDef;
-    bodyDef.position.Set(x/PIXELS_PER_METER, y/PIXELS_PER_METER);
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.linearDamping = 1;
-    bodyDef.fixedRotation = true;
     b2PolygonShape b2shape;
     b2shape.SetAsBox(10/PIXELS_PER_METER/2.0, 10/PIXELS_PER_METER/2.0);
     b2FixtureDef fixtureDef;
     fixtureDef.density = 1.0;
-    fixtureDef.friction = 0.1;
-    fixtureDef.restitution = 0.1;
+    fixtureDef.friction = 0.25;
     fixtureDef.shape = &b2shape;
 
-    // _body = WorldHandler::getWorld().CreateBody(&bodyDef);
-    // _body->CreateFixture(&fixtureDef);
-    this->initCollider(bodyDef);
-    this->createFixture(fixtureDef);
+    Collider::initCollider(x/PIXELS_PER_METER,y/PIXELS_PER_METER);
+    Collider::createFixture(fixtureDef);
+    Collider::getBody()->SetLinearDamping(1);
+    Collider::getBody()->SetFixedRotation(true);
     //! TESTING
     CollisionCallbacks::setBody(this->getBody());
     //! -------
-
-    //* not optimal as the body could be destroyed 
-    this->onEnabled(b2Body::SetEnabled, this->getBody(), true);
-    this->onDisabled(b2Body::SetEnabled, this->getBody(), false);
 
     RectangleShape::setSize({10,10});
     RectangleShape::setOrigin(5,5);
@@ -34,7 +24,7 @@ Player::Player(const float& x, const float& y, const bool& handleInput, const in
 
 Player::~Player()
 {
-    WorldHandler::getWorld().DestroyBody(this->getBody());
+
 }
 
 void Player::Draw(sf::RenderWindow& window)

@@ -25,9 +25,12 @@ private:
     {
     public:
         _objectCompClass(unsigned long long id);
-        virtual void destroy() override;
+        void setID(unsigned long long id);
+        createDestroy();
     };
 
+    /// @brief if the comp class is deleted the object will be removed with the id
+    static _objectCompClass _compClass;
     static std::set<Object*, _objectComp> _objects;
 };
 

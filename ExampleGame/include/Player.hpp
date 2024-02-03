@@ -38,7 +38,7 @@ struct PlayerState
     }
 };
 
-class Player : public sf::RectangleShape, public GameObject, public CollisionCallbacks, public Collider
+class Player final : public sf::RectangleShape, public GameObject, public CollisionCallbacks, public Collider
 {
 public:
     Player(const float& x, const float& y, const bool& handleInput = true, const int& layer = 0);

@@ -21,17 +21,20 @@ public:
         ~Ptr();
         Object* operator->() const;
         Object* operator*() const;
+        Object::Ptr& operator=(const Object::Ptr& objectPtr);
         /// @brief if there is no ptr returns nullptr
         /// @returns obj or nullptr if no obj
-        Object* get();
-        bool isValid();
+        Object* get() const;
+        bool isValid() const;
+        /// @brief assigns which obj is stored in this ptr
+        /// @param obj the new obj
         void setObject(Object* obj);
 
     protected:
         void removePtr();
 
     private:
-        Object* _ptr;
+        Object* _ptr = nullptr;
         unsigned int _eventID = 0;
     };
 
@@ -71,17 +74,20 @@ public:
         return temp;
     }
 
+    /// @brief MUST be implemented in the final class which derives from object
     virtual void destroy() = 0;
 
 protected:
     /// @warning only use this if you know what you are doing
     Object(unsigned long long id);
-    inline virtual void onEnable() {};
-    inline virtual void onDisable() {};
+    /// @warning only use this if you know what you are doing
+    void setID(unsigned long long id);
+    inline virtual void OnEnable() {};
+    inline virtual void OnDisable() {};
 
 private:
     bool _enabled = true;
-    unsigned long long _id = 0;
+    unsigned long long _id = 1;
 
     static std::atomic_ullong _lastID;
 };

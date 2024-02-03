@@ -88,6 +88,28 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
 
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z)
+            {
+                if (ids.size() > 0)
+                {
+                    Object::Ptr temp = ObjectManager::getObject(ids.front());
+                    temp->setEnabled(!temp->isEnabled());
+                }
+            }
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::X)
+            {
+                if (ids.size() > 0)
+                {
+                    Object::Ptr temp = ObjectManager::getObject(ids.front());
+                    Collider* collider = temp->cast<Collider>();
+                    if (collider != nullptr)
+                    {
+                        collider->setPhysicsEnabled(!collider->isPhysicsEnabled());
+                    }
+                }
+            }
+
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
             {
                 Player* temp = new Player(rand()%window.getSize().x, rand()%window.getSize().y, false);

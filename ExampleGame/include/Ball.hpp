@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Utils/GameObject.hpp"
+#include "Utils/Physics/Collider.hpp"
 
 #include "Utils/Physics/WorldHandler.hpp"
 #include "Utils/Graphics/WindowHandler.hpp"
@@ -13,7 +14,7 @@
 //! TESTING
 #include "Utils/Physics/CollisionCallbacks.hpp"
 
-class Ball : public GameObject, public sf::CircleShape, public CollisionCallbacks
+class Ball : public GameObject, public sf::CircleShape, public CollisionCallbacks, public Collider
 {
 public:
     /// @brief creates a new ball and sets the speed
@@ -34,7 +35,7 @@ protected:
     void EndContact(b2Contact* contact) override;
 
 private:
-    b2Body* _body;
+
 };
 
 #endif

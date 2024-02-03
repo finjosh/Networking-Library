@@ -10,9 +10,7 @@ std::atomic_ullong Object::_lastID = 0;
 
 Object::Ptr::Ptr(Object* obj)
 {
-    _ptr = obj;
-    if (_ptr != nullptr)
-        _eventID = obj->onDestroy(Object::Ptr::removePtr, this);
+    this->setObject(obj);
 }
 
 Object::Ptr::~Ptr()
@@ -33,33 +31,40 @@ Object* Object::Ptr::operator*() const
     return _ptr;
 }
 
-Object* Object::Ptr::get()
+Object::Ptr& Object::Ptr::operator=(const Object::Ptr& objectPtr)
+{
+    this->setObject(objectPtr._ptr);
+    return *this;
+}
+
+Object* Object::Ptr::get() const
 {
     return _ptr;
 }
 
-bool Object::Ptr::isValid()
+bool Object::Ptr::isValid() const
 {
-    return _ptr != nullptr;
+    return (_ptr != nullptr);
 }
 
 void Object::Ptr::setObject(Object* obj)
 {
-    if (isValid())
+    if (this->isValid())
     {
         _ptr->onDestroy.disconnect(_eventID);
         _ptr = nullptr;
     }
 
     _ptr = obj;
-    _eventID = _ptr->onDestroy(Object::Ptr::removePtr, this);
+    if (_ptr != nullptr)
+        _eventID = _ptr->onDestroy(Object::Ptr::removePtr, this);
 }
 
 void Object::Ptr::removePtr()
 {
     _ptr = nullptr;
+    _eventID = 0;
 }
-
 
 Object::Object()
 {
@@ -69,8 +74,16 @@ Object::Object()
 
 Object::Object(unsigned long long id) : _id(id) {}
 
+void Object::setID(unsigned long long id)
+{
+    _id = id;
+}
+
 Object::~Object()
 {
+    // this is not a real object
+    if (_id == 0)
+        return;
     ObjectManager::removeObject(this);
     onDestroy.invoke();
 }
