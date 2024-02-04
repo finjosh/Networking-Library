@@ -31,13 +31,7 @@ void Socket::_thread_receive_packets(std::stop_token sToken)
         if (receiveStatus == sf::Socket::Error)
         {
             if (sToken.stop_requested()) break;
-            throw std::runtime_error("ERROR - receiving packet");
-        }
-        else if (receiveStatus != sf::Socket::Done)
-        {
-            throw std::runtime_error("ERROR - receiving packet: " + std::to_string(receiveStatus));
-            packet.clear();
-            continue;
+            throw std::runtime_error("Receiving packet: " + std::to_string(receiveStatus));
         }
 
         int packetType;
@@ -71,7 +65,7 @@ void Socket::_thread_receive_packets(std::stop_token sToken)
             break;
 
         default:
-            throw std::runtime_error("Packet Type not given... Value received: " + std::to_string(packetType));
+            throw std::runtime_error("Packet Type not given... Value received: " + std::to_string(packetType)); // TODO dont throw error just warn program
             break;
         }
 
@@ -135,7 +129,7 @@ void Socket::_resetConnectionData()
 void Socket::_sendTo(sf::Packet& packet, const sf::IpAddress& ip, const PORT& port)
 {
     if (sf::UdpSocket::send(packet, sf::IpAddress(ip), port))
-        throw std::runtime_error("ERROR - Could not send packet (Socket::_sendTo Function)");
+        throw std::runtime_error("Could not send packet (Socket::_sendTo Function)");
 }
 
 // -----------------

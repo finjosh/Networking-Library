@@ -192,7 +192,7 @@ bool Client::tryOpenConnection()
     catch(const std::exception& e)
     {
         stopThreads();
-        close();
+        Socket::close();
         return false; 
     }
 
