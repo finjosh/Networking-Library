@@ -3,7 +3,10 @@
 
 #pragma once
 
+#include <map>
+
 #include "Socket.hpp"
+#include "ClientData.hpp"
 
 namespace udp
 {

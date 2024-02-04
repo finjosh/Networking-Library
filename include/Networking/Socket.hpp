@@ -4,15 +4,12 @@
 #pragma once
 
 #include <stdexcept>
-#include <iostream>
 #include <thread>
-#include <list>
-#include <set>
-#include <map>
 
-#include <SFML\Network.hpp>
+#include <SFML/Network/UdpSocket.hpp>
+#include <SFML/Network/Packet.hpp>
+#include <SFML/System/Clock.hpp>
 
-#include "ClientData.hpp"
 #include "Utils/funcHelper.hpp"
 #include "Utils/EventHelper.hpp"
 #include "Utils/UpdateLimiter.hpp"

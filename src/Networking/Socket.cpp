@@ -35,7 +35,7 @@ void Socket::_thread_receive_packets(std::stop_token sToken)
         }
         else if (receiveStatus != sf::Socket::Done)
         {
-            std::cerr << "Error receiving packet: " << std::to_string(receiveStatus) << std::endl;
+            throw std::runtime_error("ERROR - receiving packet: " + std::to_string(receiveStatus));
             packet.clear();
             continue;
         }
@@ -71,7 +71,7 @@ void Socket::_thread_receive_packets(std::stop_token sToken)
             break;
 
         default:
-            std::cerr << "Packet Type not given... Value received: " << std::to_string(packetType) << std::endl;
+            throw std::runtime_error("Packet Type not given... Value received: " + std::to_string(packetType));
             break;
         }
 
