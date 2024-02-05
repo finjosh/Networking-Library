@@ -37,22 +37,23 @@ b2Fixture* Collider::createFixture(const b2Shape& shape, const float& density)
     return _body->CreateFixture(&shape, density);
 }
 
-void Collider::initCollider(const float& x, const float& y)
-{
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(x,y);
-    _body = WorldHandler::getWorld().CreateBody(&bodyDef);
-}
-
 void Collider::initCollider(const b2Vec2& pos)
 {
     this->initCollider(pos.x, pos.y);
 }
 
+void Collider::initCollider(const float& x, const float& y)
+{
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position.Set(x,y);
+    this->initCollider(bodyDef);
+}
+
 void Collider::initCollider(const b2BodyDef& bodyDef)
 {
     _body = WorldHandler::getWorld().CreateBody(&bodyDef);
+    _body->GetUserData().pointer = (uintptr_t)this;
 }
 
 void Collider::setPhysicsEnabled(const bool& enabled)
@@ -73,4 +74,24 @@ bool Collider::isPhysicsEnabled() const
 void Collider::updatePhysicsState()
 {
     _body->SetEnabled(_enabled && Object::isEnabled());
+}
+
+
+//* Collision Data
+
+CollisionData::CollisionData(Collider* collider, b2Fixture* thisFixture, b2Fixture* otherFixture) : _collider(collider), _thisFixture(thisFixture), _otherFixture(otherFixture) {}
+
+Collider* CollisionData::getCollider()
+{
+    return _collider;
+}
+
+b2Fixture* CollisionData::getFixtureA()
+{
+    return _thisFixture;
+}
+
+b2Fixture* CollisionData::getFixtureB()
+{
+    return _otherFixture;
 }

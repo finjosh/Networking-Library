@@ -7,9 +7,7 @@
 #include "box2d/b2_contact.h"
 #include "box2d/b2_collision.h"
 
-#include "Utils/Physics/CollisionCallbacks.hpp"
-
-class CollisionListener : public b2ContactListener
+class CollisionManager : public b2ContactListener
 {
 public:
     void BeginContact(b2Contact* contact) override;

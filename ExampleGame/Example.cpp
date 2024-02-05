@@ -43,7 +43,7 @@ int main()
     // -----------------------
 
     WorldHandler::getWorld().SetGravity({0.f,0.f});
-    WorldHandler::getWorld().SetContactListener(new CollisionListener);
+    WorldHandler::getWorld().SetContactListener(new CollisionManager);
 
     udp::SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->sendToAll(udp::Socket::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->sendToServer(udp::Socket::DataPacketTemplate() << "Some Data"); }});
     sDisplay.initConnectionDisplay(gui);
@@ -128,6 +128,18 @@ int main()
                     ids.erase(ids.begin());
                 }
             }
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::C)
+            {
+                for (auto id: ids)
+                {
+                    Object::Ptr obj = ObjectManager::getObject(id);
+                    if (obj.isValid())
+                    {
+                        obj->cast<Player>()->setHandleInput(!obj->cast<Player>()->getHandleInput());
+                    }
+                }
+            }
         }
         UpdateManager::Update(deltaTime.asSeconds());
         if (fixedUpdate >= 0.2)
@@ -154,6 +166,12 @@ int main()
         //! Do physics before this
         WorldHandler::getWorld().Step(deltaTime.asSeconds(), int32(8), int32(3));
         //! Draw after this
+
+        //* Write code here
+
+        Command::Prompt::print(std::to_string(ObjectManager::getNumberOfObjects()));
+
+        // ---------------
 
         DrawableManager::draw(window);
 

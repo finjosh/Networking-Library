@@ -18,9 +18,6 @@ Ball::Ball(const b2Vec2& pos, const b2Vec2& direction, const float& speed)
     b2Vec2 temp = direction;
     temp.Normalize();
     Collider::getBody()->SetLinearVelocity({temp.x*speed, temp.y*speed});
-    //! TESTING
-    CollisionCallbacks::setBody(Collider::getBody());
-    //! -------
 
     CircleShape::setRadius(5);
     CircleShape::setOrigin(5,5);
@@ -49,12 +46,12 @@ void Ball::Draw(sf::RenderWindow& window)
 
 #include "Utils/Debug/CommandPrompt.hpp"
 
-void Ball::BeginContact(b2Contact* contact) 
+void Ball::BeginContact(CollisionData collisionData) 
 {
     // Command::Prompt::print("Ball contact begin");
 }
 
-void Ball::EndContact(b2Contact* contact) 
+void Ball::EndContact(CollisionData collisionData) 
 {
     // Command::Prompt::print("Ball contact end");
 }

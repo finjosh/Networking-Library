@@ -13,6 +13,8 @@ public:
     /// @returns nullptr if the object does not exist 
     static Object::Ptr getObject(unsigned long long id);
 
+    static unsigned long long getNumberOfObjects();
+
 protected:
     static Object::Ptr addObject(Object* object);
     static void removeObject(Object* object);
@@ -31,7 +33,7 @@ private:
 
     /// @brief if the comp class is deleted the object will be removed with the id
     static _objectCompClass _compClass;
-    static std::set<Object*, _objectComp> _objects;
+    static std::set<Object*, _objectComp> _objects; // TODO change this to unordered set
 };
 
 #endif

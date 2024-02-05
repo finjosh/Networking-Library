@@ -15,9 +15,6 @@
 #include "Utils/GameObject.hpp"
 #include "Ball.hpp"
 
-//! TESTING
-#include "Utils/Physics/CollisionCallbacks.hpp"
-
 struct PlayerState
 {
     bool up = false;
@@ -38,7 +35,7 @@ struct PlayerState
     }
 };
 
-class Player final : public sf::RectangleShape, public GameObject, public CollisionCallbacks, public Collider
+class Player final : public sf::RectangleShape, public GameObject, public Collider
 {
 public:
     Player(const float& x, const float& y, const bool& handleInput = true, const int& layer = 0);
@@ -48,13 +45,16 @@ public:
 
     void throwBall() const;
 
+    bool getHandleInput() const;
+    void setHandleInput(const bool& handle = true);
+
 protected:
     virtual void Update(const float& deltaTime) override;
     virtual void Draw(sf::RenderWindow& window) override;
     void handleInput();
 
-    void BeginContact(b2Contact* contact) override;
-    void EndContact(b2Contact* contact) override;
+    void BeginContact(CollisionData collisionData) override;
+    void EndContact(CollisionData collisionData) override;
 
 private:
     PlayerState _state;

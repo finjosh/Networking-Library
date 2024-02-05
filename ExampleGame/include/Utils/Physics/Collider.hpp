@@ -8,6 +8,30 @@
 #include "Utils/Physics/WorldHandler.hpp"
 #include "Utils/Object.hpp"
 
+#include "Utils/Physics/CollisionManager.hpp"
+
+class CollisionManager;
+
+class Collider;
+
+class CollisionData
+{
+public:
+    CollisionData(Collider* collider, b2Fixture* thisFixture, b2Fixture* otherFixture);
+
+    /// @returns the other objects collider
+    Collider* getCollider();
+    /// @returns the fixture from this object that collided
+    b2Fixture* getFixtureA();
+    /// @returns the fixture from the other object that collided
+    b2Fixture* getFixtureB();
+
+private:
+    Collider* _collider;
+    b2Fixture* _thisFixture;
+    b2Fixture* _otherFixture;
+};
+
 class Collider : public virtual Object
 {
 public:
@@ -48,6 +72,27 @@ protected:
     /// @warning DO NOT DESTROY THE BODY
     /// @note if you want to destroy the physics body call destroy on this object
     b2Body* getBody() const;
+
+    /// @brief called after the time step so the body can be destroyed
+    /// @param collisionData the collision data
+    inline virtual void BeginContact(CollisionData collisionData) {};
+    /// @brief called after the time step so the body can be destroyed
+    /// @param collisionData the collision data
+    inline virtual void EndContact(CollisionData collisionData) {};
+    /// @brief This can be called multiple times in one frame (called before the collision is handled)
+    /// @note to get the collider get the userdata from the body and cast to Collider
+    /// @warning do not destroy the body during this call back
+    /// @param contact the contact data
+    /// @param oldManifold the old manifold data
+    inline virtual void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) {};
+    /// @brief This can be called multiple times in one frame (called after the collision is handled)
+    /// @note to get the collider get the userdata from the body and cast to Collider
+    /// @warning do not destroy the body during this call back
+    /// @param contact the contact data
+    /// @param impulse the impulse data
+    inline virtual void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {};
+
+    friend CollisionManager;
 
 private:
     /// @brief updates the body state (enabled or not)

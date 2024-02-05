@@ -1,7 +1,7 @@
 # Networking-Library
 A simple and efficient C++ networking library built using ([SFML](https://www.sfml-dev.org/index.php))'s networking module.
 
-Tested with: 
+### Tested with: 
   - Compiler: MSYS2
   - Version: g++.exe (Rev3, Built by MSYS2 project) 12.1.0
 
@@ -9,8 +9,32 @@ Tested with:
   - Version: 2.6.1
 
 ### [TGUI](https://tgui.eu/)
-
-TGUI is used for the Socket UI and Connection Display, which are not required for the networking library to work
-
-TGUI:
+  - TGUI is used for the Socket UI and Connection Display, which are not required for the networking library to work
   - Version: 1.x dev build from 1/13/2024
+
+### [cpp-Utilities](https://github.com/finjosh/cpp-Utilities)
+  - Built with the latest release
+
+# Class breakdown
+| File | Brief Description | Dependencies |
+| --- | --- | --- |
+| `Socket.hpp` | Stores data that is useful for a server or client. Derived from the SFML UDP socket. Can be derived from to create your own implementation of a client and server | SFML Networking and time, cpp-Utilities(funcHelper.hpp, EventHelper.hpp, and UpdateLimiter.hpp) |
+| `Client.hpp` | An implementation of a client | Socket.hpp |
+| `ClientData.hpp` | Client data that is stored in the server | SFML data types |
+| `Server.hpp` | An implementation of a server | Socket.hpp and ClientData.hpp |
+| `SocketUI.hpp` | UI system for connecting/hosting and displaying the connection information (only works with built-in client and server). Changing the default TGUI theme, the SocketUI will also update | TGUI, Client.hpp, Server.hpp, cpp-Utilities(TerminatingFunction.hpp) |
+
+# Socket UI
+
+<div align="center">
+  <p>
+    <img src=https://github.com/finjosh/Networking-Library/assets/109707607/04bb0551-d1c6-4efa-b4b5-9c357e53afb3>
+    <img src=https://github.com/finjosh/Networking-Library/assets/109707607/80183637-c832-4729-aa9c-69474b31da2c>
+    <p>
+    <img src=https://github.com/finjosh/Networking-Library/assets/109707607/dc8c7cca-76af-4f0e-809c-b40c2c2d0242>
+    <img src=https://github.com/finjosh/Networking-Library/assets/109707607/9c758fd6-08c9-43b9-8b89-822dd29958ee>
+  </p>
+</div>
+
+# Example Game (Work in Progress)
+  - A simple example game for an example of how to use the networking classes

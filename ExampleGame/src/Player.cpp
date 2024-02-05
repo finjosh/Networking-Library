@@ -13,9 +13,6 @@ Player::Player(const float& x, const float& y, const bool& handleInput, const in
     Collider::createFixture(fixtureDef);
     Collider::getBody()->SetLinearDamping(1);
     Collider::getBody()->SetFixedRotation(true);
-    //! TESTING
-    CollisionCallbacks::setBody(this->getBody());
-    //! -------
 
     RectangleShape::setSize({10,10});
     RectangleShape::setOrigin(5,5);
@@ -37,6 +34,16 @@ void Player::throwBall() const
 {
     sf::Vector2i mousePos = sf::Mouse::getPosition(*WindowHandler::getRenderWindow());
     new Ball(this->getBody()->GetPosition(), this->getBody()->GetLocalPoint({mousePos.x/PIXELS_PER_METER, mousePos.y/PIXELS_PER_METER}), 100);
+}
+
+bool Player::getHandleInput() const
+{
+    return _handleInput;
+}
+
+void Player::setHandleInput(const bool& handle)
+{
+    _handleInput = handle;
 }
 
 void Player::Update(const float& deltaTime)
@@ -131,17 +138,17 @@ void Player::handleInput()
 
 #include "Utils/Debug/CommandPrompt.hpp"
 
-void Player::BeginContact(b2Contact* contact) 
+void Player::BeginContact(CollisionData collisionData) 
 {
-    if (static_cast<CollisionCallbacks*>((void*)contact->GetFixtureB()->GetBody()->GetUserData().pointer)->cast<Ball>() == nullptr)
+    if (collisionData.getCollider()->cast<Ball>() == nullptr)
         return;
 
     Command::Prompt::print("Player contact with ball begin");
 }
 
-void Player::EndContact(b2Contact* contact) 
+void Player::EndContact(CollisionData collisionData) 
 {
-    if (static_cast<CollisionCallbacks*>((void*)contact->GetFixtureB()->GetBody()->GetUserData().pointer)->cast<Ball>() == nullptr)
+    if (collisionData.getCollider()->cast<Ball>() == nullptr)
         return;
     
     Command::Prompt::print("Player contact with ball end");

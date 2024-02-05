@@ -52,9 +52,9 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
     _panel->setSize({"100%", "100%"});
 
     //* Updating which widgets to show
-    _serverCheck->onCheck([this](){ _clientCheck->setChecked(false); updateConnectionDisplay(); });
+    _serverCheck->onCheck([this](){ _clientCheck->setChecked(false); updateConnectionDisplay(); initData(); });
     _serverCheck->onUncheck([this](){ this->resetUIConnectionStates(); updateConnectionDisplay(); });
-    _clientCheck->onCheck([this](){ _serverCheck->setChecked(false); updateConnectionDisplay(); });
+    _clientCheck->onCheck([this](){ _serverCheck->setChecked(false); updateConnectionDisplay(); initData(); });
     _clientCheck->onUncheck([this](){ this->resetUIConnectionStates(); updateConnectionDisplay(); });
     _passCheck->onChange(updateConnectionDisplay, this);
     _passEdit->onTextChange([this](){ 

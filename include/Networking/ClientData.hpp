@@ -1,7 +1,7 @@
 #ifndef CLIENTDATA_H
 #define CLIENTDATA_H
 
-#include <SFML/Network/UdpSocket.hpp>
+#include <SFML/Config.hpp>
 
 struct ClientData
 {

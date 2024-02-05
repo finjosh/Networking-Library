@@ -1,62 +1,64 @@
 #include "Utils/Physics/CollisionManager.hpp"
+#include "Utils/Physics/Collider.hpp"
 
-//! debugging
-#include "Utils/Debug/CommandPrompt.hpp"
-
-void CollisionListener::BeginContact(b2Contact* contact)
+// TODO call this after the box2d step so objects can be destroyed
+void CollisionManager::BeginContact(b2Contact* contact)
 {
-    
-
-    b2Body* temp = contact->GetFixtureA()->GetBody();
-    if (temp != nullptr)
+    Collider* A = static_cast<Collider*>((void*)contact->GetFixtureA()->GetBody()->GetUserData().pointer);
+    Collider* B = static_cast<Collider*>((void*)contact->GetFixtureB()->GetBody()->GetUserData().pointer);
+    if (A != nullptr)
     {
-        static_cast<CollisionCallbacks*>((void*)temp->GetUserData().pointer)->BeginContact(contact);
+        A->BeginContact({B, contact->GetFixtureA(), contact->GetFixtureB()});
     }
-    temp = contact->GetFixtureB()->GetBody();
-    if (temp != nullptr)
+    if (B != nullptr)
     {
-        static_cast<CollisionCallbacks*>((void*)temp->GetUserData().pointer)->BeginContact(contact);
+        B->BeginContact({A, contact->GetFixtureB(), contact->GetFixtureA()});
     }
 }
 
-void CollisionListener::EndContact(b2Contact* contact)
+// TODO call this after the box2d step so objects can be destroyed
+void CollisionManager::EndContact(b2Contact* contact)
 {
-    b2Body* temp = contact->GetFixtureA()->GetBody();
-    if (temp != nullptr)
+    Collider* A = static_cast<Collider*>((void*)contact->GetFixtureA()->GetBody()->GetUserData().pointer);
+    Collider* B = static_cast<Collider*>((void*)contact->GetFixtureB()->GetBody()->GetUserData().pointer);
+    if (A != nullptr)
     {
-        static_cast<CollisionCallbacks*>((void*)temp->GetUserData().pointer)->EndContact(contact);
+        A->EndContact({B, contact->GetFixtureA(), contact->GetFixtureB()});
     }
-    temp = contact->GetFixtureB()->GetBody();
-    if (temp != nullptr)
+    if (B != nullptr)
     {
-        static_cast<CollisionCallbacks*>((void*)temp->GetUserData().pointer)->EndContact(contact);
+        B->EndContact({A, contact->GetFixtureB(), contact->GetFixtureA()});
     }
 }
 
-void CollisionListener::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
+void CollisionManager::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
 {
-    b2Body* temp = contact->GetFixtureA()->GetBody();
-    if (temp != nullptr)
+    b2Body* body = contact->GetFixtureA()->GetBody();
+    if (body != nullptr)
     {
-        static_cast<CollisionCallbacks*>((void*)temp->GetUserData().pointer)->PreSolve(contact, oldManifold);
+        Collider* collider = static_cast<Collider*>((void*)body->GetUserData().pointer);
+        collider->PreSolve(contact, oldManifold);
     }
-    temp = contact->GetFixtureB()->GetBody();
-    if (temp != nullptr)
+    body = contact->GetFixtureB()->GetBody();
+    if (body != nullptr)
     {
-        static_cast<CollisionCallbacks*>((void*)temp->GetUserData().pointer)->PreSolve(contact, oldManifold);
+        Collider* collider = static_cast<Collider*>((void*)body->GetUserData().pointer);
+        collider->PreSolve(contact, oldManifold);
     }
 }
 
-void CollisionListener::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
+void CollisionManager::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
 {
-    b2Body* temp = contact->GetFixtureA()->GetBody();
-    if (temp != nullptr)
+    b2Body* body = contact->GetFixtureA()->GetBody();
+    if (body != nullptr)
     {
-        static_cast<CollisionCallbacks*>((void*)temp->GetUserData().pointer)->PostSolve(contact, impulse);
+        Collider* collider = static_cast<Collider*>((void*)body->GetUserData().pointer);
+        collider->PostSolve(contact, impulse);
     }
-    temp = contact->GetFixtureB()->GetBody();
-    if (temp != nullptr)
+    body = contact->GetFixtureB()->GetBody();
+    if (body != nullptr)
     {
-        static_cast<CollisionCallbacks*>((void*)temp->GetUserData().pointer)->PostSolve(contact, impulse);
+        Collider* collider = static_cast<Collider*>((void*)body->GetUserData().pointer);
+        collider->PostSolve(contact, impulse);
     }
 }

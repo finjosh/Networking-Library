@@ -19,6 +19,11 @@ Object::Ptr ObjectManager::getObject(unsigned long long id)
     return Object::Ptr(obj == _objects.end() ? nullptr : *obj);
 }
 
+unsigned long long ObjectManager::getNumberOfObjects()
+{
+    return _objects.size();
+}
+
 Object::Ptr ObjectManager::addObject(Object* object)
 {
     _objects.insert({object});
