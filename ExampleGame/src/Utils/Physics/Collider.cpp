@@ -12,17 +12,32 @@ Collider::~Collider()
         WorldHandler::getWorld().DestroyBody(_body);
 }
 
-b2Body* Collider::operator-> () const
+b2Body* Collider::operator->()
 {
     return _body;
 }
 
-b2Body* Collider::operator* () const
+const b2Body* Collider::operator->() const
 {
     return _body;
 }
 
-b2Body* Collider::getBody() const
+b2Body* Collider::operator*()
+{
+    return _body;
+}
+
+const b2Body* Collider::operator*() const
+{
+    return _body;
+}
+
+b2Body* Collider::getBody()
+{
+    return _body;
+}
+
+const b2Body* Collider::getBody() const
 {
     return _body;
 }
@@ -32,9 +47,27 @@ b2Fixture* Collider::createFixture(const b2FixtureDef& fixture)
     return _body->CreateFixture(&fixture);
 }
 
-b2Fixture* Collider::createFixture(const b2Shape& shape, const float& density)
+b2Fixture* Collider::createFixture(const b2Shape& shape, const float& density, const float& friction, 
+                                    const float& restitution, const float& restitutionThreshold, const b2Filter& filter)
 {
-    return _body->CreateFixture(&shape, density);
+    b2FixtureDef def;
+    def.density = density;
+    def.friction = friction;
+    def.restitution = restitution;
+    def.restitutionThreshold = restitutionThreshold;
+    def.filter = filter;
+    def.shape = &shape;
+    return _body->CreateFixture(&def);
+}
+
+b2Fixture* Collider::createFixtureSensor(const b2Shape& shape, const float& density, const b2Filter& filter)
+{
+    b2FixtureDef def;
+    def.isSensor = true;
+    def.density = density;
+    def.filter = filter;
+    def.shape = &shape;
+    return _body->CreateFixture(&def);
 }
 
 void Collider::initCollider(const b2Vec2& pos)

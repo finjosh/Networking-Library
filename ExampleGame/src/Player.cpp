@@ -4,13 +4,9 @@ Player::Player(const float& x, const float& y, const bool& handleInput, const in
 {
     b2PolygonShape b2shape;
     b2shape.SetAsBox(10/PIXELS_PER_METER/2.0, 10/PIXELS_PER_METER/2.0);
-    b2FixtureDef fixtureDef;
-    fixtureDef.density = 1.0;
-    fixtureDef.friction = 0.25;
-    fixtureDef.shape = &b2shape;
 
     Collider::initCollider(x/PIXELS_PER_METER,y/PIXELS_PER_METER);
-    Collider::createFixture(fixtureDef);
+    Collider::createFixture(b2shape, 1, 0.25);
     Collider::getBody()->SetLinearDamping(1);
     Collider::getBody()->SetFixedRotation(true);
 
@@ -26,7 +22,7 @@ Player::~Player()
 
 void Player::Draw(sf::RenderWindow& window)
 {
-    RectangleShape::setPosition({this->getBody()->GetPosition().x*PIXELS_PER_METER, this->getBody()->GetPosition().y*PIXELS_PER_METER});
+    RectangleShape::setPosition({getBody()->GetPosition().x*PIXELS_PER_METER, this->getBody()->GetPosition().y*PIXELS_PER_METER});
     window.draw(*this);
 }
 
@@ -140,7 +136,7 @@ void Player::handleInput()
 
 void Player::BeginContact(CollisionData collisionData) 
 {
-    if (collisionData.getCollider()->cast<Ball>() == nullptr)
+    if (collisionData.getCollider()->cast<Ball>() == nullptr || this->_handleInput)
         return;
 
     Command::Prompt::print("Player contact with ball begin");
@@ -148,7 +144,7 @@ void Player::BeginContact(CollisionData collisionData)
 
 void Player::EndContact(CollisionData collisionData) 
 {
-    if (collisionData.getCollider()->cast<Ball>() == nullptr)
+    if (collisionData.getCollider()->cast<Ball>() == nullptr || this->_handleInput)
         return;
     
     Command::Prompt::print("Player contact with ball end");

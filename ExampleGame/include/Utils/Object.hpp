@@ -19,12 +19,15 @@ public:
     public:
         Ptr(Object* obj);
         ~Ptr();
-        Object* operator->() const;
-        Object* operator*() const;
+        Object* operator->();
+        const Object* operator->() const;
+        Object* operator*();
+        const Object* operator*() const;
         Object::Ptr& operator=(const Object::Ptr& objectPtr);
+        Object* get();
         /// @brief if there is no ptr returns nullptr
         /// @returns obj or nullptr if no obj
-        Object* get() const;
+        const Object* get() const;
         bool isValid() const;
         /// @brief assigns which obj is stored in this ptr
         /// @param obj the new obj

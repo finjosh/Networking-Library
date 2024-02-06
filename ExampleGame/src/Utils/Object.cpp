@@ -21,12 +21,22 @@ Object::Ptr::~Ptr()
     }
 }
 
-Object* Object::Ptr::operator->() const
+Object* Object::Ptr::operator->()
 {
     return _ptr;
 }
 
-Object* Object::Ptr::operator*() const
+const Object* Object::Ptr::operator->() const
+{
+    return _ptr;
+}
+
+Object* Object::Ptr::operator*()
+{
+    return _ptr;
+}
+
+const Object* Object::Ptr::operator*() const
 {
     return _ptr;
 }
@@ -37,7 +47,12 @@ Object::Ptr& Object::Ptr::operator=(const Object::Ptr& objectPtr)
     return *this;
 }
 
-Object* Object::Ptr::get() const
+Object* Object::Ptr::get()
+{
+    return _ptr;
+}
+
+const Object* Object::Ptr::get() const
 {
     return _ptr;
 }

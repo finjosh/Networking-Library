@@ -3,16 +3,10 @@
 Ball::Ball(const b2Vec2& pos, const b2Vec2& direction, const float& speed)
 {
     b2CircleShape b2shape;
-    b2shape.m_radius = 5;
-    b2FixtureDef fixtureDef;
-    fixtureDef.density = 1.0;
-    fixtureDef.friction = 0.1;
-    fixtureDef.restitution = 0.1;
-    fixtureDef.shape = &b2shape;
-    fixtureDef.isSensor = true;
+    b2shape.m_radius = 5/PIXELS_PER_METER;
 
     Collider::initCollider(pos.x,pos.y);
-    Collider::createFixture(fixtureDef);
+    Collider::createFixtureSensor(b2shape, 1);
     Collider::getBody()->SetBullet(true);
 
     b2Vec2 temp = direction;
