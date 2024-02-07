@@ -90,7 +90,7 @@ protected:
 
 private:
     bool _enabled = true;
-    unsigned long long _id = 1;
+    unsigned long long _id = 0;
 
     static std::atomic_ullong _lastID;
 };

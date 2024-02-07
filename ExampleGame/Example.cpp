@@ -26,14 +26,12 @@ using namespace sf;
 
 void addThemeCommands();
 
-// TODO make a physics body class (will stop physics when the object is disabled)
 // TODO setup a view manager that handles windows size changes
 int main()
 {
     // setup for sfml and tgui
-    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Example Game");
+    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Example Game", sf::Style::Fullscreen);
     window.setFramerateLimit(144);
-    window.setPosition(Vector2i(-8, -8));
     WindowHandler::setRenderWindow(&window);
 
     tgui::Gui gui{window};
@@ -85,7 +83,7 @@ int main()
             Command::Prompt::UpdateEvent(event);
             //! ----------------------------------------------------------
 
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed || event.key.code == sf::Keyboard::Escape)
                 window.close();
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z)
@@ -169,7 +167,7 @@ int main()
 
         //* Write code here
 
-        Command::Prompt::print(std::to_string(ObjectManager::getNumberOfObjects()));
+        // Command::Prompt::print(std::to_string(ObjectManager::getNumberOfObjects()));
 
         // ---------------
 
