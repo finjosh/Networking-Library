@@ -25,6 +25,7 @@ protected:
     /// @param data the data for this obj
     virtual void OnDataReceived(sf::Packet& data) = 0;
     /// @brief Called when data is required from this object
+    /// @note make sure that the send function is thread safe
     /// @returns a packet with the data that will be unpacked in "OnDataReceived"
     virtual sf::Packet& OnSendData() = 0;
 
