@@ -1,8 +1,22 @@
 #include "Utils/Networking/NetworkObject.hpp"
 
-std::atomic_ullong NetworkObject::_lastID = 1;
+NetworkObject::~NetworkObject()
+{
+    removeNetworkObject();
+}
 
-unsigned long int NetworkObject::getNetworkID() const
+unsigned long long NetworkObject::getNetworkID() const
 {
     return _id;
+}
+
+void NetworkObject::initNetworkObject(unsigned long long id)
+{
+    _id = id;
+    NetworkObjectManager::addNetworkObject(this);
+}
+
+void NetworkObject::removeNetworkObject()
+{
+    NetworkObjectManager::removeNetworkObject(this);
 }

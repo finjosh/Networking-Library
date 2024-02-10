@@ -3,16 +3,21 @@
 
 #pragma once
 
-#include <atomic>
-
 #include "SFML/Network/Packet.hpp"
 
 #include "Utils/Object.hpp"
+#include "Utils/Networking/NetworkObjectManager.hpp"
 
 class NetworkObject : public virtual Object
 {
 public:
-    unsigned long int getNetworkID() const;
+    ~NetworkObject();
+
+    unsigned long long getNetworkID() const;
+    void initNetworkObject(unsigned long long id);
+    /// @brief removes this object from the network
+    /// @note does not destroy it
+    void removeNetworkObject();
 
 protected:
     /// @brief called when the network connection is opened
@@ -22,7 +27,7 @@ protected:
     /// @note this is called when either the server is closed or the client is disconnected 
     inline virtual void OnConnectionClose(){};
     /// @brief called when data is received for this Object
-    /// @param data the data for this obj
+    /// @param data the packet containing data for this obj
     virtual void OnDataReceived(sf::Packet& data) = 0;
     /// @brief Called when data is required from this object
     /// @note make sure that the send function is thread safe
@@ -31,10 +36,7 @@ protected:
 
 private:
     /// @brief null id = 0
-    /// @note this is the id that is stored on the server
     unsigned long long _id = 0;
-
-    static std::atomic_ullong _lastID;
 };
 
 class _networkingObjectComp
