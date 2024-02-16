@@ -1,4 +1,5 @@
 #include "Utils/Physics/Collider.hpp"
+#include "Utils/Physics/CollisionManager.hpp"
 
 Collider::Collider()
 {

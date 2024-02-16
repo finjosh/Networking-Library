@@ -174,6 +174,17 @@ void Socket::stopThreads()
     _sSource = nullptr;
 }
 
+void Socket::setThreadSafeOverride(const bool& override)
+{
+    _overrideEvents = override;
+}
+
+bool Socket::getThreadSafeOverride() const
+{
+    return _overrideEvents;
+}
+
+
 // ------------------------
 
 //* Getter
@@ -222,7 +233,7 @@ const funcHelper::func<void>& Socket::getPacketSendFunction() const
 void Socket::setUpdateInterval(const unsigned int& interval)
 { 
     this->_socketUpdateRate = interval;
-    onUpdateRateChanged.invoke(interval, _threadSafeEvents);
+    onUpdateRateChanged.invoke(interval, _threadSafeEvents, _overrideEvents);
 }
 
 void Socket::sendingPackets(const bool& sendPackets)
@@ -231,27 +242,27 @@ void Socket::sendingPackets(const bool& sendPackets)
 void Socket::setPassword(const std::string& password)
 { 
     this->_password = password; 
-    onPasswordChanged.invoke(password, _threadSafeEvents);
+    onPasswordChanged.invoke(password, _threadSafeEvents, _overrideEvents);
 }
 
 void Socket::setClientTimeout(const int& timeout)
 { 
     _clientTimeoutTime = timeout; 
-    onClientTimeoutChanged.invoke(timeout, _threadSafeEvents);
+    onClientTimeoutChanged.invoke(timeout, _threadSafeEvents, _overrideEvents);
 }
 
 bool Socket::setPacketSendFunction(const funcHelper::func<void>& packetSendFunction)
 {
     if (this->isConnectionOpen()) return false;
     _packetSendFunction = packetSendFunction;
-    onPacketSendChanged.invoke(_threadSafeEvents);
+    onPacketSendChanged.invoke(_threadSafeEvents, _overrideEvents);
     return true;
 }
 
 void Socket::setPort(const PORT& port)
 {
     _port = port;
-    onPortChanged.invoke(_port, _threadSafeEvents);
+    onPortChanged.invoke(_port, _threadSafeEvents, _overrideEvents);
 }
 
 // --------

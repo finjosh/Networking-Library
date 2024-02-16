@@ -1,6 +1,6 @@
 #include "Ball.hpp"
 
-Ball::Ball(const b2Vec2& pos, const b2Vec2& direction, const float& speed)
+Ball::Ball(const b2Vec2& pos, const b2Vec2& direction, const float& speed) : NetworkObject(typeid(Ball).hash_code())
 {
     b2CircleShape b2shape;
     b2shape.m_radius = 5/PIXELS_PER_METER;
@@ -48,4 +48,16 @@ void Ball::BeginContact(CollisionData collisionData)
 void Ball::EndContact(CollisionData collisionData) 
 {
     // Command::Prompt::print("Ball contact end");
+}
+
+void Ball::OnDataReceived(sf::Packet& data) 
+{
+
+}
+
+sf::Packet Ball::OnSendData() 
+{
+    sf::Packet temp;
+
+    return temp;
 }

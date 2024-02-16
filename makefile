@@ -26,7 +26,7 @@ LINKERFLAGS=$(LIBS) \
 			-l:TFuncDisplay.a -l:VarDisplay.a -l:LiveVar.a \
 			-l:iniParser.a -l:Log.a \
 			-l:EventHelper.a -l:TerminatingFunction.a -l:StringHelper.a \
-			-mwindows
+			# -mwindows
 
 # the directory for lib files
 LIB_DIR:=lib

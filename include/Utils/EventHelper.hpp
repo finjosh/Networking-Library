@@ -81,9 +81,10 @@ public:
     /// @brief Call all connected functions
     ///
     /// @param threadSafe if true this event will be called on EventHelper::Event::ThreadSafe::update() 
+    /// @param removeOtherInstances fi true will remove any other thread safe calls of this event before adding
     ///
     /// @return True when at least one function was called
-    bool invoke(bool threadSafe = false);
+    bool invoke(bool threadSafe = false, bool removeOtherInstances = false);
 
     /// @brief Calls all connected functions at: EventHelper::Event::ThreadSafe::update()
     // void invokeThreadSafe();
@@ -116,9 +117,10 @@ public:
         /// @brief Call this first thing every frame
         static void update();
         /// @brief used when an event is destroyed in case its still in the queue
+        /// @note removes all of the given event from the queue
         static void removeEvent(Event* event);
         /// @brief adds the given event to the thread safe queue and copys any data needed to call it
-        /// @note dont use this 
+        /// @note dont use this unless you know what you are doing
         /// @note set threadSafe = true when invoking from the event
         static void addEvent(Event* event, std::function<void()>&& func)
         {
@@ -210,14 +212,15 @@ public:
     /// @param threadSafe if true this event will be called on EventHelper::Event::ThreadSafe::update() 
     ///
     /// @return True when a callback function was executed, false when there weren't any connected callback functions
-    bool invoke(T param, bool threadSafe = false)
+    bool invoke(T param, bool threadSafe = false, bool removeOtherInstances = false)
     {
         if (m_functions.empty() || !m_enabled)
             return false;
 
         if (threadSafe)
         {
-            Event::ThreadSafe::addEvent(this, [this, param]{ Event::invokeFunc(&EventDynamic::invoke, this, param, false); });
+            if (removeOtherInstances) Event::ThreadSafe::removeEvent(this);
+            Event::ThreadSafe::addEvent(this, [this, param]{ Event::invokeFunc(&EventDynamic::invoke, this, param, false, false); });
             return true;
         }
 
@@ -286,14 +289,15 @@ public:
     /// @param param   Parameter that will be passed to callback function if it has an unbound parameter
     ///
     /// @return True when a callback function was executed, false when there weren't any connected callback functions
-    bool invoke(T param, T2 param2, bool threadSafe = false)
+    bool invoke(T param, T2 param2, bool threadSafe = false, bool removeOtherInstances = false)
     {
         if (m_functions.empty() || !m_enabled)
             return false;
 
         if (threadSafe)
         {
-            Event::ThreadSafe::addEvent(this, [this, param, param2]{ Event::invokeFunc(&EventDynamic2::invoke, this, param, param2, false); });
+            if (removeOtherInstances) Event::ThreadSafe::removeEvent(this);
+            Event::ThreadSafe::addEvent(this, [this, param, param2]{ Event::invokeFunc(&EventDynamic2::invoke, this, param, param2, false, false); });
             return true;
         }
 
@@ -369,14 +373,15 @@ public:
     /// @param param   Parameter that will be passed to callback function if it has an unbound parameter
     ///
     /// @return True when a callback function was executed, false when there weren't any connected callback functions
-    bool invoke(T param, T2 param2, T3 param3, bool threadSafe = false)
+    bool invoke(T param, T2 param2, T3 param3, bool threadSafe = false, bool removeOtherInstances = false)
     {
         if (m_functions.empty() || !m_enabled)
             return false;
 
         if (threadSafe)
         {
-            Event::ThreadSafe::addEvent(this, [this, param, param2, param3]{ Event::invokeFunc(&EventDynamic3::invoke, this, param, param2, param3, false); });
+            if (removeOtherInstances) Event::ThreadSafe::removeEvent(this);
+            Event::ThreadSafe::addEvent(this, [this, param, param2, param3]{ Event::invokeFunc(&EventDynamic3::invoke, this, param, param2, param3, false, false); });
             return true;
         }
 
@@ -459,14 +464,15 @@ public:
     /// @param param   Parameter that will be passed to callback function if it has an unbound parameter
     ///
     /// @return True when a callback function was executed, false when there weren't any connected callback functions
-    bool invoke(T param, T2 param2, T3 param3, T4 param4, bool threadSafe = false)
+    bool invoke(T param, T2 param2, T3 param3, T4 param4, bool threadSafe = false, bool removeOtherInstances = false)
     {
         if (m_functions.empty() || !m_enabled)
             return false;
 
         if (threadSafe)
         {
-            Event::ThreadSafe::addEvent(this, [this, param, param2, param3, param4]{ Event::invokeFunc(&EventDynamic4::invoke, this, param, param2, param3, param4, false); });
+            if (removeOtherInstances) Event::ThreadSafe::removeEvent(this);
+            Event::ThreadSafe::addEvent(this, [this, param, param2, param3, param4]{ Event::invokeFunc(&EventDynamic4::invoke, this, param, param2, param3, param4, false, false); });
             return true;
         }
 
@@ -556,14 +562,15 @@ public:
     /// @param param   Parameter that will be passed to callback function if it has an unbound parameter
     ///
     /// @return True when a callback function was executed, false when there weren't any connected callback functions
-    bool invoke(T param, T2 param2, T3 param3, T4 param4, T5 param5, bool threadSafe = false)
+    bool invoke(T param, T2 param2, T3 param3, T4 param4, T5 param5, bool threadSafe = false, bool removeOtherInstances = false)
     {
         if (m_functions.empty() || !m_enabled)
             return false;
 
         if (threadSafe)
         {
-            Event::ThreadSafe::addEvent(this, [this, param, param2, param3, param4, param5]{ Event::invokeFunc(&EventDynamic5::invoke, this, param, param2, param3, param4, param5, false); });
+            if (removeOtherInstances) Event::ThreadSafe::removeEvent(this);
+            Event::ThreadSafe::addEvent(this, [this, param, param2, param3, param4, param5]{ Event::invokeFunc(&EventDynamic5::invoke, this, param, param2, param3, param4, param5, false, false); });
             return true;
         }
 

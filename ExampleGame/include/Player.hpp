@@ -4,6 +4,7 @@
 #pragma once
 
 #include <math.h>
+#include <mutex>
 
 #include "box2d/Box2D.h"
 
@@ -14,6 +15,7 @@
 #include "Utils/Physics/Collider.hpp"
 #include "Utils/GameObject.hpp"
 #include "Ball.hpp"
+#include "Utils/Networking/NetworkObject.hpp"
 
 struct PlayerState
 {
@@ -35,7 +37,7 @@ struct PlayerState
     }
 };
 
-class Player final : public sf::RectangleShape, public GameObject, public Collider
+class Player final : public sf::RectangleShape, public GameObject, public Collider, public NetworkObject
 {
 public:
     Player(const float& x, const float& y, const bool& handleInput = true, const int& layer = 0);
@@ -47,6 +49,9 @@ public:
 
     bool getHandleInput() const;
     void setHandleInput(const bool& handle = true);
+
+    virtual void OnDataReceived(sf::Packet& data) override;
+    virtual sf::Packet OnSendData() override;
 
 protected:
     virtual void Update(const float& deltaTime) override;

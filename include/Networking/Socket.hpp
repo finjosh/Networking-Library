@@ -14,6 +14,26 @@
 #include "Utils/EventHelper.hpp"
 #include "Utils/UpdateLimiter.hpp"
 
+inline sf::Packet& operator <<(sf::Packet& packet, const sf::Packet& otherPacket)
+{
+    packet << otherPacket.getDataSize();
+    packet.append(otherPacket.getData(), otherPacket.getDataSize());
+    return packet;
+}
+
+inline sf::Packet& operator >>(sf::Packet& packet, sf::Packet& otherPacket)
+{
+    size_t sizeOfData;
+    packet >> sizeOfData;
+    std::vector<sf::Int8> data(sizeOfData, 0);
+    for (size_t i = 0; i < sizeOfData; i++)
+    {
+        packet >> data[i];
+    }
+    otherPacket.append(&data.front(), sizeOfData);
+    return packet;
+}
+
 namespace udp
 {
 
@@ -55,6 +75,7 @@ protected:
     //* Thread Variables
 
         const bool _threadSafeEvents = true;
+        bool _overrideEvents = false;
         // stop source is universal
         std::stop_source* _sSource = nullptr;
         // receiving thread
@@ -190,8 +211,13 @@ public:
 
     //* Public Thread Functions
 
+        /// @brief this will NOT reset any state data (connection open, ect.)
         void startThreads();
+        /// @brief this will NOT reset any state data (connection open, ect.)
         void stopThreads();
+        /// @brief if true then anytime and event is called multiple times in one frame only the last call will be invoked at EventHelper::Event::ThreadSafe::update()
+        void setThreadSafeOverride(const bool& override);
+        bool getThreadSafeOverride() const;
 
     // ---------------------
 

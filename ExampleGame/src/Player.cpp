@@ -1,6 +1,6 @@
 #include "Player.hpp"
 
-Player::Player(const float& x, const float& y, const bool& handleInput, const int& layer) : DrawableObject(layer), _handleInput(handleInput)
+Player::Player(const float& x, const float& y, const bool& handleInput, const int& layer) : DrawableObject(layer), NetworkObject(typeid(Player).hash_code()), _handleInput(handleInput)
 {
     b2PolygonShape b2shape;
     b2shape.SetAsBox(10/PIXELS_PER_METER/2.0, 10/PIXELS_PER_METER/2.0);
@@ -132,20 +132,28 @@ void Player::handleInput()
     }
 }
 
-#include "Utils/Debug/CommandPrompt.hpp"
-
 void Player::BeginContact(CollisionData collisionData) 
 {
     if (collisionData.getCollider()->cast<Ball>() == nullptr || this->_handleInput)
         return;
-
-    Command::Prompt::print("Player contact with ball begin");
 }
 
 void Player::EndContact(CollisionData collisionData) 
 {
     if (collisionData.getCollider()->cast<Ball>() == nullptr || this->_handleInput)
         return;
-    
-    Command::Prompt::print("Player contact with ball end");
+}
+
+void Player::OnDataReceived(sf::Packet& data) 
+{
+    data >> this->_shootCooldown >> this-> _burstCooldown;
+    data >> _state.burst >> _state.down >> _state.left >> _state.right >> _state.shoot >> _state.up;
+}
+
+sf::Packet Player::OnSendData() 
+{
+    sf::Packet temp;
+    temp << this->_shootCooldown << this-> _burstCooldown;
+    temp << _state.burst << _state.down << _state.left << _state.right << _state.shoot << _state.up;
+    return temp;
 }

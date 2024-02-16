@@ -7,6 +7,7 @@
 #include "box2d/b2_contact.h"
 #include "box2d/b2_collision.h"
 
+// TODO make begin and end contact be called after the box2d update function so objects can delete themselves during the callback
 class CollisionManager : public b2ContactListener
 {
 public:

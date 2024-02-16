@@ -3,11 +3,9 @@
 
 #pragma once
 
+#include "SFML/Graphics/RenderWindow.hpp"
+
 #include "Utils/Object.hpp"
-
-#include "DrawableManager.hpp"
-
-class DrawableManager;
 
 class DrawableObject : public virtual Object
 {
@@ -20,12 +18,10 @@ public:
     void setLayer(const int& layer);
     int getLayer() const;
 
-protected:
-
     /// @brief should be used to draw the obj
     virtual void Draw(sf::RenderWindow& window) = 0;
 
-    friend DrawableManager;
+protected:
 
 private:
     int _layer = 0;

@@ -5,18 +5,12 @@
 
 #include "Utils/Object.hpp"
 
-#include "UpdateManager.hpp"
-
-class UpdateManager;
-
 class UpdateInterface : public virtual Object
 {
 public:
 
     UpdateInterface();
     ~UpdateInterface();
-
-protected:
 
     /// @brief called every frame
     virtual void Update(const float& deltaTime);
@@ -28,7 +22,7 @@ protected:
     /// @note called even if the object is disabled
     virtual void Start();
 
-    friend UpdateManager;
+protected:
 
 private:
     

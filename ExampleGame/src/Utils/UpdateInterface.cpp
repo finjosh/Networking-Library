@@ -1,4 +1,5 @@
 #include "Utils/UpdateInterface.hpp"
+#include "Utils/UpdateManager.hpp"
 
 UpdateInterface::UpdateInterface()
 {

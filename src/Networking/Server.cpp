@@ -36,7 +36,7 @@ void Server::_update(const float& deltaTime)
         if (clientData.second.TimeSinceLastPacket >= _clientTimeoutTime)
         {
             this->disconnectClient(clientData.first);
-            this->onClientDisconnected.invoke(_threadSafeEvents);
+            this->onClientDisconnected.invoke(_threadSafeEvents, _overrideEvents);
         }
         clientData.second.ConnectionTime += deltaTime;
     }
@@ -73,7 +73,7 @@ void Server::_parseDataPacket(sf::Packet* packet, const sf::IpAddress& senderIP,
     {
         client->second.TimeSinceLastPacket = 0.0;
         client->second.PacketsSent++;
-        this->onDataReceived.invoke((*packet), _threadSafeEvents);
+        this->onDataReceived.invoke((*packet), _threadSafeEvents, _overrideEvents);
     }
     // if the sender is not a current client add them if possible
     else
@@ -85,7 +85,7 @@ void Server::_parseDataPacket(sf::Packet* packet, const sf::IpAddress& senderIP,
             sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
             _sendTo(Confirmation, senderIP, senderPort);
 
-            this->onClientConnected.invoke((ID)(senderIP.toInteger()), _threadSafeEvents);
+            this->onClientConnected.invoke((ID)(senderIP.toInteger()), _threadSafeEvents, _overrideEvents);
         }
         else
         {
@@ -121,13 +121,13 @@ void Server::_parseConnectionRequestPacket(sf::Packet* packet, const sf::IpAddre
 
     sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
     _sendTo(Confirmation, senderIP, senderPort);
-    this->onClientConnected.invoke((ID)senderIP.toInteger(), _threadSafeEvents);
+    this->onClientConnected.invoke((ID)senderIP.toInteger(), _threadSafeEvents, _overrideEvents);
 }
 
 void Server::_parseConnectionClosePacket(sf::Packet* packet, const sf::IpAddress& senderIP)
 {
     disconnectClient(senderIP.toInteger());
-    this->onClientDisconnected.invoke((ID)senderIP.toInteger(), _threadSafeEvents);
+    this->onClientDisconnected.invoke((ID)senderIP.toInteger(), _threadSafeEvents, _overrideEvents);
 }
 
 void Server::_parsePasswordPacket(sf::Packet* packet, const sf::IpAddress& senderIP, const PORT& senderPort)
@@ -143,7 +143,7 @@ void Server::_parsePasswordPacket(sf::Packet* packet, const sf::IpAddress& sende
         // send confirmation as password was correct
         sf::Packet Confirmation = this->ConnectionConfirmPacket(senderIP.toInteger());
         _sendTo(Confirmation, senderIP, senderPort);
-        this->onClientConnected.invoke((ID)ip, _threadSafeEvents);
+        this->onClientConnected.invoke((ID)ip, _threadSafeEvents, _overrideEvents);
     }
     else
     {
@@ -259,7 +259,7 @@ bool Server::tryOpenConnection()
 
     _connectionOpen = true;
     startThreads();
-    this->onConnectionOpen.invoke(_threadSafeEvents);
+    this->onConnectionOpen.invoke(_threadSafeEvents, _overrideEvents);
     return true;
 }
 
@@ -273,7 +273,7 @@ void Server::closeConnection()
     stopThreads();
     close();
 
-    onConnectionClose.invoke(_threadSafeEvents);
+    onConnectionClose.invoke(_threadSafeEvents, _overrideEvents);
 }
 
 // -------------------------

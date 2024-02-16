@@ -8,10 +8,6 @@
 #include "Utils/Physics/WorldHandler.hpp"
 #include "Utils/Object.hpp"
 
-#include "Utils/Physics/CollisionManager.hpp"
-
-class CollisionManager;
-
 class Collider;
 
 class CollisionData
@@ -45,14 +41,6 @@ public:
     /// @returns true if physics are enabled
     bool isPhysicsEnabled() const;
 
-protected:
-    /// @brief creates a body in the world with the default body def parameters
-    void initCollider(const float& x = 0, const float& y = 0);
-    /// @brief create a body in the world with the default body def parameters
-    /// @param pos the position to init the body at
-    void initCollider(const b2Vec2& pos);
-    /// @brief create a body in the world with the given body def
-    void initCollider(const b2BodyDef& bodyDef);
     /// @brief creates a fixture with the given fixture def
     /// @returns the pointer to the new fixture
     b2Fixture* createFixture(const b2FixtureDef& fixture);
@@ -107,7 +95,14 @@ protected:
     /// @param impulse the impulse data
     inline virtual void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {};
 
-    friend CollisionManager;
+protected:
+    /// @brief creates a body in the world with the default body def parameters
+    void initCollider(const float& x = 0, const float& y = 0);
+    /// @brief create a body in the world with the default body def parameters
+    /// @param pos the position to init the body at
+    void initCollider(const b2Vec2& pos);
+    /// @brief create a body in the world with the given body def
+    void initCollider(const b2BodyDef& bodyDef);
 
 private:
     /// @brief updates the body state (enabled or not)

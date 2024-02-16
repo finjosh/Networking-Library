@@ -1,4 +1,5 @@
 #include "Utils/Graphics/DrawableObject.hpp"
+#include "Utils/Graphics/DrawableManager.hpp"
 
 DrawableObject::DrawableObject(const int& layer) : _layer(layer)
 {

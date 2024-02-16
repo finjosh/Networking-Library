@@ -18,6 +18,11 @@
 #include "Utils/Graphics/DrawableManager.hpp"
 #include "Utils/ObjectManager.hpp"
 
+// Network files
+#include "Utils/Networking/NetworkObject.hpp"
+#include "Utils/Networking/ObjectType.hpp"
+#include "Utils/Networking/NetworkObjectManager.hpp"
+
 #include "Player.hpp"
 #include "Utils/Physics/CollisionManager.hpp"
 
@@ -29,8 +34,11 @@ void addThemeCommands();
 // TODO setup a view manager that handles windows size changes
 int main()
 {
+    initObjectTypeConstructor(typeid(Player).hash_code(), {[](){ return new Player(7, 7, false); }});
+    initObjectTypeConstructor(typeid(Ball).hash_code(), {[](){ return new Ball({0,0},{0,0},0); }});
+
     // setup for sfml and tgui
-    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Example Game", sf::Style::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Example Game");
     window.setFramerateLimit(144);
     WindowHandler::setRenderWindow(&window);
 
@@ -43,10 +51,19 @@ int main()
     WorldHandler::getWorld().SetGravity({0.f,0.f});
     WorldHandler::getWorld().SetContactListener(new CollisionManager);
 
-    udp::SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->sendToAll(udp::Socket::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->sendToServer(udp::Socket::DataPacketTemplate() << "Some Data"); }});
+    udp::SocketUI sDisplay(50001, {}, {});
     sDisplay.initConnectionDisplay(gui);
-    sDisplay.closeConnectionDisplay();
+    // sDisplay.closeConnectionDisplay();
     // sDisplay.setConnectionVisible();
+    NetworkObjectManager::init(sDisplay.getServer(), sDisplay.getClient(), {[](){ sf::Packet temp;
+        temp << "data maybe";
+        return temp;
+    }});
+    NetworkObjectManager::onDataReceived([](sf::Packet* data){
+        std::string temp;
+        *data >> temp;
+        Command::Prompt::print(temp);
+    });
 
     //! Required to initialize VarDisplay and CommandPrompt
     // creates the UI for the VarDisplay
@@ -68,45 +85,30 @@ int main()
     float fixedUpdate = 0;
     while (window.isOpen())
     {
+        NetworkObjectManager::lock();
         EventHelper::Event::ThreadSafe::update();
+        NetworkObjectManager::unlock();
         window.clear();
         // updating the delta time var
         sf::Time deltaTime = deltaClock.restart();
         fixedUpdate += deltaTime.asSeconds();
+        WorldHandler::updateTime(deltaTime.asSeconds());
         sf::Event event;
         while (window.pollEvent(event))
         {
             gui.handleEvent(event);
 
             //! Required for LiveVar and CommandPrompt to work as intended
+            NetworkObjectManager::lock();
             LiveVar::UpdateLiveVars(event);
+            NetworkObjectManager::unlock();
+            NetworkObjectManager::lock();
             Command::Prompt::UpdateEvent(event);
+            NetworkObjectManager::unlock();
             //! ----------------------------------------------------------
 
             if (event.type == sf::Event::Closed || event.key.code == sf::Keyboard::Escape)
                 window.close();
-
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z)
-            {
-                if (ids.size() > 0)
-                {
-                    Object::Ptr temp = ObjectManager::getObject(ids.front());
-                    temp->setEnabled(!temp->isEnabled());
-                }
-            }
-
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::X)
-            {
-                if (ids.size() > 0)
-                {
-                    Object::Ptr temp = ObjectManager::getObject(ids.front());
-                    Collider* collider = temp->cast<Collider>();
-                    if (collider != nullptr)
-                    {
-                        collider->setPhysicsEnabled(!collider->isPhysicsEnabled());
-                    }
-                }
-            }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
             {
@@ -126,31 +128,29 @@ int main()
                     ids.erase(ids.begin());
                 }
             }
-
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::C)
-            {
-                for (auto id: ids)
-                {
-                    Object::Ptr obj = ObjectManager::getObject(id);
-                    if (obj.isValid())
-                    {
-                        obj->cast<Player>()->setHandleInput(!obj->cast<Player>()->getHandleInput());
-                    }
-                }
-            }
         }
+        NetworkObjectManager::lock();
         UpdateManager::Update(deltaTime.asSeconds());
+        NetworkObjectManager::unlock();
         if (fixedUpdate >= 0.2)
         {
             fixedUpdate = 0;
+            NetworkObjectManager::lock();
             UpdateManager::FixedUpdate();
+            NetworkObjectManager::unlock();
         }
+        NetworkObjectManager::lock();
         UpdateManager::LateUpdate(deltaTime.asSeconds());
+        NetworkObjectManager::unlock();
         //! Updates all the vars being displayed
+        NetworkObjectManager::lock();
         VarDisplay::Update();
+        NetworkObjectManager::unlock();
         //! ------------------------------=-----
         //! Updates all Terminating Functions
+        NetworkObjectManager::lock();
         TerminatingFunction::UpdateFunctions(deltaTime.asSeconds());
+        NetworkObjectManager::unlock();
         //* Updates for the terminating functions display
         TFuncDisplay::update();
         //! ------------------------------
@@ -162,12 +162,12 @@ int main()
         sDisplay.updateInfoDisplay();
 
         //! Do physics before this
-        WorldHandler::getWorld().Step(deltaTime.asSeconds(), int32(8), int32(3));
+        NetworkObjectManager::lock();
+        WorldHandler::updateWorld();
+        NetworkObjectManager::unlock();
         //! Draw after this
 
         //* Write code here
-
-        // Command::Prompt::print(std::to_string(ObjectManager::getNumberOfObjects()));
 
         // ---------------
 

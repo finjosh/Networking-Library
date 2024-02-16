@@ -28,20 +28,41 @@ int main()
     Command::color::setDefaultColor({255,255,255,255});
     // -----------------------
 
-    udp::SocketUI sDisplay(50001, {[&sDisplay](){ sDisplay.getServer()->sendToAll(udp::Socket::DataPacketTemplate() << "Some Data"); }}, {[&sDisplay](){ sDisplay.getClient()->sendToServer(udp::Socket::DataPacketTemplate() << "Some Data"); }});
+    udp::SocketUI sDisplay(50001, {[&sDisplay](){
+        sf::Packet temp;
+        temp << "Some Data" << "More data";
+        sf::Packet data = udp::Socket::DataPacketTemplate();
+        data << temp;
+        sDisplay.getServer()->sendToAll(data); 
+        }}, 
+        {[&sDisplay](){ 
+            sf::Packet temp;
+            temp << "Some Data" << "More data";
+            sf::Packet data = udp::Socket::DataPacketTemplate();
+            data << temp;
+            sDisplay.getClient()->sendToServer(data); 
+        }});
     sDisplay.initConnectionDisplay(gui);
     sDisplay.setInfoVisible();
     sDisplay.initInfoDisplay(gui);
     sDisplay.setConnectionVisible();
     sDisplay.getServer()->onDataReceived([](sf::Packet packet){ 
-        std::string temp;
+        std::string str;
+        sf::Packet temp;
         packet >> temp;
-        Command::Prompt::print(temp); 
+        temp >> str;
+        Command::Prompt::print(str); 
+        temp >> str;
+        Command::Prompt::print(str); 
     });
     sDisplay.getClient()->onDataReceived([](sf::Packet packet){ 
-        std::string temp;
+        std::string str;
+        sf::Packet temp;
         packet >> temp;
-        Command::Prompt::print(temp); 
+        temp >> str;
+        Command::Prompt::print(str); 
+        temp >> str;
+        Command::Prompt::print(str); 
     });
 
     //! Required to initialize VarDisplay and CommandPrompt

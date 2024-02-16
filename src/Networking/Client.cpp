@@ -63,7 +63,7 @@ void Client::_resetConnectionData()
 void Client::_parseDataPacket(sf::Packet* packet)
 {
     _timeSinceLastPacket = 0.f;
-    this->onDataReceived.invoke(*packet, _threadSafeEvents);
+    this->onDataReceived.invoke(*packet, _threadSafeEvents, _overrideEvents);
 }
 
 void Client::_parseConnectionClosePacket(sf::Packet* packet)
@@ -71,7 +71,7 @@ void Client::_parseConnectionClosePacket(sf::Packet* packet)
     _connectionOpen = false;
     _connectionTime = 0.f;
     closeConnection();
-    this->onConnectionClose.invoke(_threadSafeEvents);
+    this->onConnectionClose.invoke(_threadSafeEvents, _overrideEvents);
 }
 
 void Client::_parseConnectionConfirmPacket(sf::Packet* packet)
@@ -79,7 +79,7 @@ void Client::_parseConnectionConfirmPacket(sf::Packet* packet)
     _connectionOpen = true;
     _connectionTime = 0.f;
     (*packet) >> _ip; // getting the ip from the packet
-    this->onConnectionOpen.invoke(_threadSafeEvents);
+    this->onConnectionOpen.invoke(_threadSafeEvents, _overrideEvents);
 }
 
 void Client::_parsePasswordRequestPacket(sf::Packet* packet)
@@ -89,7 +89,7 @@ void Client::_parsePasswordRequestPacket(sf::Packet* packet)
     else
         _wrongPassword = false;
     _needsPassword = true;
-    this->onPasswordRequest.invoke(_threadSafeEvents);
+    this->onPasswordRequest.invoke(_threadSafeEvents, _overrideEvents);
 }
 
 //* Pure Virtual Definition
@@ -133,13 +133,13 @@ void Client::setServerData(const sf::IpAddress& serverIP)
         _serverIP = sf::IpAddress::LocalHost;
     else
         _serverIP = serverIP; 
-    onServerIpChanged.invoke(getServerIP(), _threadSafeEvents);
+    onServerIpChanged.invoke(getServerIP(), _threadSafeEvents, _overrideEvents);
 }
 
 void Client::setServerData(const PORT& port)
 {
     _serverPort = port;
-    onServerPortChanged.invoke(getServerPort(), _threadSafeEvents);
+    onServerPortChanged.invoke(getServerPort(), _threadSafeEvents, _overrideEvents);
 }
 
 void Client::sendToServer(sf::Packet& packet)
@@ -205,7 +205,7 @@ void Client::closeConnection()
     {
         sf::Packet close = this->ConnectionCloseTemplate();
         this->sendToServer(close);
-        this->onConnectionClose.invoke(_threadSafeEvents);
+        this->onConnectionClose.invoke(_threadSafeEvents, _overrideEvents);
     }
     else
     {

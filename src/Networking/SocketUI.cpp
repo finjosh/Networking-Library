@@ -236,7 +236,7 @@ Socket* SocketUI::getSocket()
 
 void SocketUI::updateInfoDisplay()
 {
-    if (isEmpty() || !isConnectionOpen()) return;
+    if (_list == nullptr || isEmpty() || !isConnectionOpen()) return;
     _list->changeItem(5, {"Connection Open Time", std::to_string(_socket->getConnectionTime())});
 
     if (_isServer)

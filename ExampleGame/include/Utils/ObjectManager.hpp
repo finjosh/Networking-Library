@@ -22,6 +22,8 @@ protected:
     friend Object;
 
 private:
+    inline ObjectManager() = default;
+
     /// @note used as Object can not be made on its own due to its pure virtual destroy function
     class _objectCompClass : public Object
     {

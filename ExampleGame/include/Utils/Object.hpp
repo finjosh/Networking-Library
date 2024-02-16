@@ -89,7 +89,7 @@ protected:
     inline virtual void OnDisable() {};
 
 private:
-    bool _enabled = true;
+    std::atomic_bool _enabled = true;
     unsigned long long _id = 0;
 
     static std::atomic_ullong _lastID;
