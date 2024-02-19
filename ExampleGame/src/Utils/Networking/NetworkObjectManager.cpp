@@ -11,7 +11,7 @@ EventHelper::Event NetworkObjectManager::onConnectionOpen;
 EventHelper::Event NetworkObjectManager::onConnectionClose;
 EventHelper::EventDynamic<sf::Packet*> NetworkObjectManager::onDataReceived;
 
-std::set<NetworkObject*, _networkObjectComp> NetworkObjectManager::_objects;
+std::unordered_set<NetworkObject*> NetworkObjectManager::_objects;
 
 NetworkObjectManager::_networkObject::_networkObject(unsigned long long id) : 
     NetworkObject(typeid(NetworkObjectManager::_networkObject).hash_code()) 

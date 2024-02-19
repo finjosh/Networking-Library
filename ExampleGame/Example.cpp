@@ -35,7 +35,7 @@ void addThemeCommands();
 int main()
 {
     initObjectTypeConstructor(typeid(Player).hash_code(), {[](){ return new Player(7, 7, false); }});
-    initObjectTypeConstructor(typeid(Ball).hash_code(), {[](){ return new Ball({0,0},{0,0},0); }});
+    initObjectTypeConstructor(typeid(Ball).hash_code(), {[](){ return new Ball({0,0},{0,0},0); }});    
 
     // setup for sfml and tgui
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Example Game");

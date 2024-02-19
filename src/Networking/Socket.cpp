@@ -65,7 +65,7 @@ void Socket::_thread_receive_packets(std::stop_token sToken)
             break;
 
         default:
-            throw std::runtime_error("Packet Type not given... Value received: " + std::to_string(packetType)); // TODO dont throw error just warn program
+            onUnknownPacket.invoke(packetType, packet, _threadSafeEvents, _overrideEvents);
             break;
         }
 

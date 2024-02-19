@@ -43,7 +43,7 @@ typedef sf::Uint32 ID;
 typedef ID IP;
 typedef unsigned short PORT;
 
-enum PacketType
+enum PacketType : sf::Int8
 {
     Data = 0,
     ConnectionRequest = 1,
@@ -199,6 +199,9 @@ public:
         /// @note Server -> Closed
         /// @note Client -> Disconnected
         EventHelper::Event onConnectionClose;
+        /// @brief Invoked when there is an unknown packet received
+        /// @note Optional parameter sf::Packet
+        EventHelper::EventDynamic2<sf::Int8, sf::Packet> onUnknownPacket;
 
     // ------
 

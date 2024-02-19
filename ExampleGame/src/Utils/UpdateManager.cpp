@@ -1,6 +1,6 @@
 #include "Utils/UpdateManager.hpp"
 
-std::set<UpdateInterface*, _objectComp> UpdateManager::_objects;
+std::unordered_set<UpdateInterface*> UpdateManager::_objects;
 
 void UpdateManager::addUpdateObject(UpdateInterface* obj)
 {
@@ -14,7 +14,7 @@ void UpdateManager::removeUpdateObject(UpdateInterface* obj)
 
 void UpdateManager::Update(float deltaTime)
 {
-    std::set<UpdateInterface*>::iterator i = _objects.begin();
+    std::unordered_set<UpdateInterface*>::iterator i = _objects.begin();
     while (i != _objects.end())
     {
         // in the case that the obj is destroyed during call
@@ -27,7 +27,7 @@ void UpdateManager::Update(float deltaTime)
 
 void UpdateManager::LateUpdate(float deltaTime)
 {
-    std::set<UpdateInterface*>::iterator i = _objects.begin();
+    std::unordered_set<UpdateInterface*>::iterator i = _objects.begin();
     while (i != _objects.end())
     {
         // in the case that the obj is destroyed during call
@@ -40,7 +40,7 @@ void UpdateManager::LateUpdate(float deltaTime)
 
 void UpdateManager::FixedUpdate()
 {
-    std::set<UpdateInterface*>::iterator i = _objects.begin();
+    std::unordered_set<UpdateInterface*>::iterator i = _objects.begin();
     while (i != _objects.end())
     {
         // in the case that the obj is destroyed during call

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <set>
+#include <unordered_set>
 
 #include "Utils/Object.hpp"
 
@@ -35,7 +35,7 @@ private:
 
     /// @brief if the comp class is deleted the object will be removed with the id
     static _objectCompClass _compClass;
-    static std::set<Object*, _objectComp> _objects; // TODO change this to unordered set
+    static std::unordered_set<Object*> _objects;
 };
 
 #endif

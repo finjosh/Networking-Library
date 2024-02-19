@@ -5,7 +5,7 @@
 
 #include "UpdateInterface.hpp"
 
-#include <set>
+#include <unordered_set>
 
 class UpdateInterface;
 
@@ -30,7 +30,7 @@ protected:
 private:
     inline UpdateManager() = default;
 
-    static std::set<UpdateInterface*, _objectComp> _objects;
+    static std::unordered_set<UpdateInterface*> _objects;
 };
 
 #endif

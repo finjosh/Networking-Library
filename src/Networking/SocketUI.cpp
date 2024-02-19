@@ -32,11 +32,11 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
     _passEdit->setDefaultText("Password");
     _IPEdit = tgui::EditBox::create();
     _IPEdit->setDefaultText("Server IP");
-    _tryOpenConnection = tgui::Button::create("Try Open Connection");
-    _tryOpenConnection->onClick([this](){
+    _tryOpenConnectionBtn = tgui::Button::create("Try Open Connection");
+    _tryOpenConnectionBtn->onClick([this](){
         TFunction temp = {[this](TData* data){
             if (this->getClient()->NeedsPassword())
-                this->updateConnectionDisplay();
+                this->_updateConnectionDisplay();
             else if (!this->isServer() && !this->isEmpty() && !this->getClient()->isConnectionOpen())
                 data->setRunning();
         }};
@@ -52,11 +52,11 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
     _panel->setSize({"100%", "100%"});
 
     //* Updating which widgets to show
-    _serverCheck->onCheck([this](){ _clientCheck->setChecked(false); updateConnectionDisplay(); initData(); });
-    _serverCheck->onUncheck([this](){ this->resetUIConnectionStates(); updateConnectionDisplay(); });
-    _clientCheck->onCheck([this](){ _serverCheck->setChecked(false); updateConnectionDisplay(); initData(); });
-    _clientCheck->onUncheck([this](){ this->resetUIConnectionStates(); updateConnectionDisplay(); });
-    _passCheck->onChange(updateConnectionDisplay, this);
+    _serverCheck->onCheck([this](){ _clientCheck->setChecked(false); _updateConnectionDisplay(); _initData(); });
+    _serverCheck->onUncheck([this](){ this->_resetUIConnectionStates(); _updateConnectionDisplay(); });
+    _clientCheck->onCheck([this](){ _serverCheck->setChecked(false); _updateConnectionDisplay(); _initData(); });
+    _clientCheck->onUncheck([this](){ this->_resetUIConnectionStates(); _updateConnectionDisplay(); });
+    _passCheck->onChange(_updateConnectionDisplay, this);
     _passEdit->onTextChange([this](){ 
         if (this->_socket != nullptr)
         {
@@ -103,36 +103,36 @@ void SocketUI::initConnectionDisplay(tgui::Gui& gui)
                 }
                 tempThread->detach();
                 delete(tempThread); //! bad as all functions could be cleared and thread will never be removed
-                this->updateConnectionDisplay();
+                this->_updateConnectionDisplay();
             });
-            this->updateConnectionDisplay();
+            this->_updateConnectionDisplay();
         } 
     });
 
-    _tryOpenConnection->onClick([this](){
+    _tryOpenConnectionBtn->onClick([this](){
         if (this->isConnectionOpen())
         {
-            this->closeConnection();
+            this->_closeConnection();
         }
         else
         {
-            this->tryOpenConnection();
+            this->_tryOpenConnection();
         }
-        this->updateConnectionDisplay();
+        this->_updateConnectionDisplay();
     });
 
     _sendPassword->onClick([this](){
-        this->tryOpenConnection();
-        this->updateConnectionDisplay();
+        this->_tryOpenConnection();
+        this->_updateConnectionDisplay();
     });
 
-    _server.onConnectionOpen(&SocketUI::updateConnectionDisplay, this);
-    _server.onConnectionClose(&SocketUI::resetUIConnectionStates, this);
-    _client.onConnectionOpen(&SocketUI::updateConnectionDisplay, this);
-    _client.onConnectionClose(&SocketUI::updateConnectionDisplay, this);
-    _client.onConnectionClose(&SocketUI::resetUIConnectionStates, this);
+    _server.onConnectionOpen(&SocketUI::_updateConnectionDisplay, this);
+    _server.onConnectionClose(&SocketUI::_resetUIConnectionStates, this);
+    _client.onConnectionOpen(&SocketUI::_updateConnectionDisplay, this);
+    _client.onConnectionClose(&SocketUI::_updateConnectionDisplay, this);
+    _client.onConnectionClose(&SocketUI::_resetUIConnectionStates, this);
 
-    updateConnectionDisplay();
+    _updateConnectionDisplay();
 }
 
 void SocketUI::closeConnectionDisplay()
@@ -173,13 +173,13 @@ void SocketUI::initInfoDisplay(tgui::Gui& gui)
     _clientData = tgui::TreeView::create();
     _infoParent->add(_clientData);
 
-    _server.onConnectionOpen(&SocketUI::initData, this);
-    _server.onConnectionClose(&SocketUI::initData, this);
-    _client.onConnectionOpen(&SocketUI::initData, this);
-    _client.onConnectionClose(&SocketUI::initData, this);
+    _server.onConnectionOpen(&SocketUI::_initData, this);
+    _server.onConnectionClose(&SocketUI::_initData, this);
+    _client.onConnectionOpen(&SocketUI::_initData, this);
+    _client.onConnectionClose(&SocketUI::_initData, this);
 
-    _infoParent->onSizeChange(updateUISize, this);
-    updateUISize();
+    _infoParent->onSizeChange(_updateUISize, this);
+    _updateUISize();
 }
 
 void SocketUI::closeInfoDisplay()
@@ -267,7 +267,7 @@ void SocketUI::updateInfoDisplay()
     }
 }
 
-void SocketUI::initData()
+void SocketUI::_initData()
 {
     if (_socket == nullptr || _infoParent == nullptr) return;
     _list->removeAllItems();
@@ -277,7 +277,7 @@ void SocketUI::initData()
     _list->addItem({"Port", std::to_string(_socket->getPort())});
     _list->addItem({"Connection Open", (_socket->isConnectionOpen() ? "True" : "False")});
     _list->addItem({"Connection Open Time", std::to_string(_socket->getConnectionTime())});
-    updateUISize();
+    _updateUISize();
 }
 
 void SocketUI::_close(bool isInfoDisplay, bool* tguiAbortClose)
@@ -295,92 +295,92 @@ void SocketUI::_close(bool isInfoDisplay, bool* tguiAbortClose)
     }
 }
 
-void SocketUI::updateUISize()
+void SocketUI::_updateUISize()
 {
     _list->setSize({"100%",{_list->getCurrentHeaderHeight() + 10 + _list->getItemHeight()*_list->getItemCount()}});
     _clientData->setSize({"100%",tgui::String(_infoParent->getInnerSize().y - _list->getFullSize().y - 10)});
     _clientData->setPosition({"0%",tgui::String(_list->getSize().y)});
 }
 
-void SocketUI::setServer()
+void SocketUI::_setServer()
 {
     _isServer = true;
     _socket = &_server;
 }
 
-void SocketUI::setClient()
+void SocketUI::_setClient()
 {
     _isServer = false;
     _socket = &_client;
 }
 
-void SocketUI::setEmpty()
+void SocketUI::_setEmpty()
 {
     if (this->getSocket() == nullptr) return;
     _socket->closeConnection();
     _socket = nullptr;
 }
 
-void SocketUI::updateConnectionDisplay()
+void SocketUI::_updateConnectionDisplay()
 {
     _panel->removeAllWidgets();
 
-    addWidgetToConnection(_serverCheck);
+    _addWidgetToConnection(_serverCheck);
 
-    //* Is a Server
+    // Is a Server
     if (_serverCheck->isChecked())
     {
-        this->setServer();
+        this->_setServer();
 
         _passCheck->setText("Password");
-        addWidgetToConnection(_passCheck, 1);
+        _addWidgetToConnection(_passCheck, 1);
 
         if (_passCheck->isChecked())
         {
-            addWidgetToConnection(_passEdit, 2);
+            _addWidgetToConnection(_passEdit, 2);
         }
 
         if (this->getServer()->isConnectionOpen())
-            _tryOpenConnection->setText("Close Server");
+            _tryOpenConnectionBtn->setText("Close Server");
         else    
-            _tryOpenConnection->setText("Open Server");
+            _tryOpenConnectionBtn->setText("Open Server");
 
-        addWidgetToConnection(_tryOpenConnection, 1);
+        _addWidgetToConnection(_tryOpenConnectionBtn, 1);
 
         // adding the client check to the UI
-        addWidgetToConnection(_clientCheck);
+        _addWidgetToConnection(_clientCheck);
     }
-    //* Is a Client
+    // Is a Client
     else if (_clientCheck->isChecked())
     {
-        addWidgetToConnection(_clientCheck);
-        this->setClient();
+        _addWidgetToConnection(_clientCheck);
+        this->_setClient();
 
-        addWidgetToConnection(_IPEdit, 1);
+        _addWidgetToConnection(_IPEdit, 1);
         if (_validIPState == validIP::checking) 
-            addWidgetToConnection(_IPState, 1, 5);
+            _addWidgetToConnection(_IPState, 1, 5);
 
         if (_client.NeedsPassword())
         {
             _passEdit->setText("");
-            addWidgetToConnection(_passEdit, 2);
-            addWidgetToConnection(_sendPassword, 2);
+            _addWidgetToConnection(_passEdit, 2);
+            _addWidgetToConnection(_sendPassword, 2);
         }
 
         if (_client.isConnectionOpen()) // need to check here as the connection confirmation can take time
-            _tryOpenConnection->setText("Disconnect");
+            _tryOpenConnectionBtn->setText("Disconnect");
         else
-            _tryOpenConnection->setText("Try Connect");
-        addWidgetToConnection(_tryOpenConnection, 1);
+            _tryOpenConnectionBtn->setText("Try Connect");
+        _addWidgetToConnection(_tryOpenConnectionBtn, 1);
     }
     else
     {
-        addWidgetToConnection(_clientCheck);
-        this->setEmpty();
+        _addWidgetToConnection(_clientCheck);
+        this->_setEmpty();
     }
 }
 
-void SocketUI::addWidgetToConnection(tgui::Widget::Ptr widgetPtr, float indent, float spacing)
+void SocketUI::_addWidgetToConnection(tgui::Widget::Ptr widgetPtr, float indent, float spacing)
 {
     float currentHeight = 0;
     auto& widgets = _panel->getWidgets();
@@ -396,14 +396,14 @@ void SocketUI::addWidgetToConnection(tgui::Widget::Ptr widgetPtr, float indent, 
     }
 }
 
-void SocketUI::resetUIConnectionStates()
+void SocketUI::_resetUIConnectionStates()
 {
     _passCheck->setChecked(false);
     _passEdit->setText("");
     _IPEdit->setText("");
 }
 
-void SocketUI::tryOpenConnection()
+void SocketUI::_tryOpenConnection()
 {
     if (!isEmpty() && isServer())
     {
@@ -428,10 +428,10 @@ void SocketUI::tryOpenConnection()
     }
 }
 
-void SocketUI::closeConnection()
+void SocketUI::_closeConnection()
 {
     _server.closeConnection();
     _client.closeConnection();
-    resetUIConnectionStates();
+    _resetUIConnectionStates();
     _socket = nullptr;
 }

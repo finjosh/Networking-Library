@@ -1,7 +1,7 @@
 #include "Utils/ObjectManager.hpp"
 
 ObjectManager::_objectCompClass ObjectManager::_compClass(0);
-std::set<Object*, _objectComp> ObjectManager::_objects;
+std::unordered_set<Object*> ObjectManager::_objects;
 
 //* Comparison classes
 
@@ -13,7 +13,7 @@ void ObjectManager::_objectCompClass::setID(unsigned long long id) { Object::set
 Object::Ptr ObjectManager::getObject(unsigned long long id)
 {
     _compClass.setID(id);
-    std::set<Object*>::iterator obj = _objects.find((Object*)&_compClass);
+    std::unordered_set<Object*>::iterator obj = _objects.find((Object*)&_compClass);
     _compClass.setID(0);
 
     return Object::Ptr(obj == _objects.end() ? nullptr : *obj);

@@ -64,27 +64,27 @@ public:
     void updateInfoDisplay();
 
 protected:
-    void initData();
+    void _initData();
     void _close(bool isInfoDisplay, bool* tguiAbortClose);
-    void updateUISize();
-    void setServer();
-    void setClient();
+    void _updateUISize();
+    void _setServer();
+    void _setClient();
     /// @brief this is no longer a client or a server
-    void setEmpty();
+    void _setEmpty();
 
     //* Functions for updating the UI in the connection parent
-    void updateConnectionDisplay();
+    void _updateConnectionDisplay();
     /// @brief adds the given widget to the connection display with proper spacing
     /// @param indent the number of indents to move the widget by
     /// @param spacing the space from the last widget
     /// @note for a space put a nullptr in
-    void addWidgetToConnection(tgui::Widget::Ptr widgetPtr, float indent = 0, float spacing = 10);
+    void _addWidgetToConnection(tgui::Widget::Ptr widgetPtr, float indent = 0, float spacing = 10);
     /// @brief resets the state of the checkboxes, edit boxes, and buttons
-    void resetUIConnectionStates();
+    void _resetUIConnectionStates();
 
     /// @brief tries to open connection with the current data
-    void tryOpenConnection();
-    void closeConnection();
+    void _tryOpenConnection();
+    void _closeConnection();
 
 private:
 
@@ -109,7 +109,7 @@ private:
     tgui::EditBox::Ptr _IPEdit;
     tgui::Label::Ptr _IPState;
     // Open / close connection
-    tgui::Button::Ptr _tryOpenConnection;
+    tgui::Button::Ptr _tryOpenConnectionBtn;
     tgui::Button::Ptr _sendPassword;
     tgui::ScrollablePanel::Ptr _panel;
 

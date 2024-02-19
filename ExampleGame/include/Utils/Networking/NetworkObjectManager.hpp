@@ -67,7 +67,7 @@ private:
     static bool _isServer;
     static funcHelper::func<sf::Packet> _sendPacketFunc;
 
-    static std::set<NetworkObject*, _networkObjectComp> _objects;
+    static std::unordered_set<NetworkObject*> _objects;
 
     static std::mutex _threadLock;
 

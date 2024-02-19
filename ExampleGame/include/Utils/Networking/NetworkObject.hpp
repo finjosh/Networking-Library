@@ -61,4 +61,37 @@ public:
     bool operator() (const NetworkObject* lhs, const NetworkObject* rhs) const;
 };
 
+namespace std {
+    template <>
+    struct hash<NetworkObject> {
+        inline size_t operator()(const NetworkObject& obj) const noexcept
+        {
+            return hash<size_t>{}(obj.getNetworkID());
+        }
+    };
+    template <>
+    struct hash<NetworkObject*> {
+        inline size_t operator()(const NetworkObject* obj) const noexcept
+        {
+            if (obj == nullptr)
+                return 0;
+            return hash<size_t>{}(obj->getNetworkID());
+        }
+    };
+    template <>
+    struct equal_to<NetworkObject> {
+        inline bool operator()(const NetworkObject& obj, const NetworkObject& obj2) const noexcept
+        {
+            return obj.getNetworkID() == obj2.getNetworkID();
+        }
+    };
+    template <>
+    struct equal_to<NetworkObject*> {
+        inline bool operator()(const NetworkObject* obj, const NetworkObject* obj2) const noexcept
+        {
+            return obj->getNetworkID() == obj2->getNetworkID();
+        }
+    };
+}
+
 #endif

@@ -101,4 +101,37 @@ public:
     bool operator()(const Object* lhs, const Object* rhs) const;
 };
 
+namespace std {
+    template <>
+    struct hash<Object> {
+        inline size_t operator()(const Object& obj) const noexcept
+        {
+            return hash<size_t>{}(obj.getID());
+        }
+    };
+    template <>
+    struct hash<Object*> {
+        inline size_t operator()(const Object* obj) const noexcept
+        {
+            if (obj == nullptr)
+                return 0;
+            return hash<size_t>{}(obj->getID());
+        }
+    };
+    template <>
+    struct equal_to<Object> {
+        inline bool operator()(const Object& obj, const Object& obj2) const noexcept
+        {
+            return obj.getID() == obj2.getID();
+        }
+    };
+    template <>
+    struct equal_to<Object*> {
+        inline bool operator()(const Object* obj, const Object* obj2) const noexcept
+        {
+            return obj->getID() == obj2->getID();
+        }
+    };
+}
+
 #endif
