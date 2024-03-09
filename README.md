@@ -31,8 +31,8 @@ A simple and efficient C++ networking library built using ([SFML](https://www.sf
     <img src=https://github.com/finjosh/Networking-Library/assets/109707607/04bb0551-d1c6-4efa-b4b5-9c357e53afb3>
     <img src=https://github.com/finjosh/Networking-Library/assets/109707607/80183637-c832-4729-aa9c-69474b31da2c>
     <p>
-    <img src=https://github.com/finjosh/Networking-Library/assets/109707607/dc8c7cca-76af-4f0e-809c-b40c2c2d0242>
-    <img src=https://github.com/finjosh/Networking-Library/assets/109707607/9c758fd6-08c9-43b9-8b89-822dd29958ee>
+    <img src=https://github.com/finjosh/Networking-Library/assets/109707607/4b9ab384-ec4a-4124-9741-0288fe2e7f7d>
+    <img src=https://github.com/finjosh/Networking-Library/assets/109707607/11b3f9dc-877a-4711-942d-54121296cccc>
   </p>
 </div>
 
